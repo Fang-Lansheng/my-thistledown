@@ -2,6 +2,10 @@
 
 `2019年1月3日` `Blog`
 
+[TOC]
+
+---
+
 ## 前言
 
 上一个基于 WordPress 的博客已经在重装服务器系统之后烟消云散了，因为搭建过程全程百度，自己毫无印象，也就不愿意再重复一遍机械式地抄写。这一会打算参考网上的教程，重新搭建一个自己 blog，并且把过程记录下来，权当做一个学习的过程吧。
@@ -249,3 +253,307 @@ enabled=1
 yum install nginx
 ```
 
+果然不失所望，安装过程中，找不到包了，在网上的教程中转了又转，敲了几行竟然又成了：
+
+```bash
+yum clean all
+yum makecache
+yum -y install nginx
+```
+
+大功告成！
+
+Nginx 配置成功后，需要设置 Nginx 的配置，配置路径为 `/etc/nginx/conf.d/default.conf`，配置内容如下：
+
+```bash
+server {
+    listen       80;
+    server_name  localhost my-thistledown.com www.my-thistledown.com;	
+	# 非 www 域名的重定向到 www
+	if ( $host != "www.my-thistledown.com" ) {
+    	rewrite "^/(.*)$" http://www.my-thistledown.com/$1 permanent;
+	}
+
+    #charset koi8-r;
+    #access_log  /var/log/nginx/host.access.log  main;
+
+    location / {
+        root   /usr/share/nginx/html;
+        index  index.html index.htm;
+    }
+
+    error_page  404              /404.html;
+
+    # redirect server error pages to the static page /50x.html
+    #
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+    # proxy the PHP scripts to Apache listening on 127.0.0.1:80
+    #
+    #location ~ \.php$ {
+    #    proxy_pass   http://127.0.0.1;
+    #}
+
+    # pass the PHP scripts to FastCGI server listening on 127.0.0.1:9000
+    #
+    #location ~ \.php$ {
+    #    root           html;
+    #    fastcgi_pass   127.0.0.1:9000;
+    #    fastcgi_index  index.php;
+    #    fastcgi_param  SCRIPT_FILENAME  /scripts$fastcgi_script_name;
+    #    include        fastcgi_params;
+    #}
+
+    # deny access to .htaccess files, if Apache's document root
+    # concurs with nginx's one
+    #
+    #location ~ /\.ht {
+    #    deny  all;
+    #}
+}
+```
+
+安装 Nginx 服务成功后，将 Jekyll 编译的博客静态 html 文件输出到 Nginx 服务器上，执行以下命令：
+
+```bash
+jekyll build --destination=/root/blog/html
+```
+
+启动 Nginx 服务器，就可以正常访问博客网页。如果需要在浏览器上访问，需要在阿里云 ECS 控制台的安全组件暴露 80 端口。如果想通过域名访问，需要将域名解析设置指向你的服务器地址。
+
+毫无疑问，没有成功……可能是用 Jekyll 输出文件到 Nginx 服务器上出错了吧，没关系，这里修改一下配置文件：
+
+```bash
+vi /etc/nginx/nginx.conf
+```
+
+打开配置文件，显示：
+
+```bash
+user nginx;
+worker_processes  1;
+
+error_log  /var/log/nginx/error.log warn;
+pid        /var/run/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       /etc/nginx/mime.types;
+    default_type  application/octet-stream;
+
+    log_format  main  '$remote_addr - $remote_user [$time_local] "$request" '
+                      '$status $body_bytes_sent "$http_referer" '
+                      '"$http_user_agent" "$http_x_forwarded_for"';
+
+    access_log  /var/log/nginx/access.log  main;
+
+    sendfile        on;
+    #tcp_nopush     on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    include /etc/nginx/conf.d/*.conf;
+}
+```
+
+`http` 括号下有 `include /etc/nginx/conf.d/*.conf` ，因此我们自定义的配置文件是成功导入的：
+
+```bash
+vi /etc/nginx/conf.d/default.conf
+```
+
+重新修改配置文件，静态文件目录为我们网页文件所在的目录：
+
+```bash
+# location / {} 中修改这两行：
+root /root/myblog/my-thistledown;
+index index.html;
+```
+
+然后将 `nginx.conf` 中第一行 `user nginx` 修改为：
+
+```bash
+user root;	# 这里可能存在权限问题
+```
+
+重启服务，成功运行。在浏览器中输入域名，出现了 `index.html` 的内容。
+
+
+
+### 启动 Nginx 服务器
+
+```bash
+nginx -c nginx.conf
+```
+
+如果遇到 `nginx: [emerg] bind() to 0.0.0.0:80 failed (98: Address already in use)` 这样的错误，可能是端口被占用。
+
+```bash
+# 方法一
+# Linux 通过端口查看进程
+netstat -nap | grep 端口号
+
+# 方法二
+# 先查看进程 PID
+ps -ef | grep 进程名
+# 通过 PID 查看占用端口
+netstat -nap | grep 进程PID
+```
+
+
+
+### 停止 Nginx 服务器
+
+```bash
+ps -ef | grep nginx
+
+# 从容停止 Nginx
+kill -QUIT 主进程号
+
+# 快速停止 Nginx
+kill -TERM 主进程号
+
+# 强制停止 Nginx
+pkill -9 nginx
+```
+
+
+
+### 重启 Nginx 服务器
+
+```bash
+sudo nginx -s reload
+```
+
+
+
+### 访问首页时直接显示域名，不显示 ***/index.html
+
+这算是一个小插曲，我发现访问我的首页 http://www.my-thisdown.com 时并不是显示index.html，而访问 http://www.my-thisdown.com/index.html 时才跳转到我的主页。这显然与不太符合预期，在网络上查找一番，发现有以下解决方法：
+
+首先，还是打开配置文件：
+
+```bash
+vi /etc/nginx/conf.d/default.conf
+```
+
+在其中添加以下几行代码即可：
+
+```bash
+location / {
+    root /root/myblog/my-thistledown;
+    index index.html index.htm;
+    # 以下为新添加内容
+    # 此 if 为判断是否访问了 root 目录，为是时，跳转到 index 配置项，即访问到 index.html
+    if (!-e $request_filename) {
+        proxy_pass http://index;
+    } 
+}
+```
+
+
+
+### 自动化部署
+
+通过设置 GitHub 的 Webhooks 可以实现自动化构建和部署。
+
+过程为：提交博文或者配置到 GitHub 仓库，仓库会触发你设置的 Webhook，会向你设置的 Webhooks 地址发送一个 post 请求，比如我设置的请求是在服务器跑的一个 Node.js 程序，监听 GitHub Webhooks 的请求，接收到请求后，会执行 shell 命令。
+
+首先设置 GitHub 的 Webhooks，在 GitHub 仓库的项目界面，点击 `Settings`→`Webhooks`→`Add webhook`，添加配置信息，示例如下：
+
+> - Payload URL
+>
+> http://www.my-thistledown.com/webhook
+>
+> - Content type
+>
+> application/json
+>
+> - Secret
+>
+> \*\*\*\*\*\*
+
+点击 Add webhook 按钮，就设置成功了。
+
+现在去服务器端监听 GItHub Webhook 发送的请求，我也跟随教程，采用了开源组件 [github-webhook-handler](https://github.com/rvagg/github-webhook-handler) 去监听。首先安装：
+
+```bash
+npm i github-webhook-handler
+```
+
+安装成功后，在 `/root/node-v8.12.0-linux-x64/lib/node_modules/github-webhook-handler` 文件夹下新建 `deploy.js` 文件：
+
+```js
+var http = require('http');
+var createHandler = require('github-webhook-handler');
+var handler = createHandler({ path: '/webhook', secret: '******' });
+
+function run_cmd(cmd, args, callback) {
+  var spawn = require('child_process').spawn;
+  var child = spawn(cmd, args);
+  var resp = "";
+ 
+  child.stdout.on('data', function(buffer) { resp += buffer.toString(); });
+  child.stdout.on('end', function() { callback (resp) });
+}
+
+http.createServer(function (req, res) {
+  handler(req, res, function (err) {
+    res.statusCode = 404
+    res.end('no such location')
+  })
+}).listen(3001)
+
+handler.on('error', function (err) {
+  console.error('Error:', err.message)
+})
+
+handler.on('push', function (event) {
+  console.log('Received a push event for %s to %s',
+    event.payload.repository.name,
+    event.payload.ref);
+  run_cmd('sh', ['./start_blog.sh'], function(text){ console.log(text) });
+})
+```
+
+上述代码中，制定了 Node.js 服务的端口为 3001，监听了 path/webhook，secret 为 \*\*\*\*\*\*，这和之前在 GitHub Webhook 中的设置需要一致。
+
+代码 `run_cmd('sh', ['./start_blog.sh']，···)`，指定了接收到请求后执行 `./start_blog.sh`，其代码如下：
+
+```bash
+echo `date`
+cd /root/myblog/my-thistledown
+echo start pull from github 
+git pull
+echo start build..
+jekyll build --destination=/usr/share/nginx/html
+```
+
+然后需要使用 `forover` 来启动 `deploy.js` 的服务，执行命令如下：
+
+```bash
+sudo npm install forever -g   #安装
+forever start deploy.js          #启动
+forever stop deploy.js           #关闭
+forever start -l forever.log -o out.log -e err.log deploy.js   #输出日志和错误
+```
+
+最后一步，需要在 Nginx 服务器的配置文件，将监听的 `/webhook` 请求转发到 `Node.js` 服务上，配置代码如下：
+
+```bash
+location = /webhook {
+    proxy_pass http://127.0.0.1:3001/webhook;
+}
+```
+
+这样，当你提交了文章或者修改的配置到 GItHub 上，GitHub 通过 webhook 向你所在的服务器发送请求，服务器接收到请求后执行 sh 命令，sh 命令包括了重新 pull 代码和编译代码的过程，这样自动化部署就完成了，你只需提交代码，服务器就触发 pull 代码和重新编译的动作。
