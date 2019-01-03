@@ -223,3 +223,29 @@ cd my-thistledown
 jekyll server
 ```
 
+### 部署到 Nginx 服务器上
+
+通过 Jekyll 编译后的静态文件需要挂载到 Nginx 服务器，因此需要安装 Nginx 服务器。安装过程参照[官方教程](http://nginx.org/en/linux_packages.html#mainline)：
+
+```bash
+cd /etc/yum.repos.d/
+# 新建文件
+vi nginx.repo
+```
+
+在文件中编辑以下内容，并保存：
+
+```
+[nginx]
+name=nginx repo
+baseurl=http://nginx.org/packages/mainline/centos/6/$basearch/
+gpgcheck=0
+enabled=1
+```
+
+然后执行安装 Nginx 命令，如下：
+
+```bash
+yum install nginx
+```
+
