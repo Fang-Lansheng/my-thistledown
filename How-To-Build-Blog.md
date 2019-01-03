@@ -213,3 +213,13 @@ jekyll 3.8.5
 Latest version already installed. Done.
 ```
 
+### 编译博客
+
+需要 git 工具，下载在 github 上的代码，执行以下命令：
+
+```bash
+git clone https://github.com/Fang-Lansheng/my-thistledown.git
+cd my-thistledown
+jekyll server
+```
+
