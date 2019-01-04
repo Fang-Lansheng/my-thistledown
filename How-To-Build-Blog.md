@@ -719,7 +719,7 @@ vi /etc/nginx/conf.d/https.conf
 
 ```bash
 server {
-  listen       445;	# 默认 443 端口，本地已被其他程序占用
+  listen       443;	# 默认 443 端口
   server_name  my-thistledown.com;
   ssl          on;
   root /usr/share/nginx/html;
