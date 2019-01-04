@@ -557,3 +557,278 @@ location = /webhook {
 ```
 
 这样，当你提交了文章或者修改的配置到 GItHub 上，GitHub 通过 webhook 向你所在的服务器发送请求，服务器接收到请求后执行 sh 命令，sh 命令包括了重新 pull 代码和编译代码的过程，这样自动化部署就完成了，你只需提交代码，服务器就触发 pull 代码和重新编译的动作。
+
+### Acme.sh
+
+> 此节和接下来的 `HTTPS` 一节参考文章：[在VPS上通过Jekyll搭建博客 - linkthis blog](https://linkthis.me/2018/03/07/blog-poweredf-by-jekyll-on-vps/)
+
+为了提高网站的安全性和保证访问质量，我们需要让网站使用 HTTPS 连接，而我们首先需要申请一个受信任的证书。大牌提供商的 SSL 证书并不便宜，所以我们选择使用由 [Let’s Encrypt](https://letsencrypt.org/) 提供的免费证书。需要注意的是Let’s Encrypt提供的证书的**有效期只有90天**，所以我们需要使用脚本定期更新。而`acme.sh`实现了`acme`协议，可以从 Let’s Encrypt 生成免费的证书并自动更新。
+
+> ACME的全称为Automated Certificate Management Environment，即自动化证书管理环境，相关内容可以参看此[仓库](https://github.com/ietf-wg-acme/acme/)。
+
+安装 `acme.sh` 十分简单，只需执行如下命令：
+
+```bash
+curl  https://get.acme.sh | sh
+```
+
+其会安装到所在目录下的 `~/.acme.sh/` 中，并自动创建一个 `bash` 的`alias`：`acme.sh=~/.acme.sh/acme.sh`。注意为了让安装在shell当中即时生效，我们需要执行：`source .bashrc`。安装过程不会污染任何已有的系统功能和文件， 所有的修改都限制在安装目录：`~/.acme.sh/`中。如果需要更高级的安装选项可以参看 `acme.sh` 的 [How to install](https://github.com/Neilpang/acme.sh/wiki/How-to-install)。
+在 `acme.sh` 提供的验证方式当中我们选择使用 DNS 验证（不需要任何服务器和任何公网 IP，只需要 DNS 的解析记录即可），不过我们需要同时配置 `Automatic DNS API`，保证 `acme.sh` 自动更新证书。在此仅以 Aliyun domain API 为例，执行如下操作：
+
+```bash
+export Ali_Key="sdfsdfsdfljlbjkljlkjsdfoiwje"
+export Ali_Secret="jlsdflanljkljlfdsaklkjflsa"
+
+./acme.sh --issue --dns dns_ali -d my-thistledown.com -d www.my-thistledown.com
+```
+
+配置当中需要等待 120s （原文为 300s ，我实际操作时已经是120s 了），以便自动添加的 txt 解析记录生效。域名商 API 的用法可以参看 [DNS API](https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md)。
+由于 `acme` 协议和 Let’s Encrypt CA 都在不定期的更新, 因此 `acme.sh` 也需要更新以保持同步，执行如下命令：
+
+```bash
+./acme.sh --upgrade #手动更新
+./acme.sh  --upgrade  --auto-upgrade #自动更新
+./acme.sh --upgrade  --auto-upgrade  0 #关闭自动更新
+```
+
+### HTTPS
+
+在为 Nginx 配置 HTTPS 之前，我们首先需要将刚才申请的证书安装到需要使用的地方，请不要使用 `~/.acme.sh/` 目录下的文件，里面的文件都是内部使用，而且目录结构可能会变化。首先应该创建存放使用证书的文件夹：
+
+```bash
+mkdir /etc/nginx/ssl/
+```
+
+然后使用 `--installcert` 将证书安装到指定位置：
+
+```bash
+acme.sh --install-cert -d my-thistledown.com \
+--keypath       /etc/nginx/ssl/mydomain.key  \
+--fullchainpath /etc/nginx/ssl/fullchain.cer \
+--reloadcmd     "service nginx force-reload"
+```
+
+我们指定了 `--installcert` 的 `reloadcmd` 保证证书更新以后自动调用新的证书给 Nginx 使用。同时我们使用的是 **fullchain.cer**，防止 SSL Labs 测试时出现 `Chain issues Incomplete` 的错误。而 Nginx 应该使用 `force-reload` 保证重新加载证书。更加详细的参数可以参考 [Install the cert to Apache/Nginx etc](https://github.com/Neilpang/acme.sh#3-install-the-cert-to-apachenginx-etc)。
+如果出现 `Failed to restart nginx.service: Unit nginx.service is masked.`，则需要先执行：
+
+```bash
+systemctl unmask nginx # 未报错则忽略
+```
+
+然后生成键值以启用 Perfect Forward Security（PFS）：
+
+```bash
+openssl dhparam -out dhparam.pem 4096
+# This is going to take a long time......
+# A really long time...
+# ...
+# Ten hours later TAT
+```
+
+之后进行 HTTPS 配置的环境为**：Nginx 1.13.10，OpenSSL 1.0.2l，支持HSTS**。 你可以使用如下命令查看 Nginx 和 Openssl 的版本：
+
+```bash
+nginx -v
+openssl version
+```
+
+Nginx 配置模板：
+
+```bash
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    # 使用301将HTTP访问重定向到HTTPS
+    return 301 https://$host$request_uri;
+}
+server {
+    listen 443 ssl http2;
+    listen [::]:443 ssl http2;
+
+    access_log  /var/log/nginx/www.my-thistledown.com_access.log;
+    error_log  /var/log/nginx/www.my-thistledown.com_error.log;
+
+    # Let's Encrypt生成的文件
+    ssl_certificate /etc/nginx/ssl/fullchain.cer;
+    ssl_certificate_key /etc/nginx/ssl/mydomain.key;
+    ssl_session_timeout 1d;
+    ssl_session_cache shared:SSL:50m;
+    ssl_session_tickets off;
+
+    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
+
+    # OCSP Stapling ---
+    # fetch OCSP records from URL in ssl_certificate and cache them
+    ssl_stapling on;
+    ssl_stapling_verify on;
+
+    ssl_protocols TLSv1.2;
+    ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
+    ssl_prefer_server_ciphers on;
+}
+```
+
+### 用阿里云的免费 SSL 证书让网站从 HTTP 换成 HTTPS
+
+> 本文参考：https://ninghao.net/blog/4449
+
+**申请证书**
+
+1. 登录：阿里云控制台→产品与服务→证书服务→购买证书
+2. 购买：证书类型选择→免费型DV SSL，然后完成购买
+3. 补全：在 `我的证书` 控制台，找到购买的证书，在操作栏里选择补全，填写证书相关信息。
+4. 域名验证：可以选择 DNS，如果域名用了阿里云的 DNS 服务，再勾选一下 证书绑定的域名在 阿里云的云解析
+5. 上传：系统生成 CSR，点一下创建
+6. 提交审核
+
+**下载证书**
+
+证书审核通过后，即可下载。可以根据自己的服务器类型选择证书下载，支持 Tomcat、Apache、Nginx、IIS 等。下载对应的证书，解压后得到两个文件，一个是 `*.key`，一个是 `*.pem`。
+
+**配置 Nginx 的 HTTPS**
+
+有了证书，就可以去服务器使用了。
+
+第一步：上传证书
+
+创建一个存储证书的目录：
+
+```bash
+mkdir /etc/nginx/ssl/my-thistledown.com
+```
+
+把申请并下载下来的证书，上传到上面创建的目录中，这里我使用的是 `Xftp` 进行的文件传输。证书的实际位置为：
+
+```bash
+/etc/nginx/ssl/my-thistledown.com/1692217_my-thistledown.com.key
+/etc/nginx/ssl/my-thistledown.com/1692217_my-thistledown.com.pem
+```
+
+第二步：Nginx 配置文件
+
+你的网站可以同时支持 HTTP 与 HTTPS，HTTP 的默认端口号是 80，HTTPS 的默认端口号是 443。也就是说，如果你的网站要使用 HTTPS，你需要配置网站服务器，让其监听 443 端口，也就是用户使用 HTTPS 发出的请求。
+
+新增配置文件：
+
+```bash
+vi /etc/nginx/conf.d/https.conf
+```
+
+增加如下配置：
+
+```bash
+server {
+  listen       445;	# 默认 443 端口，本地已被其他程序占用
+  server_name  my-thistledown.com;
+  ssl          on;
+  root /usr/share/nginx/html;
+  index index.html; 
+
+  ssl_certificate   /etc/nginx/ssl/my-thistledown.com/1692217_my-thistledown.com.pem;
+  ssl_certificate_key  /etc/nginx/ssl/my-thistledown.com/1692217_my-thistledown.com.key;
+  ssl_session_timeout 5m;	# 客户端可以重用会话参数的时间
+  ssl_protocols TLSv1 TLSv1.1 TLSv1.2;	# 使用的协议
+  ssl_ciphers AESGCM:ALL:!DH:!EXPORT:!RC4:+HIGH:!MEDIUM:!LOW:!aNULL:!eNULL;	# 配套加密套件
+  ssl_prefer_server_ciphers on;
+}
+```
+
+然后重新加载 Nginx 服务：
+
+```bash
+sudo service nginx reload
+# 或
+sudo systemctl reload nginx
+# 或
+nginx -s reload
+```
+
+**遇到的问题**
+
+配置成功后，无法成功访问，执行 `nginx -t` 检查：
+
+```bash
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+
+没有出错，看来问题出在其他地方。
+
+Centos 6 的防火墙配置有问题：
+
+```bash
+# 配置 iptables 端口
+vi /etc/sysconfig/iptables
+```
+
+添加下面几行
+
+```bash
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 21 -j ACCEPT	
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 80 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 8080 -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 443 -j ACCEPT
+# 在 COMMIT 一行之前
+```
+
+- 21端口：默认，供 ssh 访问
+- 80、8080 端口：HTTP 服务访问
+- 445 端口：HTTPS 服务访问（默认 443）
+
+然后重启 iptables 服务：
+
+```bash
+service iptables restart	# 重启 iptables 服务
+service iptables enable		# 设置 iptables 服务开机启动
+service iptables status		# 查询防火墙状态
+```
+
+再修改了下配置文件，这下应该是没问题了：
+
+```
+server {
+    listen       80 ;
+    server_name  _ localhost my-thistledown.com www.my-thistledown.com ;
+    return 301 https://www.my-thistledown.com$request_uri;
+}
+server {
+    listen 443;
+    server_name my-thistledown.com;
+    return 301 https://www.my-thistledown.com$request_uri;
+}
+server {
+    listen 443 default_server ssl;
+    server_name www.my-thistledown.com;
+
+    ssl          on;
+    ssl_certificate   /etc/nginx/ssl/my-thistledown.com/1692217_my-thistledown.com.pem;
+    ssl_certificate_key  /etc/nginx/ssl/my-thistledown.com/1692217_my-thistledown.com.key;
+    ssl_session_timeout 5m;
+    ssl_protocols TLSv1 TLSv1.1 TLSv1.2;
+    ssl_ciphers AESGCM:ALL:!DH:!EXPORT:!RC4:+HIGH:!MEDIUM:!LOW:!aNULL:!eNULL;
+    ssl_prefer_server_ciphers on;
+
+
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+
+    location / {
+        root /usr/share/nginx/html;
+        index index.html;
+    }
+
+    location = /webhook {
+        proxy_pass http://127.0.0.1:3001/webhook;
+    }
+
+    error_page  404              /404.html;
+
+    error_page   500 502 503 504  /50x.html;
+    location = /50x.html {
+        root   /usr/share/nginx/html;
+    }
+
+}
+```
+
