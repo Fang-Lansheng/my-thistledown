@@ -790,6 +790,10 @@ service iptables status		# 查询防火墙状态
 server {
     listen       80 ;
     server_name  _ localhost my-thistledown.com www.my-thistledown.com ;
+    location = /webhook {
+        proxy_pass http://127.0.0.1:3001/webhook;
+    }
+    
     return 301 https://www.my-thistledown.com$request_uri;
 }
 server {
@@ -818,9 +822,6 @@ server {
         index index.html;
     }
 
-    location = /webhook {
-        proxy_pass http://127.0.0.1:3001/webhook;
-    }
 
     error_page  404              /404.html;
 
