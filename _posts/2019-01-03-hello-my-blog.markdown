@@ -4,7 +4,7 @@ title:      "Hello, my blog!"
 subtitle:   "And how did I build this blog."
 date:       2019-01-03 12:00:00
 author:     "Thistledown"
-header-img: "img/post-bg-2015.jpg"
+header-img: "img/post-bg-20190103.jpg"
 tags:
     - Blog
     - Nginx
