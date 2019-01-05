@@ -1,18 +1,15 @@
 ---
-layout:	post
-title:	"Hello, my blog!"
-subtitle:	"And how to build this blog."
-date: 2019-01-03
-author:	"Thistledown"
-header-img:	"img/post-bg-2015.jpg"
+layout:     post
+title:      "Hello, my blog!"
+subtitle:   "And how did I build this blog."
+date:       2019-01-03 12:00:00
+author:     "Thistledown"
+header-img: "img/post-bg-2015.jpg"
 tags:
-	- Blog
-	- Nginx
-	- Jekyll
+    - Blog
+    - Nginx
+    - Jekyll
 ---
-
-
-
 ## 前言
 
 上一个基于 WordPress 的博客已经在重装服务器系统之后烟消云散了，因为搭建过程全程百度，自己毫无印象，也就不愿意再重复一遍机械式地抄写。这一会打算参考网上的教程，重新搭建一个自己 blog，并且把过程记录下来，权当做一个学习的过程吧。
@@ -47,7 +44,7 @@ node -v
 npm
 ```
 
-PS：使用 `xy` 命令时，提示：
+PS：使用 `xz` 命令时，提示：
 
 ```bash
 -bash: xz: command not found
