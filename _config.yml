@@ -1,10 +1,11 @@
 # Site settings
 title: My-Thistledown
+title-alias: A Learner's Blog
 SEOTitle: My-Thistledown | Blog
 header-img: img/home-bg.jpg
 email: 120768091@qq.com
 description: "Stay hungry. Stay foolish."
-keyword: "Thistledown"
+keyword: "Thistledown My-Thistledown Blog"
 url: "https://www.my-thistledown.com"              # your host, for absolute URL
 baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
