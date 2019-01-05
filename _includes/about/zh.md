@@ -1,6 +1,6 @@
 > 拿一支铅笔，画一个真理，那是个什么样的字？  
 > 那是我所不能了解的事。  
-> <p align="right">—— <a href="https://music.163.com/#/song?id=109219">罗大佑 - 我所不能了解的事</a></p> 
+> <p align="right">—— <a href="https://music.163.com/#/song?id=109219" target="_blank">罗大佑 - 我所不能了解的事</a></p> 
    
 <br>
 很高兴见到你。  
