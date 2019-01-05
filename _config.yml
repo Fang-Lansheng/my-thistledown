@@ -12,7 +12,7 @@ baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 # SNS settings
 RSS: true
-weibo_username:     Thistledown
+# weibo_username:     Thistledown
 zhihu_username:     Thistledown
 github_username:    Fang-lansheng
 twitter_username:  MyThistledown
