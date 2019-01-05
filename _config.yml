@@ -6,7 +6,7 @@ email: 120768091@qq.com
 description: "My-Thistledown"
 keyword: ""
 url: "https://www.my-thistledown.com"              # your host, for absolute URL
-baseurl: "/blog"         # for example, '/blog' if your blog hosted on 'host/blog'
+baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
 
