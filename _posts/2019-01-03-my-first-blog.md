@@ -1,10 +1,17 @@
-# 搭建自己的博客
-
-`2019年1月3日` `Blog`
-
-[TOC]
-
 ---
+layout:	post
+title:	"Hello, my blog!"
+subtitle:	"And how to build this blog."
+date: 2019-01-03
+author:	"Thistledown"
+header-img:	"img/post-bg-2015.jpg"
+tags:
+	- Blog
+	- Nginx
+	- Jekyll
+---
+
+
 
 ## 前言
 
@@ -832,4 +839,3 @@ server {
 
 }
 ```
-
