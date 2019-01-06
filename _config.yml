@@ -4,7 +4,7 @@ title-alias: A Learner's Blog
 SEOTitle: My-Thistledown | Blog
 header-img: img/home-bg.jpg
 email: 120768091@qq.com
-description: "Stay hungry. Stay foolish."
+description: "A Learner's Blog"
 keyword: "Thistledown My-Thistledown Blog"
 url: "https://www.my-thistledown.com"              # your host, for absolute URL
 baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
@@ -17,7 +17,7 @@ RSS: true
 zhihu_username:     Thistledown
 github_username:    Fang-lansheng
 twitter_username:  MyThistledown
-#facebook_username:  huxpro
+#facebook_username:  
 
 
 
@@ -79,7 +79,7 @@ sidebar-avatar: /img/avatar-thistledown.jpg      # use absolute URL, seeing it's
 
 # Featured Tags
 featured-tags: true                     # whether or not using Feature-Tags
-featured-condition-size: 0              # A tag will be featured if the size of it is more than this condition value
+featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
 
 # Progressive Web Apps
 chrome-tab-theme-color: "#000000"
