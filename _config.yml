@@ -71,8 +71,8 @@ Gitalk_owner: Fang-Lansheng
 # Baidu Analytics
 ba_track_id: aabe2e6da1e4c00b9199c98c5d724be8
 # Google Analytics
-# ga_track_id: 'UA-131781922-1'            # Format: UA-xxxxxx-xx
-# ga_domain: my-thistledown.com
+ga_track_id: 'UA-131781922-1'            # Format: UA-xxxxxx-xx
+ga_domain: my-thistledown.com
 
 
 
