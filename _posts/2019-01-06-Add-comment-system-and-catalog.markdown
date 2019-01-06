@@ -19,7 +19,7 @@ tags:
 > 搭建参考教程：[一步一步教你在Jekyll博客添加评论系统 - 一之笔的博客](https://yizibi.github.io/2018/09/26/Mac-%E4%B8%80%E6%AD%A5%E4%B8%80%E6%AD%A5%E6%95%99%E4%BD%A0%E5%9C%A8Jekyll%E5%8D%9A%E5%AE%A2%E6%B7%BB%E5%8A%A0%E8%AF%84%E8%AE%BA%E7%B3%BB%E7%BB%9F/)  
 
 
-之前在其实使用过 [Disqus](https://disqus.com/)，但是几经比较还是觉得 [Gitalk](https://gitalk.github.io/) 更加美观些，而且使用 GitHub 账号登录也比较方便，支持 `markdown` 语法这一点也深得我意 ~~（其实根本没有人会评论）~~。所以最后还是关掉了 Disgus，着手开始搭建 Gitalk 啦 ~
+之前在其实使用过 [Disqus](https://disqus.com/)，但是几经比较还是觉得 [Gitalk](https://gitalk.github.io/) 更加美观些，而且使用 GitHub 账号登录也比较方便，支持 `markdown` 语法这一点也深得我意 ~~（其实根本没有人会评论）~~。所以最后还是关掉了 Disqus，着手开始搭建 Gitalk 啦 ~
 
 ### 申请 GitHub OAuth Application
 
