@@ -48,7 +48,7 @@ kramdown:
 
 
 # Disqus settings
-disqus_username: Thistledown
+# disqus_username: Thistledown
 
 # Duoshuo settings
 #duoshuo_username: Thistledown
