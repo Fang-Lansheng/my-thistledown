@@ -100,8 +100,8 @@ date:       ……
 author:     "Thistledown"
 header-img: "……"
 # 添加下面这行代码
-catalog: true	
-tags:	……
+catalog: true  
+tags: ……
 ---
 ```
 
