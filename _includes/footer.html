@@ -16,6 +16,19 @@
                     <br>
                     Powered by <a href="https://jekyllrb.com/">Jekyll</a> |
                     Theme From <a href="https://github.com/Huxpro/huxpro.github.io">HuxPro</a>
+                    <br>
+                    <!-- 访问人数 -->
+                    <span title="访客数">
+                        <a class="fa fa-male"></a><span id="busuanzi_value_site_uv"></span>  &nbsp;&nbsp;| &nbsp;&nbsp;
+                    </span>
+                    <!-- 总点击量 -->
+                    <span title="总点击量">
+                        <a class="fa fa-eye"></a><span id="busuanzi_value_site_pv"></span>  &nbsp;&nbsp;| &nbsp;&nbsp;
+                    </span>
+                    <!-- 本篇点击量 -->
+                    <span title="本页面点击量">
+                        <a class="fa fa-file-text-o"></a><span id="busuanzi_value_page_pv"></span>
+                    </span>
                 </p>
             </div>
         </div>
@@ -112,7 +125,8 @@
 </script>
 {% endif %}
 
-
+<!-- 不蒜子统计 -->
+<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 <!-- Baidu Tongji -->
 {% if site.ba_track_id %}
 <script>
