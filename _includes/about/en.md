@@ -10,7 +10,7 @@ Nice to meet you!
 
 You can call me Ji Zhang, and this blog is to record my learning process and essays.  
 
-As a student with nothing, I have a wonderful but sometimes burdensome college career. Thanks to my girlfriend and whose who make my life colorful.
+As a student with nothing, I have a wonderful but sometimes burdensome college career. Thanks to my girlfriend and those who make my life colorful.
 
 What a shame that I idle away my past college years and it's time learn programming seriously again.  
 
