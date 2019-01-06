@@ -18,7 +18,7 @@ tags:
 
 搭建教程参考：
 
-> [程序员如何搭建自己的个人博客 - 方志朋的博客](https://www.fangzhipeng.com/life/2018/10/14/how-to-build-blog/)
+>  [程序员如何搭建自己的个人博客 - 方志朋的博客](https://www.fangzhipeng.com/life/2018/10/14/how-to-build-blog/)
 
 ## 使用自己的服务器部署博客
 
