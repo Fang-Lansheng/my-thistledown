@@ -52,7 +52,7 @@ kramdown:
       start_line: 1
 
 
-
+#Comment settings
 # Disqus settings
 # disqus_username: Thistledown
 
@@ -66,6 +66,8 @@ Gitalk_clientID: 77e354298d4579d035fc
 Gitalk_clientSecret: cfb1cce89bfdf42b6716e5f4243910a33a61b028
 Gitalk_repo: my-thistledown
 Gitalk_owner: Fang-Lansheng
+
+
 
 # Analytics settings
 # Baidu Analytics
@@ -95,6 +97,7 @@ service-worker: true
 
 # MathJax rendering for layout:page (e.g. post preview)
 page-mathjax: false
+
 
 
 # Friends
