@@ -14,6 +14,6 @@ As a student with nothing, I have a wonderful but sometimes burdensome college c
 
 What a shame that I idle away my past college years and it's time learn programming seriously again.  
 
-Apologize for my poor English, wish you a good day.
+Apologize for my poor English. Wish you a good day.
 
 
