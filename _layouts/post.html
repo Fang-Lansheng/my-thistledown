@@ -8,6 +8,8 @@ layout: default
 
 <!-- Post Header -->
 {% include intro-header.html type='post' %}
+<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 
 <!-- Post Content -->
 <article>
@@ -52,21 +54,24 @@ layout: default
                 </ul>
                 <hr style="visibility: hidden;">
 
-                <!-- Gitalk -->
-                <div id="gitmentContainer"></div>
-                <link href="https://imsun.github.io/gitment/style/default.css" rel="stylesheet">
-                <script src="https://imsun.github.io/gitment/dist/gitment.browser.js"></script>
-                <script>
-                    var gitment = new Gitment({
-                        owner: 'Fang-Lansheng',
-                        repo: 'https://github.com/Fang-Lansheng/my-thistledown',
-                        oauth: {
-                            client_id: '77e354298d4579d035fc',
-                            client_secret: 'cfb1cce89bfdf42b6716e5f4243910a33a61b028'
-                        }
-                    });
-                    gitment.render('gitmentContainer');
-                </script>
+                <!-- Gitalk 评论框 start -->
+                <div class="comment">
+                    <div id="gitalk-container"></div>
+                    <script>
+                        var gitalk = new Gitalk({
+                            clientID: '77e354298d4579d035fc',
+                            clientSecret: 'cfb1cce89bfdf42b6716e5f4243910a33a61b028',
+                            repo: 'my-thistledown',
+                            owner: 'Fang-Lansheng',
+                            admin: ['Fang-Lansheng'],
+                            id: location.pathname,      // Ensure uniqueness and length less than 50
+                            distractionFreeMode: false  // Facebook-like distraction free mode
+                        })
+                        gitalk.render('gitalk-container')
+                    </script>
+                </div>
+                <!-- Gitalk 评论框 end -->
+
 
                 {% if site.disqus_username %}
                 <!-- disqus 评论框 start -->
