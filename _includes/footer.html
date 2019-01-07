@@ -36,6 +36,11 @@
     </div>
 </footer>
 
+<!-- Canvas -->
+<canvas id="background-canvas" style="display: block; width: 100%; height: 100%;"></canvas>
+<!-- 实现网页动态背景 -->
+<script src="../js/background-canvas.js"></script>
+
 <!-- jQuery -->
 <script src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
 
@@ -107,7 +112,6 @@
     })
 </script>
 
-
 <!-- Google Analytics -->
 {% if site.ga_track_id %}
 <script>
@@ -137,6 +141,7 @@
 
 <!-- 不蒜子统计 -->
 <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
 <!-- Baidu Tongji -->
 {% if site.ba_track_id %}
 <script>
@@ -153,7 +158,6 @@
     })();
 </script>
 {% endif %}
-
 
 <!-- Side Catalog -->
 {% if page.catalog %}
@@ -215,7 +219,6 @@
     });
 </script>
 {% endif %}
-
 
 <!-- Multi-Lingual -->
 {% if page.multilingual %}
