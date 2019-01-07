@@ -73,8 +73,7 @@ class currentCirle extends Circle {
 //更新页面用requestAnimationFrame替代setTimeout
 window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
 
-// let canvas = document.getElementById('background-canvas');
-let canvas = document.getElementsByTagName('body');
+let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
 let w = canvas.width = canvas.offsetWidth;
 let h = canvas.height = canvas.offsetHeight;
