@@ -122,4 +122,4 @@ page-mathjax: false
 
 
 # Background setting
-canvas-nest: true
+canvas-nest: false
