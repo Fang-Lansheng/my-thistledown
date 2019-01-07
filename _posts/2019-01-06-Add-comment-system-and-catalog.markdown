@@ -21,15 +21,15 @@ tags:
 
 之前在其实使用过 [Disqus](https://disqus.com/)，但是几经比较还是觉得 [Gitalk](https://gitalk.github.io/) 更加美观些，而且使用 GitHub 账号登录也比较方便，支持 `markdown` 语法这一点也深得我意 ~~（其实根本没有人会评论）~~。所以最后还是关掉了 Disqus，着手开始搭建 Gitalk 啦 ~
 
-### 申请 GitHub OAuth Application
+#### 申请 GitHub OAuth Application
 
-在 [GitHub](www.github.com) 中点击头像下拉菜单，选择 Settings，然后点击左侧的 `Developer settings` ，接下来点击 OAuth Apps > Register a new application，开始填写你的信息：
+在 [GitHub](https://github.com/) 中点击头像下拉菜单，选择 Settings，然后点击左侧的 `Developer settings` ，接下来点击 OAuth Apps > Register a new application，开始填写你的信息：
 
-![](https://ws1.sinaimg.cn/large/006y42ybgy1fywy52fzbxj30ep0b7js1.jpg)
+![](https://ws1.sinaimg.cn/large/006y42ybgy1fyy7lfbwpgj30et0bb74x.jpg)
 
 点击 `Register application` 后，就会得到你的 `Client ID` 和 `Client Secret`。
 
-### 在 Jekyll 中添加 Gitalk
+#### 在 Jekyll 中添加 Gitalk
 
 在你需要添加评论系统的地方，一般是 `_layout/` 目录下的 `post.html`：
 
