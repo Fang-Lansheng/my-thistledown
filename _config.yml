@@ -119,7 +119,3 @@ page-mathjax: false
 #         href: "#"
 #     }
 # ]
-
-
-# Background setting
-canvas-nest: false
