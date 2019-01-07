@@ -25,15 +25,15 @@ tags:
 
 参考教程，我也是使用 `Jekyll` 搭建博客。服务器系统为 `Centos 6 x86_64 bbr `
 
-### VPS 及域名购买
+#### VPS 及域名购买
 
 VPS 是买的搬瓦工，一年不到 $20，相当划算。域名则是来自阿里云。这两者已经是很久之前购买的了，网络上相关教程及介绍也非常详尽，故不在此赘述。
 
-### 连接到服务器
+#### 连接到服务器
 
 这里我是用的是 Xshell，Putty 也不错。因为不了解原理，所以也不多讲，实际操作中善用搜索引擎基本就能掌握操作。
 
-### 安装 Node
+#### 安装 Node
 
 使用 Xshell 连接到服务器之后。安装 Node 环境，执行以下命令：
 
@@ -83,7 +83,7 @@ tar -xvf ***.tar
 yum install gcc
 ```
 
-### 安装 Ruby
+#### 安装 Ruby
 
 Jekyll 依赖于 Ruby 环境，需要安装 Ruby，执行以下命令即可：
 
@@ -115,7 +115,7 @@ export PATH
 source .bash_profile
 ```
 
-### 安装 gcc
+#### 安装 gcc
 
 在前面已经踩坑装过 gcc 了，这里验证一下：
 
@@ -132,7 +132,7 @@ yum -y install gcc+ gcc-c++
 export PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin:/root/bin
 ```
 
-### 安装 Jekyll
+#### 安装 Jekyll
 
 最后安装 Jekyll，执行以下命令：
 
@@ -224,7 +224,7 @@ jekyll 3.8.5
 Latest version already installed. Done.
 ```
 
-### 编译博客
+#### 编译博客
 
 需要 git 工具，下载在 github 上的代码，执行以下命令：
 
@@ -234,7 +234,7 @@ cd my-thistledown
 jekyll server
 ```
 
-### 部署到 Nginx 服务器上
+#### 部署到 Nginx 服务器上
 
 通过 Jekyll 编译后的静态文件需要挂载到 Nginx 服务器，因此需要安装 Nginx 服务器。安装过程参照[官方教程](http://nginx.org/en/linux_packages.html#mainline)：
 
@@ -397,7 +397,7 @@ user root;	# 这里可能存在权限问题
 
 
 
-### 启动 Nginx 服务器
+**启动 Nginx 服务器**
 
 ```bash
 nginx -c nginx.conf
@@ -419,7 +419,7 @@ netstat -nap | grep 进程PID
 
 
 
-### 停止 Nginx 服务器
+**停止 Nginx 服务器**
 
 ```bash
 ps -ef | grep nginx
@@ -436,7 +436,7 @@ pkill -9 nginx
 
 
 
-### 重启 Nginx 服务器
+**重启 Nginx 服务器**
 
 ```bash
 sudo nginx -s reload
@@ -444,7 +444,7 @@ sudo nginx -s reload
 
 
 
-### 访问首页时直接显示域名，不显示 ***/index.html
+#### 访问首页时直接显示域名，不显示 ***/index.html
 
 这算是一个小插曲，我发现访问我的首页 http://www.my-thisdown.com 时并不是显示index.html，而访问 http://www.my-thisdown.com/index.html 时才跳转到我的主页。这显然与不太符合预期，在网络上查找一番，发现有以下解决方法：
 
@@ -470,7 +470,7 @@ location / {
 
 
 
-### 自动化部署
+#### 自动化部署
 
 通过设置 GitHub 的 Webhooks 可以实现自动化构建和部署。
 
@@ -565,118 +565,8 @@ location = /webhook {
 
 这样，当你提交了文章或者修改的配置到 GItHub 上，GitHub 通过 webhook 向你所在的服务器发送请求，服务器接收到请求后执行 sh 命令，sh 命令包括了重新 pull 代码和编译代码的过程，这样自动化部署就完成了，你只需提交代码，服务器就触发 pull 代码和重新编译的动作。
 
-### Acme.sh
 
-> 此节和接下来的 `HTTPS` 一节参考文章：[在VPS上通过Jekyll搭建博客 - linkthis blog](https://linkthis.me/2018/03/07/blog-poweredf-by-jekyll-on-vps/)
-
-为了提高网站的安全性和保证访问质量，我们需要让网站使用 HTTPS 连接，而我们首先需要申请一个受信任的证书。大牌提供商的 SSL 证书并不便宜，所以我们选择使用由 [Let’s Encrypt](https://letsencrypt.org/) 提供的免费证书。需要注意的是Let’s Encrypt提供的证书的**有效期只有90天**，所以我们需要使用脚本定期更新。而`acme.sh`实现了`acme`协议，可以从 Let’s Encrypt 生成免费的证书并自动更新。
-
-> ACME的全称为Automated Certificate Management Environment，即自动化证书管理环境，相关内容可以参看此[仓库](https://github.com/ietf-wg-acme/acme/)。
-
-安装 `acme.sh` 十分简单，只需执行如下命令：
-
-```bash
-curl  https://get.acme.sh | sh
-```
-
-其会安装到所在目录下的 `~/.acme.sh/` 中，并自动创建一个 `bash` 的`alias`：`acme.sh=~/.acme.sh/acme.sh`。注意为了让安装在shell当中即时生效，我们需要执行：`source .bashrc`。安装过程不会污染任何已有的系统功能和文件， 所有的修改都限制在安装目录：`~/.acme.sh/`中。如果需要更高级的安装选项可以参看 `acme.sh` 的 [How to install](https://github.com/Neilpang/acme.sh/wiki/How-to-install)。
-在 `acme.sh` 提供的验证方式当中我们选择使用 DNS 验证（不需要任何服务器和任何公网 IP，只需要 DNS 的解析记录即可），不过我们需要同时配置 `Automatic DNS API`，保证 `acme.sh` 自动更新证书。在此仅以 Aliyun domain API 为例，执行如下操作：
-
-```bash
-export Ali_Key="sdfsdfsdfljlbjkljlkjsdfoiwje"
-export Ali_Secret="jlsdflanljkljlfdsaklkjflsa"
-
-./acme.sh --issue --dns dns_ali -d my-thistledown.com -d www.my-thistledown.com
-```
-
-配置当中需要等待 120s （原文为 300s ，我实际操作时已经是120s 了），以便自动添加的 txt 解析记录生效。域名商 API 的用法可以参看 [DNS API](https://github.com/Neilpang/acme.sh/blob/master/dnsapi/README.md)。
-由于 `acme` 协议和 Let’s Encrypt CA 都在不定期的更新, 因此 `acme.sh` 也需要更新以保持同步，执行如下命令：
-
-```bash
-./acme.sh --upgrade #手动更新
-./acme.sh  --upgrade  --auto-upgrade #自动更新
-./acme.sh --upgrade  --auto-upgrade  0 #关闭自动更新
-```
-
-### HTTPS
-
-在为 Nginx 配置 HTTPS 之前，我们首先需要将刚才申请的证书安装到需要使用的地方，请不要使用 `~/.acme.sh/` 目录下的文件，里面的文件都是内部使用，而且目录结构可能会变化。首先应该创建存放使用证书的文件夹：
-
-```bash
-mkdir /etc/nginx/ssl/
-```
-
-然后使用 `--installcert` 将证书安装到指定位置：
-
-```bash
-acme.sh --install-cert -d my-thistledown.com \
---keypath       /etc/nginx/ssl/mydomain.key  \
---fullchainpath /etc/nginx/ssl/fullchain.cer \
---reloadcmd     "service nginx force-reload"
-```
-
-我们指定了 `--installcert` 的 `reloadcmd` 保证证书更新以后自动调用新的证书给 Nginx 使用。同时我们使用的是 **fullchain.cer**，防止 SSL Labs 测试时出现 `Chain issues Incomplete` 的错误。而 Nginx 应该使用 `force-reload` 保证重新加载证书。更加详细的参数可以参考 [Install the cert to Apache/Nginx etc](https://github.com/Neilpang/acme.sh#3-install-the-cert-to-apachenginx-etc)。
-如果出现 `Failed to restart nginx.service: Unit nginx.service is masked.`，则需要先执行：
-
-```bash
-systemctl unmask nginx # 未报错则忽略
-```
-
-然后生成键值以启用 Perfect Forward Security（PFS）：
-
-```bash
-openssl dhparam -out dhparam.pem 4096
-# This is going to take a long time......
-# A really long time...
-# ...
-# Ten hours later TAT
-```
-
-之后进行 HTTPS 配置的环境为**：Nginx 1.13.10，OpenSSL 1.0.2l，支持HSTS**。 你可以使用如下命令查看 Nginx 和 Openssl 的版本：
-
-```bash
-nginx -v
-openssl version
-```
-
-Nginx 配置模板：
-
-```bash
-server {
-    listen 80 default_server;
-    listen [::]:80 default_server;
-
-    # 使用301将HTTP访问重定向到HTTPS
-    return 301 https://$host$request_uri;
-}
-server {
-    listen 443 ssl http2;
-    listen [::]:443 ssl http2;
-
-    access_log  /var/log/nginx/www.my-thistledown.com_access.log;
-    error_log  /var/log/nginx/www.my-thistledown.com_error.log;
-
-    # Let's Encrypt生成的文件
-    ssl_certificate /etc/nginx/ssl/fullchain.cer;
-    ssl_certificate_key /etc/nginx/ssl/mydomain.key;
-    ssl_session_timeout 1d;
-    ssl_session_cache shared:SSL:50m;
-    ssl_session_tickets off;
-
-    ssl_dhparam /etc/nginx/ssl/dhparam.pem;
-
-    # OCSP Stapling ---
-    # fetch OCSP records from URL in ssl_certificate and cache them
-    ssl_stapling on;
-    ssl_stapling_verify on;
-
-    ssl_protocols TLSv1.2;
-    ssl_ciphers 'ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-SHA384:ECDHE-RSA-AES256-SHA384:ECDHE-ECDSA-AES128-SHA256:ECDHE-RSA-AES128-SHA256';
-    ssl_prefer_server_ciphers on;
-}
-```
-
-### 用阿里云的免费 SSL 证书让网站从 HTTP 换成 HTTPS
+#### 用阿里云的免费 SSL 证书让网站从 HTTP 换成 HTTPS
 
 > 本文参考：https://ninghao.net/blog/4449
 
