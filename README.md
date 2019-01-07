@@ -1,5 +1,5 @@
 # my-thistledown
-My-Thistledown: My Blog
+My-Thistledown | Blog
 
 > https://fang-lansheng.github.io/my-thistledown/  
-> my-thistledown.com
+> https://my-thistledown.com
