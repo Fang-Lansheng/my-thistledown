@@ -4,7 +4,7 @@ title:      "Hello, Blog!"
 subtitle:   "And how did I build it."
 date:       2019-01-03 12:00:00
 author:     "Thistledown"
-header-img: "img/post-bg-20190103.jpg"
+header-img: "img/posts/post-bg-20190103.jpg"
 catalog: true
 tags:
     - Blog

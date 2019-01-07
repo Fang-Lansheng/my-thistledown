@@ -4,7 +4,7 @@ title:      "在 Jekyll 博客中添加评论系统及侧边栏目录"
 subtitle:   "尝试一步步美化博客"
 date:       2019-01-06
 author:     "Thistledown"
-header-img: "img/post-bg-20190106.jpg"
+header-img: "img/posts/post-bg-20190106.jpg"
 catalog: true
 tags:
     - Blog
