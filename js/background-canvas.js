@@ -75,8 +75,8 @@ window.requestAnimationFrame = window.requestAnimationFrame || window.mozRequest
 
 let canvas = document.getElementById('canvas');
 let ctx = canvas.getContext('2d');
-let w = canvas.width = canvas.offsetWidth;
-let h = canvas.height = canvas.offsetHeight;
+let w = canvas.width = document.documentElement.clientWidth;    
+let h = canvas.height = document.documentElement.clientHeight;  // 使得 canvas 全屏
 let circles = [];
 let current_circle = new currentCirle(0, 0)
 
