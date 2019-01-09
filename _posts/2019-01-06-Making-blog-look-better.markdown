@@ -125,7 +125,7 @@ tags: ……
 
 ```html
 <!-- Number of words -->
-{{ page.content | strip_html | strip_newlines | remove: " " | size }}
+\{\{ page.content | strip_html | strip_newlines | remove: " " | size \}\}
 ```
 
 ## 其他
