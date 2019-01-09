@@ -1,10 +1,10 @@
 ---
 layout:     post
-title:      "JavaScript学习笔记（一）：数据类型、表达式、运算符和语句"
-subtitle:   "JavaScript Study Notes (1): Date Types, Expression, Operator & Statement"
+title:      "JavaScript 学习笔记（一）：数据类型、表达式、运算符和语句"
+subtitle:   "JavaScript Study Notes (1) : Date Types, Expression, Operator & Statement"
 date:       2019-01-09
 author:     "Thistledown"
-header-img: "img/posts/post-bg-20190109.jpg"
+header-img: "img/posts/post-bg-js-study-notes.jpg"
 catalog: true
 tags:
     - JavaScript学习笔记
@@ -77,7 +77,7 @@ var strObj = new String('string')	// strObj 为对象类型（String类型对应
 
   - `instanceof` 是 JavaScript 的一个二元操作符，类似于 `==`，`>`，`<` 等操作符
 
-  - `instanceo ` 是 JavaScript 的保留关键字
+  - `instanceof` 是 JavaScript 的保留关键字
 
   - 它的作用是测试它左边的对象是否是它右边的类的实例，返回 `boolean` 的数据类型
 
@@ -123,11 +123,11 @@ var strObj = new String('string')	// strObj 为对象类型（String类型对应
 - 关键字：`null`、`this`、`true`
 - 变量：`i`、`j`、`k`
 
-1. 复合表达式：
+2. 复合表达式：
 
 ![](https://ws1.sinaimg.cn/large/006y42ybgy1fz08ikyzivj30ln0afwfp.jpg)
 
-1. 初始化表达式：
+3. 初始化表达式：
 
 ```javascript
 // [1, 2]
@@ -140,7 +140,7 @@ o.x = 1;
 o.y = 2;
 ```
 
-1. 函数表达式：
+4. 函数表达式：
 
 ```javascript
 var f = function() {};
@@ -149,7 +149,7 @@ var f = function() {};
 });
 ```
 
-1. 属性访问表达式：
+5. 属性访问表达式：
 
 ```javascript
 var o = { x : 1 };
@@ -157,8 +157,8 @@ var o = { x : 1 };
 0['x'];
 ```
 
-1. 调用表达式：`func();`
-2. 对象创建表达式：
+6. 调用表达式：`func();`
+7. 对象创建表达式：
 
 ```javascript
 new Func(1, 2);
@@ -344,10 +344,10 @@ new Object;
 
 ```javascript
 {
-    语句 1;
-    语句 2;
-    ……
-    语句 n;
+    // 语句 1;
+    // 语句 2;
+    // ……
+    // 语句 n;
 }
 ```
 
@@ -373,13 +373,13 @@ var a = 1, b = 1;
 提供了一个异常捕获的机制
 
 ```javascript
-try {	// 首先执行 try 块中的代码
+try {	                // 首先执行 try 块中的代码
     throw "test";
 }	
-catch (ex) {	// 如果抛出异常，则执行 catch 块中的语句
+catch (ex) {	        // 如果抛出异常，则执行 catch 块中的语句
     console.log(ex);	// "test"
-}	// 无论如何最后都会执行 finally
-finally {
+}   
+finally {               // 无论如何最后都会执行 finally
     console.log('finally');
 }
 
