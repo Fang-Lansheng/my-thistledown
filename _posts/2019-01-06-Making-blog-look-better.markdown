@@ -1,7 +1,7 @@
 ---
 layout:     post
-title:      "在 Jekyll 博客中添加评论系统及侧边栏目录"
-subtitle:   "尝试一步步美化博客"
+title:      "Jekyll 博客美化：添加评论系统、侧边栏目录与中文字数统计"
+subtitle:   "Making My Blog look better"
 date:       2019-01-06
 author:     "Thistledown"
 header-img: "img/posts/post-bg-20190106.jpg"
@@ -103,6 +103,29 @@ header-img: "……"
 catalog: true  
 tags: ……
 ---
+```
+
+## 添加中文字数统计
+
+想要统计文章的字数，首先我们需要得到文章的内容，即 `page.content`。
+> [Page-Variables - Jekyll](https://jekyllrb.com/docs/variables/#page-variables)：  
+> `page.content` : The content of the Page, rendered or un-rendered depending upon what `Liquid` is being processed and what `page` is.
+
+而模板语言 `Liquid` 是 Jekyll 的特色之一，它有三个主要部分：对象，标签和过滤器。了解更多：[jekyllrb.com](https://jekyllrb.com/docs/step-by-step/02-liquid/)。
+
+过滤器 [`filter`](https://jekyllrb.com/docs/liquid/filters/) 更改 `Liquid` 对象的输出，并由 `|` 分隔。其中恰好就有现成的字数统计过滤器，使用方法也非常简单：`{{ page.content | number_of_words }}`，然而，它用来统计英文非常方便，统计中文却错误频出，往往一句或者一段话只统计为一个词。推测这种方法可能是用空格来分割字符进行统计，这明显不符合我们中文写作的实际，因此需要稍微走点弯路，用其他的方法来解决。
+
+我们需要的 `Liquid Filter` 有：
+- [`strip_html`](https://shopify.github.io/liquid/filters/strip_html/)：从字符串中删除所有的 HTML 标记
+- [`strip_newlines`](https://shopify.github.io/liquid/filters/strip_newlines/)：从字符串中删除所有换行符
+- [`split`](https://shopify.github.io/liquid/filters/split/)：是用参数作为分隔符将输入字符串分割为数组
+- [`size`](https://shopify.github.io/liquid/filters/size/)：返回字符串中的字符数或数组中的项数
+
+去掉文章内容中的 HTML 标签和换行符，将所有字符都单个地存储在数组中，只要统计数组的 `size`，就能够统计出文章字数。因此，代码也就非常简单：
+
+```html
+<!-- Number of words -->
+{{ page.content | strip_html | strip_newlines | remove: " " | size }}
 ```
 
 ## 其他
