@@ -7,7 +7,6 @@ author:     "Thistledown"
 header-img: "img/posts/post-bg-20190103.jpg"
 catalog: true
 tags:
-    - Blog
     - Nginx
     - Jekyll
 ---
