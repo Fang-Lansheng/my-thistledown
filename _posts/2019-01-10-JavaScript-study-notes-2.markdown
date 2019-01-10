@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "JavaScript 学习笔记（二）：对象、对象的属性以及对象的方法"
-subtitle:   "JavaScript Study Notes (2) : Object and Object.property: "
+subtitle:   "JavaScript Study Notes (2) : Object, its properties, and its methods"
 date:       2019-01-10
 author:     "Thistledown"
 header-img: "img/posts/post-bg-js-study-notes.jpg"
