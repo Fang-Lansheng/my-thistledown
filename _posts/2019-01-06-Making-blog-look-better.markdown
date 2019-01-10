@@ -67,7 +67,7 @@ tags:
 
 ## 侧边栏目录
 
-这个问题有点乌龙，其实我 Fork 的 [Hux Blog](https://github.com/Huxpro/huxpro.github.io) 主题中已经自带`catalog`，我在 `post.html` 中也看到了相关的代码：
+这个问题有点乌龙，其实我 Fork 的 [Hux Blog](https://github.com/Huxpro/huxpro.github.io) 主题中已经自带 `catalog`，我在 `post.html` 中也看到了相关的代码：
 
 ```html
 <!-- Side Catalog Container -->
