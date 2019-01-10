@@ -47,7 +47,7 @@
                     <span class="meta">
                         <i class="fa fa-send"></i>&nbsp;{% if page.author %}{{ page.author }}{% else %}{{ site.title }}{% endif %} 
                         &nbsp;&nbsp;<i class="fa fa-calendar"></i>&nbsp;{{ page.date | date: "%B %-d, %Y" }}
-                        <!-- &nbsp;&nbsp;<i class="fa fa-lightbulb-o"></i>&nbsp;{{ page.content | strip_html | strip_newlines | remove: " " | size }} words -->
+                        <!-- &nbsp;&nbsp;<i class="fa fa-lightbulb-o"></i>&nbsp;{{ page.content | strip_html | strip_newlines | split: "" | size }} words -->
                     </span>
                 </div>
             </div>

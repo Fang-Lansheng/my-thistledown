@@ -113,7 +113,7 @@ tags: ……
 
 而模板语言 `Liquid` 是 Jekyll 的特色之一，它有三个主要部分：对象，标签和过滤器。了解更多：[jekyllrb.com](https://jekyllrb.com/docs/step-by-step/02-liquid/)。
 
-过滤器 [`filter`](https://jekyllrb.com/docs/liquid/filters/) 更改 `Liquid` 对象的输出，并由 `|` 分隔。其中恰好就有现成的字数统计过滤器，使用方法也非常简单：`{{ page.content | number_of_words }}`，然而，它用来统计英文非常方便，统计中文却错误频出，往往一句或者一段话只统计为一个词。推测这种方法可能是用空格来分割字符进行统计，这明显不符合我们中文写作的实际，因此需要稍微走点弯路，用其他的方法来解决。
+过滤器 [`filter`](https://jekyllrb.com/docs/liquid/filters/) 更改 `Liquid` 对象的输出，并由 `|` 分隔。其中恰好就有现成的字数统计过滤器 `number_of_words`，然而，它用来统计英文非常方便，统计中文却错误频出，往往一句或者一段话只统计为一个词。推测这种方法可能是用空格来分割字符进行统计，这明显不符合我们中文写作的实际，因此需要稍微走点弯路，用其他的方法来解决。
 
 我们需要的 `Liquid Filter` 有：
 - [`strip_html`](https://shopify.github.io/liquid/filters/strip_html/)：从字符串中删除所有的 HTML 标记
@@ -125,9 +125,7 @@ tags: ……
 
 ```html
 <!-- Number of words -->
-{% raw %}
-{{ page.content | strip_html | strip_newlines | remove: " " | size }}
-{% endraw %}
+{% raw %} {{ page.content | strip_html | strip_newlines | split: "" | size }} {% endraw %}
 ```
 
 ## 其他
