@@ -12,7 +12,7 @@ You can call me Ji Zhang, and this blog is to record my learning process and ess
 
 As a student with nothing, I have a wonderful but sometimes burdensome college career. Thanks to my girlfriend and those who make my life colorful.
 
-What a shame that I idle away my past college years and it's time learn programming seriously again.  
+What a shame that I idle away my past college years and it's to time learn programming seriously again.  
 
 Apologize for my poor English. Wish you a good day.
 
