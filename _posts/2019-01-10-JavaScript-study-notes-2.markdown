@@ -38,9 +38,7 @@ obj;
 
 ## 4.2 创建对象、原型链
 
-**对象创建的方法**
-
-1. 字面量
+**1. 字面量**
 
 ```javascript
 var obj1 = { x : 1, y : 2 };
@@ -54,7 +52,7 @@ var obj2 = {
 };
 ```
 
-2. `new` / 原型链
+**2. `new` / 原型链**
 
 ```javascript
 function foo() {};
@@ -100,7 +98,7 @@ delete obj.z;	// true (再次删除)
 obj.z;	// still 3 (原型链上的属性不会被修改！)
 ```
 
-3. `Object.create`
+**3. `Object.create`**
 
 `Object.create()` 是一个系统内置的函数，这个函数会接受一个参数（一般是一个对象），它会返回一个新创建的对象，并让这个对象的原型，指向这个参数。
 
@@ -465,14 +463,14 @@ person.salary;	// 60000
 
 #### 4.6.1 对象标签
 
-1. 原型标签 `__proto__`
+**1. 原型标签 `__proto__`**
 
 - `Object.prototype` 的 `__proto__` 属性是一个访问器属性（一个 `getter` 函数和一个 `setter` 函数）， 暴露了通过它访问的对象的内部 `[[Prototype]]` (一个对象或  `null`)，任何一个 `__proto__` 的存取属性都继承于`Object.prototype`。
 - 使用 `__proto__` 是有争议的，也不鼓励使用它。因为它从来没有被包括在 EcmaScript 语言规范中，但是现代浏览器都实现了它。
 
 ![](https://ws1.sinaimg.cn/large/006y42ybgy1fz0p0r3ra9j30hm0dogna.jpg)
 
-2. `class` 标签
+**2. `class` 标签**
 
 - 表示对象的类型
 - 没有直接查看或修改的方式，可以间接通过 `Object.prototype.toString` 的方式去获取
@@ -491,7 +489,7 @@ getType(new Boolean(true));	// "Boolean"
 typeof new Number(true);	// "object"
 ```
 
-3. `extensible` 标签
+**3. `extensible` 标签**
 
 `Object.isExtensible()` 方法判断一个对象是否是可扩展的（是否可以在它上面添加新的属性）
 
@@ -550,7 +548,7 @@ Object.isFrozen(obj);	// true
 
 #### 4.6.2 序列化、其他对象方法
 
-1. 序列化
+**1. 序列化**
 
 `JSON.stringify()` 方法是将一个 JavaScript 值（对象或者数组）转换为一个 JSON 字符串，如果指定了 `replacer` 是一个函数，则可以替换值，或者如果指定了 `replacer` 是一个数组，可选的仅包括指定的属性。
 
@@ -593,7 +591,7 @@ obj = JSON.parse('{"x": 1}');
 obj.x;	// 1
 ```
 
-2. 序列化 - 自定义
+**2. 序列化 - 自定义**
 
 ```javascript
 var obj = {
@@ -610,7 +608,7 @@ var obj = {
 JSON.stringify(obj);	// "{"x": 1, "y": 2, "o": 3}"
 ```
 
-3. 其他对象方法
+**3. 其他对象方法**
 
 ```javascript
 var obj = {x: 1, y: 2};
