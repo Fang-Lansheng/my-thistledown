@@ -11,7 +11,7 @@ tags:
 ---
 ## 前言
 
-博客基本搭建好了，不过还有不少细节需要完善一下。浏览了一些他人精致的博客网站，发现还有很多值得学习的地方。接下来就从 `评论系统` 和 博文 `侧边栏目录` 两个方面入手，进行一些美化。
+博客基本搭建好了，不过还有不少细节需要完善一下。浏览了一些他人精致的博客网站，发现还有很多值得学习的地方。接下来就从 `评论系统` 、`侧边栏目录` 以及 `中文字数统计` 三个方面入手，进行一些美化。
 
 ## 评论系统
 
@@ -67,7 +67,7 @@ tags:
 
 ## 侧边栏目录
 
-这个问题有点乌龙，其实我 Fork 的 [Hux Blog](https://github.com/Huxpro/huxpro.github.io) 主题中已经自带 `catalog`，我在 `post.html` 中也看到了相关的代码：
+这个问题有点乌龙，其实我 Fork 的 [Hux Blog](https://github.com/Huxpro/huxpro.github.io) 主题中已经自带 `catalog`，我在 `post.html` 中也看到了相关的 `div` 块：
 
 ```html
 <!-- Side Catalog Container -->
@@ -124,7 +124,7 @@ tags: ……
 
 ```html
 <!-- Number of words -->
-{% raw %} {{ page.content | strip_html | strip_newlines | split: "" | size }} {% endraw %}
+{% raw %}{{ page.content | strip_html | strip_newlines | split: "" | size }}{% endraw %}
 ```
 
 ## 其他
