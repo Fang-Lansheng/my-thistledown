@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "JavaScript 学习笔记（三）：数组、数组操作以及数组方法"
-subtitle:   "JavaScript Study Notes (3) : Object, its properties, and its methods"
+subtitle:   "JavaScript Study Notes (3) : Array, its operations, and its methods"
 date:       2019-01-20
 author:     "Thistledown"
 header-img: "img/posts/post-bg-js-study-notes.jpg"
