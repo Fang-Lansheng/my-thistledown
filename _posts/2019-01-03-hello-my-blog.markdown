@@ -197,7 +197,7 @@ ERROR:  While executing gem ... (Gem::Exception)
 ```bash
 # 安装 OpenSSL 库
 yum install openssl-devel
-# 记成 OpenSSL 库到 Ruby
+# 集成 OpenSSL 库到 Ruby
 cd root/ruby-2.4.4
 cd ext/openssl
 ruby extconf.yb
@@ -567,7 +567,7 @@ location = /webhook {
 
 #### 用阿里云的免费 SSL 证书让网站从 HTTP 换成 HTTPS
 
-> 本文参考：https://ninghao.net/blog/4449
+> 本文参考：[https://ninghao.net/blog/4449](https://ninghao.net/blog/4449)
 
 **申请证书**
 
