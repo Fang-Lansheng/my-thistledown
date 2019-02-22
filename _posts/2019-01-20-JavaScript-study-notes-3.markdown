@@ -12,7 +12,7 @@ tags:
 
 > 本篇学习笔记是在[慕课网](https://www.imooc.com/)上学习[JavaScript深入浅出](https://www.imooc.com/learn/277)时所做笔记，内容主要来自课程课件及老师讲解，同时穿插自己的一些理解和尝试。部分资料整理自 [MDN Web Docs](https://developer.mozilla.org/)。
 
-数组是值的**有序**集合。每个值叫做元素，每个元素在数组中都有数字位置编号，也就是索引。JavaScript 中的数组是**弱类型**的，数组中可以含有不同类型的元素。数组元素甚至可以是对象或其他数组
+数组是值的**有序**集合。每个值叫做元素，每个元素在数组中都有数字位置编号，也就是索引。JavaScript 中的数组是**弱类型**的，数组中可以含有不同类型的元素。数组元素甚至可以是对象或其他数组。
 
 ```javascript
 // 例如
@@ -46,7 +46,7 @@ var arrWithLength = new Array(100);	// undefined * 100
 var arrLikesLiteral = new Array(true, false, null, 1, 2, 'hi');	// 等价于 [true, false, null, 1, 2, 'hi']
 ```
 
-注意：`Array` 的构造器如果不使用使用 `new` 也是等价的
+注意：`Array` 的构造器如果不使用 `new` 也是等价的
 
 #### 数组操作 - 数组元素读写
 
