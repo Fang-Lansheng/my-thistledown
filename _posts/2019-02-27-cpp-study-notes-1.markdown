@@ -4,7 +4,7 @@ title:      "C++ 学习笔记（一）：初学者的小窍门"
 subtitle:   "C++ Study Notes (1) : Tips for beginner"
 date:       2019-02-27
 author:     "Thistledown"
-header-img: "img/posts/post-bg-js-study-notes.jpg"
+header-img: "img/posts/post-bg-cpp.jpg"
 catalog: true
 tags:
     - C++
