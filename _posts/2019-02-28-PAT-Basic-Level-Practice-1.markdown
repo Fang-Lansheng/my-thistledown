@@ -74,6 +74,85 @@ int main() {
 }
 ```
 
+## [PAT B 1009](https://pintia.cn/problem-sets/994805260223102976/problems/994805314941992960)
+
+![PAT_B_1009](https://s2.ax1x.com/2019/02/28/k7FYuR.png)
+
+**解题思路**
+
+1. **思路一**：使用 `gets_s()` 函数读入一整行，从左至右枚举每一个字符，以空格为分隔符对单词进行划分，并按顺序存放到二维字符数组中，最后按单词输入顺序的逆顺序来输出所有单词
+2. **思路二**：输入时，单词之间用空格间隔（直到输入结束），因此可以 `scanf` 来读取该行字符，将每个单词加入到一个字符数组中，然后逆序输出该字符数组，或是用 `cin` 来不断读取新的单词，并将其加在目标字符串的头部，最后输出该字符串。
+
+**参考代码**
+- 思路一
+```c++
+#include <cstdio>
+#include <cstring>
+
+int main() {
+    char str[90];
+    gets_s(str);
+    int len = strlen(str), row = 0, col = 0;
+    char ans[90][90];
+
+    for (int i = 0; i < len; i++) {
+        if (str[i] != ' ') {	// 如果不是空格，则存放至 ans[row][col]，并令 col++
+            ans[row][col++] = str[i];
+        }
+        else {
+            ans[row][col] = '\0';
+            row++;
+            col = 0;
+        }
+    }
+    ans[row][col] = '\0';
+
+    for (int i = row; i >= 0; i--) {
+        printf("%s", ans[i]);
+        if (i > 0) printf(" ");
+    }
+
+    return 0;
+}
+```
+
+- 思路二
+```c++
+#include <cstdio>	
+int main() {
+    int num = 0;
+    char ans[90][90];
+    while (scanf("%s", ans[num]) != EOF) {	// 一直输入知道文件末尾
+        num++;	// 单词个数加 1
+    }
+    for (int i = num - 1; i >= 0; i--) {	// 逆序输出
+        printf("%s", ans[i]);
+        if (i > 0)	printf(" ");	// 句子末尾没有多余的空格
+    }
+
+    return 0;
+}
+```
+PS：值得注意的是，在命令行中手动输入时，系统不知道什么时候达到了所谓的“文件末尾”，因此需要用 `ctrl+Z` 组合键然后按 `ENTER` 回车键的方式来告诉系统已经到了 `EOF`，此时系统才会结束 `while` 循环。
+
+或者：
+```c++
+#include <iostream>
+#include <string>
+using namespace std;
+ 
+int main() {
+    string in, out;
+    cin >> out;
+    while (cin >> in) {
+        out = in + " " + out;
+    }
+    cout << out << endl;
+ 
+    return 0;
+}
+```
+PS：该方法也需要用 `ctrl+Z` 组合键然后按 `ENTER` 回车键的方式来告诉系统已经到了 `EOF`。
 
 ## [PAT B 1022](https://pintia.cn/problem-sets/994805260223102976/problems/994805299301433344)
 
