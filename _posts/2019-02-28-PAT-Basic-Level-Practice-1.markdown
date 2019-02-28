@@ -85,6 +85,7 @@ int main() {
 
 **参考代码**
 - 思路一
+
 ```c++
 #include <cstdio>
 #include <cstring>
@@ -117,12 +118,13 @@ int main() {
 ```
 
 - 思路二
+
 ```c++
 #include <cstdio>	
 int main() {
     int num = 0;
     char ans[90][90];
-    while (scanf("%s", ans[num]) != EOF) {	// 一直输入知道文件末尾
+    while (scanf("%s", ans[num]) != EOF) {	// 一直输入直到文件末尾
         num++;	// 单词个数加 1
     }
     for (int i = num - 1; i >= 0; i--) {	// 逆序输出
@@ -136,6 +138,7 @@ int main() {
 PS：值得注意的是，在命令行中手动输入时，系统不知道什么时候达到了所谓的“文件末尾”，因此需要用 `ctrl+Z` 组合键然后按 `ENTER` 回车键的方式来告诉系统已经到了 `EOF`，此时系统才会结束 `while` 循环。
 
 或者：
+
 ```c++
 #include <iostream>
 #include <string>
