@@ -29,7 +29,7 @@ C++ 为程序员提供了种类丰富的内置数据类型和用户自定义的�
 | 宽字符型 | wchar_t |
 
 其中，wchar_t 实际上是：
-```C++
+```c++
 typedef wchar_t short int;
 ```
 所以 wchar_t 实际上的空间是和 short int 一样。
@@ -67,7 +67,7 @@ typedef wchar_t short int;
 
 经验表明，eps 取 1e-8（10的-8次方） 在大多数情况下既不会漏判，也不会误判。因此可将 eps 定义为常量 1e-8：
 
-```C++
+```c++
 const double eps = 1e-8;
 ```
 
@@ -77,7 +77,7 @@ const double eps = 1e-8;
 ![等于区间示意图](https://s2.ax1x.com/2019/02/27/koITfg.png)
 
 如图所示，如果一个数 a 落在了 [b - eps, b + eps] 的区间中，就判断 `a == b` 成立。为了使**比较**更为方便，把比较操作写成宏定义的形式：
-```C++
+```c++
 #include <math.h>
 #define Equ(a, b) ((fabs((a) - (b))) - (eps)) // 括号是为防止宏定义可能带来的错误
 ```
@@ -89,7 +89,7 @@ const double eps = 1e-8;
 ![大于区间示意图](https://s2.ax1x.com/2019/02/27/koIzkT.png)
 
 如图所示，如果一个数 a 要大于 b，那么就必须在误差 eps 扰动范围之外大于 b，因此只有大于 b + eps 的数才能判定为大于 b（也即 a - b > eps）。
-```C++
+```c++
 #define More(a, b) (((a) - (b)) > (eps))
 ```
 
@@ -99,7 +99,7 @@ const double eps = 1e-8;
 ![小于区间示意图](https://s2.ax1x.com/2019/02/27/kooCp4.png)
 
 如图所示，如果一个数 a 要小于 b，那么就必须在误差 eps 扰动范围之外小于 b，因此只有小于 b - eps 的数才能判定为小于 b（也即 a - b < -eps）。
-```C++
+```c++
 #define Less(a, b) (((a) - (b)) < (-eps))
 ```
 
@@ -109,7 +109,7 @@ const double eps = 1e-8;
 ![大于等于区间示意图](https://s2.ax1x.com/2019/02/27/kooGHP.png)
 
 如图所示，由于大于等于运算符可以理解为大于运算符和等于运算符的结合，于是需要让一个数 a 在误差扰动范围内大于或者等于 b，因此大于 b - eps 的数都应当判定为大于等于 b（也即 a - b > -eps）。
-```C++
+```c++
 #define MoreEqu(a, b) (((a) - (b)) > (-eps))
 ```
 
@@ -119,19 +119,19 @@ const double eps = 1e-8;
 ![小于等于区间示意图](https://s2.ax1x.com/2019/02/27/kood3Q.png)
 
 如图所示，由于小于等于运算符可以理解为小于运算符和等于运算符的结合，于是需要让一个数 a 在误差扰动范围内小于或者等于 b，因此小于 b + eps 的数都应当判定为小于等于 b（也即 a - b < eps）。
-```C++
+```c++
 #define LessEqu(a, b) (((a) - (b)) < (eps))
 ```
 
 #### 6. 圆周率 `π`
 圆周率 π 可由 arccos(-1) 计算得到：
-```C++
+```c++
 #include <math.h>
 const double PI = acos(-1.0);
 ```
 
 汇总结果为如下代码：
-```C++
+```c++
 #include <math.h>
 const double eps = 1e-8;
 const double PI = acos(-1.0);
@@ -153,7 +153,7 @@ const double PI = acos(-1.0);
 > C 库函数 int getchar(void) 从标准输入 stdin 获取一个字符（一个无符号字符）。这等同于 getc 带有 stdin 作为参数。
 
 用程序可以简单地表示为：
-```C++
+```c++
 #include <stdio.h>
 
 int main() {

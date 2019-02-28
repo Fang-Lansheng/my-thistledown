@@ -25,7 +25,7 @@ tags:
 
 **参考代码**
 
-```C++
+```c++
 #include <stdio.h>
 int main(){
     int n, step = 0;
@@ -50,7 +50,7 @@ int main(){
 3. 用 `/` 和 `%` 方法获取 `sum` 的每一位
 
 **参考代码**  
-```C++
+```c++
 #include <stdio.h>
 
 int main() {
@@ -92,7 +92,7 @@ int main() {
 
 **参考代码**
 
-```C++
+```c++
 #include <stdio.h>
 
 int main() {
@@ -121,7 +121,7 @@ int main() {
 
 **参考代码**
 
-```C++
+```c++
 #include <stdio.h>
 
 const int maxN = 100001;
@@ -159,7 +159,7 @@ int main() {
 
 **参考代码**
 
-```C++
+```c++
 #include <stdio.h>
 
 int main() {
@@ -200,7 +200,7 @@ int main() {
 
 **参考代码**
 
-```C++
+```c++
 
 ```
 
