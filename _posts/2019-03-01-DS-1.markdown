@@ -29,16 +29,47 @@ tags:
 
 
 ## 计算复杂性理论
-在对斐波那契数列进行 `C++` 代码实现并计算时间、空间复杂度之前，先要了解一下什么是所谓的“复杂度”
+在将斐波那契数列用 `C++` 代码实现并计算时间、空间复杂度之前，先要了解一下什么是所谓的“复杂度”
 
 #### 时间复杂度
 > 在计算机科学中， 算法的时间复杂度（Time Complexity）是一个函数，它定性描述算法的运行时间。这是一个代表算法输入值的字符串的长度的函数。  
 > <p align="right">—— <a href="https://zh.wikipedia.org/wiki/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6" target="_blank">Wikipedia，时间复杂度</a></p>
 
-时间复杂度通常用大写字母 `O` 表述，不包括这个函数的低阶项和首项系数。使用这种方法时，时间复杂度可被成为是渐进的，亦即考察输入值大小趋近于无穷时（$n\\rightarrow\\infty$）的情况。 
+一个语句的频度是指该语句在算法中被重复执行的次数。算法中所有语句的频度之和即为 $T(n)$，它是该算法问题规模 $n$ 的函数，时间复杂度主要分析 $T(n)$ 的数量级。
+算法的基本运算（*最深层循环内*的语句）的频度与 $T(n)$ 同数量级。因此通常采用算法中基本运算的频度 $f(n)$ 来分析算法的时间复杂度。因此，算法的时间复杂度记为：
+\\[
+    T(n) = O(f(n))    
+\\]
+式中，$O$ 的含义是 $T(n)$ 的数量级，其严格的数学定义是：若 $T(n)$ 和 $f(n)$ 是定义在正整数集合上的两个函数，则存在正常数 $C$ 和 $n_0$，使得当 $n \\geq n_0$ 时，都满足 $0 \\leq T(n) \\leq Cf(n)$。
+
+算法的时间复杂度不仅依赖于问题的规模 $n$，也去决定于待输入数据的性质（如输入数据元素的初始状态）。
+
+- ***最坏时间复杂度：***在最坏情况下，算法的时间复杂度。
+- ***平均时间复杂度：***所有可能输入示例在等概率出现的情况下，算法的期望运行时间。
+- ***最好时间复杂度：***在最好情况下，算法的时间复杂度。
+
+一般总是考虑在最坏情况下的时间复杂度，以保证算法的运行时常不会比它更长。
+
+在分析一个程序的时间复杂性时，有以下两条规则：  
+(a) 加法规则：
+\\[
+    T(n) = T_1(n) + T_2(n) = O(f(n)) + O(g(n)) = O(max(f(n), g(n)))    
+\\]
+(b) 乘法规则：
+\\[
+    T(n) = T_1(n) \\times T_2(n) = O(f(n)) \\times O(g(n)) = O(f(n) \\times g(n))
+\\]
+时间复杂度可被成为是渐进的，亦即考察输入值大小趋近于无穷时（$n\\rightarrow\\infty$）的情况。 常见的渐进时间复杂度为：
+\\[
+    O(1) < O(\\log_2 n) < O(n) < O(n\\log_2 n) < O(n^2) < O(n^3) < O(2^n) < O(n!) < O(n^n)
+\\]
 
 #### 空间复杂度
-> 空间复杂度是指完成一个算法所需要占用的存储空间。
+> 算法的空间复杂度 $S(n)$ 被定义为该算法所耗费的存储空间，它是问题规模 $n$ 的函数。渐进空间复杂度也常简称为空间复杂度，记为 $S(n) = O(g(n))$。
+
+一个程序除需要存储空间来存放本身所用的指令、常数、变量和输入数据外，还需要一些对数据进行操作的工作单元和存储为实现计算机所需的一些信息的辅助空间，若输入数据所占空间只取决于问题本身而与算法无关，则只需分析除输入和程序外的额外空间。
+
+算法**原地工作**是指算法所需的辅助空间为常量，即 $O(1)$。
 
 ## 递归算法
 
@@ -46,22 +77,52 @@ tags:
 
 ```c++
 int fibonacci(int n) {
-    if (n == 0) {
-        return 0;
+    if (n < 2) {
+        return n;
     }
-    else if (n == 1) {
-        return 1;
-    }
-    else {
-        return fibonacci(n - 1) + fibonacci(n - 2);
-    }
+    return fibonacci(n - 1) + fibonacci(n - 2);
 }
 ```
 
+**时间复杂度：**
+
+我们知道斐波那契数列数列的递归方程是 $T(n) = T(n-1) + T(n-2) + O(1)$。这就意味着，计算 `fibonacci(n)` 的时间等于计算 `fibonacci(n-1)` 与 `fibonacci(n-2)` 的时间。因此我们很容易得知，在递归求解斐波那契数时，时间复杂度的[上界 (*upper bound*)](https://en.wikipedia.org/wiki/Upper_and_lower_bounds) 是 $O(2^n)$。但通过在数学上用线性递归函数来表示，我们可以找到 Fibonacci 的[上确界 (*tight upper bound* or  *supremum*)](https://en.wikipedia.org/wiki/Supremum)。
+
+现根据斐波那契数列的定义：
+\\[
+    F(n) = F(n-1) + F(n-2)    
+\\]
+得到其特征方程为：
+\\[
+    x^2 = x + 1 \\\\\\\\
+    x^2 - x - 1 = 0    
+\\]
+解得该二次方程的根为 $\\alpha_1 = \\frac{1 + \\sqrt{5}}{2},\ \\alpha_2 = \\frac{1 - \\sqrt{5}}{2}$。现在我们得到的线性递归函数为：
+\\[
+    F(n) = (\\alpha_1)^n + (\\alpha_2)^n
+\\]
+所以斐波那契函数 $F(n) = F(n-1) + F(n-2)$ 的解为：
+\\[
+    F(n) = (\\frac{1 + \\sqrt{5}}{2})^n + (\\frac{1 - \\sqrt{5}}{2})^n
+\\]
+显然，在进行无穷大（$n \\rightarrow \\infty$）[渐进分析](https://zh.wikipedia.org/wiki/%E6%B8%90%E8%BF%91%E5%88%86%E6%9E%90) 时，$T(n)$ 与 $F(n)$ 表示含义是相同的，可被近似地看做相等，于是可以得出：
+\\[
+    T(n) = O((\\frac{1 + \\sqrt{5}}{2})^n + (\\frac{1 - \\sqrt{5}}{2})^n)
+\\]
+或者可以写作如下形式 （根据[渐进符号 $O$ (Big O notation)](https://zh.wikipedia.org/wiki/%E5%A4%A7O%E7%AC%A6%E5%8F%B7)，可以忽略掉低阶项）：
+\\[
+    T(n) = O((\\frac{1 + \\sqrt{5}}{2})^n) \\\\\\\\
+    T(n) = O(1.618^n)
+\\]
+这即是斐波那契递归函数的上确界（tight upper bound），同时我们也可以知道，递归算法确切的时间复杂度为 $O(1.618^n)$。
+
+**空间复杂度：**函数每次执行都会调用一次堆栈，故空间复杂度为 $O(n)$。
+
+
 ## 循环算法
 循环算法的思路为：
-- 当 $n = 0$ 时，返回 $F_0$ 的值 $0$（此时，$F_{n+1}=F_1$=1，$F_n=F_0=0$的值已给出
-- 当 $n > 0 (1, 2, ..., \\infty)$ 时
+- 当 $n = 0$ 时，返回 $F_0$ 的值 $0$（此时，$F_{n+1}=F_1=1$，$F_n=F_0=0$ 的值已给出
+- 当 $n > 0\ (1, 2, ..., \\infty)$ 时
     - 用一个数 `b` 存放 $F_n$ 的值，另一个数 `a` 存放 $F_{n+1}$ 的值
     - 执行一次循环，`a + b` 为新的 $F_{n+1}$ 的值，原有的 `a` 的值即为新的 $F_n$，再将这两个值分别赋给两个对应的变量（`temp` 充当媒介）
     - 按此往复，直到循环结束
@@ -79,14 +140,103 @@ int fibonacci(int n) {
 }
 ```
 
-## 尾递归
-```c++
+**时间复杂度：**思路很清晰，循环次数与 $n$ 线性正相关，时间复杂度为 $O(n)$，较之递归算法好很多。
 
+**空间复杂度：**算法所需要的辅助空间为常量，故空间复杂度为 $O(1)$。
+
+## 尾递归算法
+尾递归算法的思路与循环算法相似，调用格式为 `fibonacci(0, 1, n)` ：
+```c++
+int fibonacci(int first, int second, int n) {
+    if (n < 2) {
+        return n;
+    }
+    else if (n == 2) {
+        return first + second;
+    }
+    return fibonacci(second, first + second, n - 1);
+}
 ```
+**时间复杂度：**递归次数为 $n$，故为 $O(n)$。
+
+**空间复杂度：**函数每一次执行都会调用一次堆栈，故为 $O(n)$。
+
+## 矩阵算法
+比较上述几种算法，可以看出，它们都利用了**分治（divide and conquer）**的思想——**将原问题划分成若干个规模较小而结构与原问题相同或相似的子问题，然后分别解决这些子问题，最后合并子问题的解，即可得到为原问题的解。**只不过区别在于是进行普通地分治还是动态规划。
+
+我们将斐波那契数列中相邻的两项 $F(n)$ 和 $F(n-1)$ 写成一个 $2\\times 1$ 的矩阵，通过计算可以得到以下结论：
+\\[
+    \\begin{bmatrix} F_n \\\\ F_{n-1} \\end{bmatrix}
+    = \\begin{bmatrix} F_{n-1} + F_{n-2} \\\\ F_{n-1} \\end{bmatrix}
+    = \\begin{bmatrix} 1 \\times F_{n-1}+1 \\times F_{n-2} \\\\ 1\\times F_{n-1}+0 \\times F_{n-2}\\end{bmatrix}
+    = \\begin{bmatrix}1&1\\\\1&0\\end{bmatrix}\\times\\begin{bmatrix}F_{n-1}\\\\F_{n-2}\\end{bmatrix}   
+\\]
+推得：
+\\[
+\\begin{bmatrix}F_n\\\\F_{n-1}\\end{bmatrix}
+=\\begin{bmatrix}1&1\\\\1&0\\end{bmatrix}^{n-1}\\times\\begin{bmatrix}F_{1}\\\\F_{0}\\end{bmatrix}
+=\\begin{bmatrix}1&1\\\\1&0\\end{bmatrix}^{n-1}\\times\\begin{bmatrix}1\\\\0\\end{bmatrix}
+\\]
+因此要求斐波那契数 $F(n)$，关键是计算二阶矩阵 $\\begin{bmatrix}1&1\\\\1&0\\end{bmatrix}$ 的 $n - 1$ 的次方。最终取相乘结果矩阵第一行第一列数字即可。
+
+求方阵的 $n-1$ 次方乍一看非常繁复，而且要求这么多次的乘方，时间复杂度也为 $O(n)$，相较于循环算法没有进步。
+那么，为什么我们还要讨论这个方法呢？因为幂运算是可以通过二分幂来优化加速的。比如说，当我们需要计算 $a^n$ 时：
+\\[
+    a^n=\\begin{cases}
+    a^{\\frac{n}{2}}\\times a^{\\frac{n}{2}}&,\\text{ if }x\\text{ is even} \\\\\\\\
+    a^{\\frac{n-1}{2}}\\times a^{\\frac{n-1}{2}}\\times a&,\\text{ if }x\\text{ is odd}
+    \end{cases}    
+\\]
+这个方法也运用了**分治**的思想，节省了大约 $\\frac{n}{2} - 1$ 次乘法运算。那么时间复杂度也由原来的 $O(n)$ 降低为 $O(\\log n)$。
+
+算法的 C++ 代码如下：
+```c++
+void multiply(int F[2][2], int M[2][2]);	// 计算矩阵 F×M
+void power(int F[2][2], int n);	// 求矩阵 F 的 n 次方
+
+int fibonacci(int first, int second, int n) {
+    int F[2][2] = { {1, 1}, {1, 0} };
+    if (n == 0)
+        return 0;
+    power(F, n - 1);    // 计算目标二阶矩阵的 n - 1 次方
+    return F[0][0];
+}
+
+void multiply(int F[2][2], int M[2][2]) {
+    int x = F[0][0] * M[0][0] + F[0][1] * M[1][0];
+    int y = F[0][0] * M[0][1] + F[0][1] * M[1][1];
+    int z = F[1][0] * M[0][0] + F[1][1] * M[1][0];
+    int w = F[1][0] * M[0][1] + F[1][1] * M[1][1];
+
+    F[0][0] = x;
+    F[0][1] = y;
+    F[1][0] = z;
+    F[1][1] = w;
+}
+
+void power(int F[2][2], int n) {
+    if (n == 0 || n == 1)
+        return;
+    int M[2][2] = { {1, 1}, {1, 0} };
+
+    power(F, n / 2);    // 二分幂方法
+    multiply(F, F);
+
+    if (n % 2 != 0)
+        multiply(F, M);
+}
+```
+**时间复杂度：**$O(\log n)$。
+
+**空间复杂度：**算法所需的辅助空间仍为常量（虽然可能相对较大），故为 $O(1)$。
+
 
 ---
 > **参考：**  
 > $1.$ [斐波那契数的时间复杂度、空间复杂度详解 - lxf_style的博客 - CSDN博客](https://blog.csdn.net/lxf_style/article/details/80458519)  
-> $2.$ [Fibonacci Sequence](https://www.mathsisfun.com/numbers/fibonacci-sequence.html)  
+> $2.$ [Fibonacci Sequence - MathIsFun.com](https://www.mathsisfun.com/numbers/fibonacci-sequence.html)  
 > $3.$ [Fibonacci sequence algorithm in Javascript – Developers Writing – Medium](https://medium.com/developers-writing/fibonacci-sequence-algorithm-in-javascript-b253dc7e320e)  
-> $4.$ [计算斐波纳契数，分析算法复杂度  · GoCalf Blog](http://www.gocalf.com/blog/calc-fibonacci.html#id10)
+> $4.$ [计算斐波纳契数，分析算法复杂度  · GoCalf Blog](http://www.gocalf.com/blog/calc-fibonacci.html#id10)  
+> $5.$ [Time complexity of recursive Fibonacci program - GeeksforGeeks](https://www.geeksforgeeks.org/time-complexity-recursive-fibonacci-program/)  
+> $6.$ [Program for Fibonacci numbers - GeeksforGeeks](https://www.geeksforgeeks.org/program-for-nth-fibonacci-number/)  
+> $7.$ [二分幂，快速幂，矩阵快速幂，快速乘 - 丁磊_ml的博客 - CSDN博客](https://blog.csdn.net/MosBest/article/details/69264953)
