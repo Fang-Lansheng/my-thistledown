@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "数据结构——求解斐波那契数列算法的复杂度"
-subtitle:   "Data Structure: Fibonacci sequence algorithm in C++ and it's Complexity"
+subtitle:   "Data Structure: Fibonacci sequence algorithm in C++ and it's complexity"
 date:       2019-03-01
 author:     "Thistledown"
 header-img: "img/posts/post-bg-20190301.png"
@@ -13,27 +13,80 @@ tags:
 ---
 
 ## 斐波那契数列
-...
+斐波那契数列（Fibonacci Sequence）是一串数字：  
+\\[
+    (0,) 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, ...
+\\]
+很容易看出，每一个数（除第 1、2 个）都等于它之前的两个数之和。因此，用公式可归纳为：
+\\[
+    F_n = 
+    \\begin{cases}
+    0,                &  n=0 \\\\ 
+    1,                &  n=1 \\\\ 
+    F_{n-1} + F_{n-2}, & n>1
+    \\end{cases}
+\\]
 
-## 相关算法及其复杂度
 
-#### 递归算法
+## 计算复杂性理论
+在对斐波那契数列进行 `C++` 代码实现并计算时间、空间复杂度之前，先要了解一下什么是所谓的“复杂度”
+
+#### 时间复杂度
+> 在计算机科学中， 算法的时间复杂度（Time Complexity）是一个函数，它定性描述算法的运行时间。这是一个代表算法输入值的字符串的长度的函数。  
+> <p align="right">—— <a href="https://zh.wikipedia.org/wiki/%E6%97%B6%E9%97%B4%E5%A4%8D%E6%9D%82%E5%BA%A6" target="_blank">Wikipedia，时间复杂度</a></p>
+
+时间复杂度通常用大写字母 `O` 表述，不包括这个函数的低阶项和首项系数。使用这种方法时，时间复杂度可被成为是渐进的，亦即考察输入值大小趋近于无穷时（$n\\rightarrow\\infty$）的情况。 
+
+#### 空间复杂度
+> 空间复杂度是指完成一个算法所需要占用的存储空间。
+
+## 递归算法
+
+最简单的算法即是根据定义写出的递归算法，C++ 代码如下：
+
 ```c++
-
+int fibonacci(int n) {
+    if (n == 0) {
+        return 0;
+    }
+    else if (n == 1) {
+        return 1;
+    }
+    else {
+        return fibonacci(n - 1) + fibonacci(n - 2);
+    }
+}
 ```
 
-#### 循环算法
-```c++
+## 循环算法
+循环算法的思路为：
+- 当 $n = 0$ 时，返回 $F_0$ 的值 $0$（此时，$F_{n+1}=F_1$=1，$F_n=F_0=0$的值已给出
+- 当 $n > 0 (1, 2, ..., \\infty)$ 时
+    - 用一个数 `b` 存放 $F_n$ 的值，另一个数 `a` 存放 $F_{n+1}$ 的值
+    - 执行一次循环，`a + b` 为新的 $F_{n+1}$ 的值，原有的 `a` 的值即为新的 $F_n$，再将这两个值分别赋给两个对应的变量（`temp` 充当媒介）
+    - 按此往复，直到循环结束
 
+```c++
+int fibonacci(int n) {
+    int a = 1, b = 0, temp;
+    while (n > 0) {
+        temp = a;
+        a = a + b;
+        b = temp;
+        n--;
+    }
+    return b;
+}
 ```
 
-#### 尾递归
+## 尾递归
 ```c++
 
 ```
 
 ---
-> 参考：  
-> [斐波那契数的时间复杂度、空间复杂度详解 - lxf_style的博客 - CSDN博客](https://blog.csdn.net/lxf_style/article/details/80458519)  
-> [Fibonacci Sequence](https://www.mathsisfun.com/numbers/fibonacci-sequence.html)  
-> [Fibonacci sequence algorithm in Javascript – Developers Writing – Medium](https://medium.com/developers-writing/fibonacci-sequence-algorithm-in-javascript-b253dc7e320e)
+> **参考：**  
+> $1.$ [斐波那契数的时间复杂度、空间复杂度详解 - lxf_style的博客 - CSDN博客](https://blog.csdn.net/lxf_style/article/details/80458519)  
+> $2.$ [Fibonacci Sequence](https://www.mathsisfun.com/numbers/fibonacci-sequence.html)  
+> $3.$ [Fibonacci sequence algorithm in Javascript – Developers Writing – Medium](https://medium.com/developers-writing/fibonacci-sequence-algorithm-in-javascript-b253dc7e320e)  
+> $4.$ [计算斐波纳契数，分析算法复杂度  · GoCalf Blog](http://www.gocalf.com/blog/calc-fibonacci.html#id10)
