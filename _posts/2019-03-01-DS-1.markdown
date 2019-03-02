@@ -6,14 +6,13 @@ date:       2019-03-01
 author:     "Thistledown"
 header-img: "img/posts/post-bg-20190301.png"
 catalog: true
+mathjax: true
 tags:
     - 数据结构
     - C++
 ---
 
 ## 斐波那契数列
-...
-$$F(n) = F(n - 1) + F(n - 2)$$
 ...
 
 ## 相关算法及其复杂度
