@@ -104,19 +104,15 @@ using namespace cv;
 int main() {
 	Mat src, src_gray;
 	src = imread("lenna.tif");			// 读取图像
-    if( src.empty() ) {
-    	printf("Error: can not open the image.\n");
-    	return 1;
- 	}
+	if( src.empty() ) {
+		printf("Error: can not open the image.\n");
+		return 1;
+	}
 	cvtColor(src, src_gray, COLOR_BGR2GRAY);
-	imshow("边缘提取-原图", src);
-	waitKey(2);
 
 	// Canny 算子
 	Mat dst_canny = src.clone();		// 创建图像副本
 	Canny(src, dst_canny, 150, 100);
-	imshow("边缘提取-Canny算子", dst_canny);
-	waitKey(1);
 
 	Mat dst_canny_2, edges_canny;
 	dst_canny_2.create(src.size(), src.type());
@@ -127,9 +123,16 @@ int main() {
 	// 使用 Canny 算子输出的边缘图 edges_canny 作为掩码，
 	// 来将原图 src 拷贝到输出图像 dst_canny_2 中
 	src.copyTo(dst_canny_2, edges_canny);
+
+	imshow("边缘提取-原图", src);
+	waitKey(2);
+
+	imshow("边缘提取-Canny算子", dst_canny);
+	waitKey(1);
+
 	imshow("边缘提取-Canny算子【高级实现】", dst_canny_2);
 	waitKey(0);
-    
+
 	return 0;
 }
 ```
@@ -244,10 +247,10 @@ using namespace cv;
 
 int main() {
 	Mat src = imread("lenna.tif");			// 读取图像
-    if( src.empty() ) {
-    	printf("Error: can not open the image.\n");
-    	return 1;
- 	}
+	if( src.empty() ) {
+		printf("Error: can not open the image.\n");
+		return 1;
+	}
 
 	Mat src_blur, src_blur_gray, dst_sobel;
 
@@ -263,15 +266,15 @@ int main() {
 	// 分别求 X、Y 方向梯度
 	Sobel(src_blur_gray, grad_x, CV_16S, 1, 0, 3, 1, 1, BORDER_DEFAULT);	
 	Sobel(src_blur_gray, grad_y, CV_16S, 0, 1, 3, 1, 1, BORDER_DEFAULT);
-	
+
 	// 转换回 CV_8U
 	convertScaleAbs(grad_x, abs_grad_x);
 	convertScaleAbs(grad_y, abs_grad_y);
-	
+
 	// 合并梯度
 	addWeighted(abs_grad_x, 0.5, abs_grad_y, 0.5, 0, dst_sobel);
-    
-    imshow("边缘提取-原图", src);
+
+	imshow("边缘提取-原图", src);
 	waitKey(3);
 
 	imshow("边缘提取-Sobel算子-X方向", abs_grad_x);
@@ -344,30 +347,30 @@ $$
 using namespace cv;
 
 int main() {
-    // 读取图像
+	// 读取图像
 	Mat src = imread("lenna.tif");			
-    if( src.empty() ) {
-    	printf("Error: can not open the image.\n");
-    	return 1;
- 	}
+	if( src.empty() ) {
+		printf("Error: can not open the image.\n");
+		return 1;
+	}
 
 	// Laplace 算子
 	Mat src_blur, src_blur_gray;
-    Mat dst_laplace, abs_dst_laplace;
+	Mat dst_laplace, abs_dst_laplace;
 
 	// 高斯滤波器去噪（kernel size = 3）
 	GaussianBlur(src, src_blur, Size(3, 3), 0, 0, BORDER_DEFAULT);
 
 	// 将图像转换为灰度图像
 	cvtColor(src_blur, src_blur_gray, COLOR_BGR2GRAY);
-	
+
 	// 应用 Laplace 算子
 	Laplacian(src_blur_gray, dst_laplace, CV_16S, 3, 1, 0, BORDER_DEFAULT);
 
 	// 计算绝对值，将结果转换为 8 位
 	convertScaleAbs(dst_laplace, abs_dst_laplace);
-    
-    imshow("边缘提取-原图", src);
+
+	imshow("边缘提取-原图", src);
 	waitKey(1);
 
 	imshow("边缘检测-Laplace算子", abs_dst_laplace);
