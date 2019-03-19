@@ -1,0 +1,122 @@
+---
+layout:     post
+title:      "PAT Advanced Level Practice (I)"
+subtitle:   "PAT Advanced Level Practice (I)"
+date:       2019-03-16
+author:     "Thistledown"
+header-img: "img/posts/post-bg-PTA.png"
+catalog: true
+tags:
+    - PAT
+    - C++
+    - 算法
+---
+
+> PAT Advanced Level 刷题（一）   
+> [PTA | 程序设计类实验辅助教学平台](https://pintia.cn/problem-sets/994805342720868352/problems)
+
+## [PAT A 1025](https://pintia.cn/problem-sets/994805260223102976/problems/994805325918486528)
+
+![PAT_A_1025](https://i.loli.net/2019/03/16/5c8caa85f2ad0.jpg)
+
+**解题思路**
+
+题目大意为：有 N（≤100） 个考场，每个考场有若干数量（K≤300）的考生。现给出各个考场中考生的准考证号与分数，要求将所有考生按分数从高到低排序，并按顺序输出所有考生的准考证号、排名、考场号及考场内排名。
+
+题目要求的信息（准考证号、分数等）可以用结构体 `Student` 来存放。对考生进行排序可以使用 C++ 标准库中的 `sort()` 函数，题目中指出结果应按照考生排名递增排序，相同分数的考生排名相同且按照准考证号递增排序。因此，我们需要准们编写一个符合题目条件的 cmp 函数，它应该满足如下规则：
+- 当分数不同时，按分数从大到小排序
+- 否则，按准考证号从小到大排序。
+
+也即：
+
+```c++
+bool cmp(Student a, Student b) {
+    if (a.score != b.score)
+        return a.score > b.score;       // 先按分数从高到低排序
+    else
+        return strcmp(a.id, b.id) < 0;	// 若分数相同，则按准考证号从小到大排序
+}
+```
+
+算法本身分为三步：
+1. 按考场读入各考生的信息，并对当前读入考场的所有考生进行排序。之后将该考场的所有考生的排名写入其结构体中。
+2. 对所有考生进行排序
+3. 按照排序，一遍计算总排名，一遍输出信息
+
+**参考代码**
+
+```c++
+#include <cstdio>
+#include <cstring>
+#include <algorithm>
+
+using namespace std;
+
+struct Student {
+    char id[15];		// 准考证号
+    int score;			// 分数
+    int location_number;	// 考场号
+    int local_rank;		// 考场内排名
+}stu[30010];
+
+bool cmp(Student a, Student b) {
+	if (a.score != b.score)
+		return a.score > b.score;	// 先按分数从高到低排序
+	else
+		return strcmp(a.id, b.id) < 0;	// 若分数相同，则按准考证号从小到大排序
+}
+int main() {
+    int n, k, num = 0;		// num 为总考生数
+    scanf("%d", &n);		// n 为考场数
+    for (int i = 1; i <= n; i++) {
+        scanf("%d", &k);	// 该考场内人数
+        for (int j = 0; j < k; j++) {
+            scanf("%s %d", stu[num].id, &stu[num].score);
+            stu[num].location_number = i;   // 该考生的考场号为 i
+            num++;			        // 总考生数 + 1
+        }
+        sort(stu + num - k, stu + num, cmp);// 将该考场内的考生排序
+        stu[num - k].local_rank = 1;	    // 该考场第 1 名的 local_rank 为 1
+        for (int j = num - k + 1; j < num; j++) {
+            if (stu[j].score == stu[j - 1].score) {	// 如果与前一位考生同分
+                stu[j].local_rank = stu[j - 1].local_rank;
+            }
+            else {
+                stu[j].local_rank = j + 1 - (num - k);
+            }
+        }
+    }
+
+    printf("%d\n", num);	// 输出总考生数
+    sort(stu, stu + num, cmp);	// 将所有考生排序
+    int rank = 1;		// 当前考生的排名
+    for (int i = 0; i < num; i++) {
+        if (i > 0 && stu[i].score != stu[i - 1].score)
+            rank = i + 1;	// 当前考生与上一个考生分属不同时，让 rank 更新为之前的人数(i) + 1
+        printf("%s ", stu[i].id);
+        printf("%d %d %d\n", rank, stu[i].location_number, stu[i].local_rank);
+    }
+
+    return 0;
+}
+```
+
+> 未完待续。。。
+
+<!--
+
+## [PAT B ]()
+
+![PAT_B_]()
+
+**解题思路**
+
+...
+
+**参考代码**
+
+```c++
+
+```
+
+-->
