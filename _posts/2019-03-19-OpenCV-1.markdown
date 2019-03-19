@@ -323,7 +323,7 @@ void cv::Laplacian( InputArray 	src,
 )	
 ```
 
-- src`：输入图像
+- `src`：输入图像
 - `dst`：与 `src` 具有相同大小和相同通道数的输出图像
 - `ddepth`：输出图像的深度。
 - `ksize`：用于计算二阶导数的滤波器的孔径尺寸；它可以是 FILTER_SCHARR、1、3、5 或 7。
