@@ -1,0 +1,475 @@
+---
+layout:     post
+title:      "OpenCV——点特征提取算子：Moravec，Forstner 与 Harris"
+subtitle:   "Interest Operators: Moravec, Forstner & Harris"
+date:       2019-04-02
+author:     "Thistledown"
+header-img: "img/posts/post-bg-20190402.png"
+catalog: true
+mathjax: true
+tags:
+    - OpenCV
+    - C++
+---
+在计算机视觉（*Computer Vision*）与摄影测量（*Photogrammetry*）中，我们在不同影像之间找到相匹配的特征，已建立两幅影像之间的联系，提取出我们所需要的信息。这些特征主要分为：
+- 边缘（*Edges*）
+- 角点（*Corners*）
+- 兴趣区域 ROI（*Regions of Interest*）
+
+其中，提取点特征的算子称为兴趣算子或有利算子（*Interest Operator*），即运用某种算法从影像种提取我们感兴趣的、有利于某种目的的点。
+
+人眼对角点的识别通常是在一个局部的小区域或小窗口内完成的。如果在各个方向上移动这个特征的小窗口，窗口内区域的灰度发生了较大的变化，那么就认为在窗口内遇到了角点。如果这个特定的窗口在图像各个方面移动时，窗口内图像的灰度没有发生变化，那么窗口内就不存在角点；如果窗口在某一个方向移动时，窗口内图像的灰度发生了较大的变化，而在另一些方向上没有发生变化，那么窗口内的图像可能只是一条直线的线段。
+
+![](https://i.loli.net/2019/04/04/5ca60f38390f0.jpg)
+
+角点的特殊之处在于，它是两条边的交点，所以它代表这两条边的方向发生变化的点。因此，图像在该点的梯度（在各个方向上）具有明显的变化。利用这一点，前人提出了一系列算法，其中比较经典的有 Moravec 算子、Forstner 算子以及 Harris 算子等。
+
+## Moravec 算子
+
+#### 基本原理
+
+Moravec 于^[1] 1977 年提出利用灰度方差提取点特征的算子，其步骤为：
+
+**1. 计算各像元的兴趣值 $IV$（*Interest Value*）。**
+在以像素 $(c, r)$ 为中心的 $w \times w$ 的窗口中（如 $5 \times 5$ 的窗口），计算四个方向相邻像素灰度差的平方和：
+
+$$
+	\begin{cases}
+	V_1 &=& \sum_{i = -k}^{k-1}(g_{c+i,r}-g_{c+i+1, r})^2 \\[2ex]
+	V_2 &=& \sum_{i = -k}^{k-1}(g_{c+i,r+i}-g_{c+i+1, r+i+1})^2 \\[2ex] 
+	V_3 &=& \sum_{i = -k}^{k-1}(g_{c,r+i}-g_{c+i+1, r+i+1})^2 \\[2ex] 
+	V_4 &=& \sum_{i = -k}^{k-1}(g_{c+i,r-i}-g_{c+i+1, r-i-1})^2
+	\end{cases}
+$$
+
+其中 $k = INT(w/2)$。取其中最小者作为该像素 $(c,r)$ 的兴趣值：
+
+$$
+	IV_{c,r} = min \{V_1, V_2, V_3, V_4\}
+$$
+
+**2. 给定一经验阈值，将兴趣值大于该阈值的点（即兴趣值计算窗口的中心点）作为候选点。**
+阈值的选择应以候选点中包括所需要的特征点而又不含过多的非特征点为原则。
+
+**3. 选取候选点中的极值点作为特征点。**
+在一定大小的窗口内（可不同于兴趣值计算窗口，例如 $5 \times 5$ 像元，$7 \times 7$ 像元或 $9 \times 9$ 像元），将候选点中兴趣值不是最大者均去掉，仅留下一个兴趣值最大者，该像素即为一个特征点（有的文献中称此步骤为抑制局部非最大）。
+
+#### 代码实现
+```c++
+/// Moravec 点特征提取算法
+void Moravec(InputArray image, vector<KeyPoint>& keyPoints, int kSize, int threshold) {
+    Mat img;
+    cvtColor(image, img, COLOR_BGR2GRAY);
+
+    unsigned char* pImg = img.data;
+    int height = img.rows;
+    int width = img.cols;
+    int size = height * width;
+
+    double* candidatePoints = new double[size];
+    for (int i = 0; i < size; i++)
+        candidatePoints[i] = 0;
+
+    int k = kSize / 2;
+
+    /// I. 计算各像元的兴趣值
+    for (int i = k; i < height - k; i++) {
+        for (int j = k; j < width - k; j++) {
+            int V1, V2, V3, V4;
+            V1 = V2 = V3 = V4 = 0;
+
+            // 在以像素 (i, j) 为中心的 k * k 的影像窗口中
+            // 计算水平、45°、竖直、135°四个方向上相邻像素灰度差的平方和
+            for (int r = -k; r < k; r++) {
+                V1 += (pImg[(i + r) * width + j] - pImg[(i + r + 1) * width + j]) * 
+                      (pImg[(i + r) * width + j] - pImg[(i + r + 1) * width + j]);
+                V2 += (pImg[(i + r) * width + j + r] - pImg[(i + r + 1) * width + j + r + 1]) * 
+                      (pImg[(i + r) * width + j + r] - pImg[(i + r + 1) * width + j + r + 1]);
+                V3 += (pImg[i * width + j + r] - pImg[i * width + j + r + 1]) * 
+                      (pImg[i * width + j + r] - pImg[i * width + j + r + 1]);
+                V4 += (pImg[(i + r) * width + j - r] - pImg[(i + r + 1) * width + j - r - 1]) * 
+                      (pImg[(i + r) * width + j - r] - pImg[(i + r + 1) * width + j - r - 1]);
+            }
+
+            // 取其中的最小值作为该像素 (i, j) 的兴趣值
+            int value = min(min(V1, V2), min(V3, V4));
+
+            // II. 将兴趣值大于阈值的点作为候选点
+            if (value > threshold)
+                candidatePoints[i * width + j] = value;
+        }
+    }
+
+    /// III. 选取候选点中的极值点作为特征点（非极大值抑制）
+    int max_i, max_j, flag;
+    double max_val;
+    for (int i = k; i < height - k; i += kSize) {
+        for (int j = k; j < width - k; j += kSize) {
+            max_i = 0;
+            max_j = 0;
+            max_val = 0;
+            flag = 0;
+            for (int m = -k; m < k; m++) {
+                for (int n = -k; n < k; n++) {
+                    double val = candidatePoints[(i + m) * width + j + n];
+                    if (val > max_val) {
+                        max_i = i + m;
+                        max_j = j + n;
+                        max_val = val;
+                        flag = 1;
+                    }
+                }
+            }
+            if (flag)
+                keyPoints.push_back(KeyPoint((float)max_j, (float)max_i, 2));
+        }
+    }
+}
+```
+
+#### 提取结果
+![](https://i.loli.net/2019/04/04/5ca60af5e8a72.jpg)
+
+## Forstner 算子
+
+#### 基本原理
+该算子通过计算各像素的 Robert 梯度和像素 $(c, r)$ 为中心的一个窗口（如 $5 \times 5)$ 的灰度协方差矩阵，在影像中寻找**具有尽可能小而接近圆的误差椭圆的点**作为特征点，其步骤为：
+
+**1. 计算各像素的 Robert 梯度。**
+
+$$
+\left.\begin{matrix}
+g_u = \frac{\partial g}{\partial u} = g_{i + 1, j + 1} - g_{i, j} \\ 
+g_v = \frac{\partial g}{\partial v} = g_{i, j + 1} - g_{i + 1, j} 
+\end{matrix}\right\}
+$$
+
+**2. 计算 $l \times l$（如 $5 \times 5$ 或更大）窗口中灰度的协方差矩阵。**
+
+$$
+Q = N^{-1} = \begin{bmatrix}\sum g^2_u & \sum g_ug_v \\ \sum g_vg_u & \sum g^2_v\end{bmatrix}^{-1}
+$$
+
+其中：
+
+$$
+\begin{align}
+&\sum g_u^2 = \sum_{i = c - k}^{c+k-1} \sum_{j=r-k}^{r+k+1}(g_{i+1, j+1} - g_{i,j})^2 \\[2ex]
+&\sum g_v^2 = \sum_{i = c - k}^{c+k-1} \sum_{j=r-k}^{r+k+1}(g_{i, j+1} - g_{i+1,j})^2 \\[2ex]
+&\sum g_ug_v = \sum_{i = c - k}^{c+k-1} \sum_{j=r-k}^{r+k+1}(g_{i+1, j+1} - g_{i,j})(g_{i, j+1} - g_{i+1,j})
+\end{align}
+$$
+
+**3. 计算兴趣值 $q$ 和 $w$**
+
+$$
+w = \frac{1}{trQ} = \frac{DetN}{trN} \\[2ex]
+q = \frac{4DetN}{(trN)^2}
+$$
+
+其中，$DetN$ 代表矩阵 $N$ 的行列式；$trN$ 代表矩阵 $N$ 的迹。
+
+可以证明，$q$ 即像素 $(c, r)$ 对应误差椭圆的圆度：
+
+$$
+q = 1 - \frac{(a^2-b^2)^2}{(a^2+b^2)^2}
+$$
+
+**4. 确定待选点。**如果兴趣值大于给定的阈值，则该像元为待选点。阈值为经验值，可参考下列值：
+
+$$
+\left.\begin{align}
+T_q &= 0.5 \sim 0.75 \\
+T_w &= 
+\begin{cases}
+f\overline{w}&(f=0.5 \sim 1.5) \\
+cw_c&(c = 5)
+\end{cases}
+\end{align}\right\}
+$$
+
+其中 $\overline{w}$ 为权平均值；$w_c$ 为权的中值。当 $q > T_q$，且 $w > T_w$ 时，该像元为待选点。
+
+**5. 选取极值点。**以权值 $w$ 为依据选择极值点，即在一个适当窗口中选择最大的待选点，而去掉其余的点。
+
+#### 代码实现
+```c++
+void Forstner(InputArray image, vector<KeyPoint> & keyPoints, int kSize) {
+    Mat img;
+    cvtColor(image, img, COLOR_BGR2GRAY);
+
+    unsigned char* pImg = img.data;
+    int height = img.rows;
+    int width = img.cols;
+    int size = height * width;
+
+    int k = kSize / 2;
+
+    double grad_u = 0, grad_v = 0;		// Robert 梯度
+    double DetN = 0.0, trN = 0.0;	        // DetN: 矩阵 N 的行列式，trN: 矩阵 N 的迹
+    double weight_total = 0, weight_mean = 0;	// 权的总值与均值
+
+    double q = 0, w = 0;			// 兴趣值 q、w
+    double* wPoints = new double[size];		// 声明存储兴趣值的数组
+    double* qPoints = new double[size];
+    for (int i = 0; i < size; i++) {		// 给数组赋初值
+        wPoints[i] = 0;
+        qPoints[i] = 0;
+    }
+
+    for (int i = k; i < height - k; i++) {
+        for (int j = k; j < width - k; j++) {
+            double N[4] = { 0 };
+            for (int m = -k; m < k; m++) {
+                for (int n = -k; n < k; n++) {
+                    grad_u = pImg[(i + m + 1) * width + j + n + 1] - 
+                             pImg[(i + m) * width + j + n];
+                    grad_v = pImg[(i + m + 1) * width + j + n] - 
+                             pImg[(i + m) * width + j + n + 1];
+                    N[0] += grad_u * grad_u;
+                    N[1] += grad_u * grad_v;
+                    N[2] = N[1];
+                    N[3] += grad_v * grad_v;
+                }
+            }
+
+            DetN = N[0] * N[3] - N[1] * N[2];	// DetN = determinant(N);
+            trN = N[0] + N[3];			// trN = trace(N);
+            if (trN != 0) {
+                w = DetN / trN;			// 权
+                q = 4 * DetN / (trN * trN);	// 圆度
+
+                weight_total += w;
+                wPoints[i * width + j] = w;
+                qPoints[i * width + j] = q;
+            }
+        }
+    }
+
+    weight_mean = weight_total / size;	        // 权平均值
+
+    double Tq = 0.75;			        // 参考阈值
+    double Tw = 0.5 * weight_mean;
+
+    for (int i = k; i < height - k; i += kSize) {
+        for (int j = k; j < width - k; j += kSize) {
+            int max_i = 0, max_j = 0, flag = 0;
+            double max_weight = 0;
+
+            for (int m = -k; m < k; m++) {
+                for (int n = -k; n < k; n++) {
+                    double val_q = qPoints[(i + m) * width + j + n];
+                    double val_w = wPoints[(i + m) * width + j + n];
+                    // 大于阈值时，该点为待选点
+                    if ((val_q > Tq) && (val_w > Tw)) {
+                        // 从候选点中选出极值点
+                        if (val_w > max_weight) {
+                            max_i = i + m;
+                            max_j = j + n;
+                            max_weight = val_w;
+                            flag = 1;
+                        }
+                    }
+                }
+            }
+            if (flag)	// 若有极值点，则存储在 keyPoints 中
+                keyPoints.push_back(KeyPoint((float)max_j, (float)max_i, 2));
+        }
+    }
+}
+```
+
+#### 提取结果
+密密麻麻（辣眼睛），感觉效果一般
+![](https://i.loli.net/2019/04/04/5ca60c4b29a90.jpg)
+
+## Harris 算子
+
+#### 基本原理
+Harris 角点提取算法是 Chris Harris 和 Mike Stephens 在 H.Moravec 算法的基础上发展出的通过自相关矩阵的角点提取算法，又称 Plessey 算法。这种算子受信号处理中自相关函数的启发，给出与自相关函数相联系的矩阵 $M$。$M$ 阵的特征值是自相关函数的一阶曲率，如果两个曲率值都高，那么就认为该点是特征角点。
+
+对于图像 $I(x, y)$，其在所有方向上位移 $(u, v)$ 后的自相似性可表示为：
+
+$$
+E(u,v) = \sum_{x,y} \underbrace{w(x,y)}_\text{window function} \, [\underbrace{I(x+u,y+v)}_\text{shifted intensity}-\underbrace{I(x,y)}_\text{intensity}]^2
+$$
+
+其中窗口函数 $w(x, y)$ 既可以是常数，也可以是高斯函数。
+
+根据泰勒展开，对图像 $I(x, y)$ 在平移 $(u, v)$ 后进行一阶近似：
+
+$$
+\begin{align}
+I(x+u,y+v) &= I(x, y) + I_x(x, y)u + I_y(x, y)v + O(u^2, v^2) \\[2ex]
+&\approx I(x, y) + I_x(x, y)u + I_y(x, y)v
+\end{align}
+$$
+
+其中，$I_x$，$I_y$ 是图像 $I(x, y)$ 的偏导数。因此可以推得：
+
+$$
+E(u, v) \approx \sum_w[I_x(x, y)u + I_y(x, y)v]^2 = \begin{bmatrix}u & v\end{bmatrix} M \begin{bmatrix} u \\ v \end{bmatrix}
+$$
+
+其中
+
+$$
+M = \sum_{x, y} w(x, y) \begin{bmatrix}I_xI_x & I_xI_y \\ I_xI_y & I_yI_y\end{bmatrix}
+= \begin{bmatrix}\sum_wI_x^2 & \sum_wI_xI_y \\ \sum_wI_xI_y & \sum_wI_y^2\end{bmatrix}
+= \begin{bmatrix}A & C \\ C & B\end{bmatrix}
+$$
+
+即图像 $I(x, y)$ 在点 $(x, y)$ 处平移 $(u, v)$ 后的自相关函数可以近似为二次项函数：
+
+$$
+E(x, y; u, v) \approx Au^2 + 2Cuv + Bv^2
+$$
+
+其中
+
+$$
+A = \sum_wI_x^2, \quad B = \sum_wI_y^2, \quad C = \sum_wI_xI_y
+$$
+
+二次项函数本质上就是一个椭圆函数。椭圆的扁率与尺寸是由 $M(x, y)$ 的特征值 $\lambda_1$，$\lambda_2$ 决定的，椭圆的方向是由 $M(x, y)$ 的特征矢量决定的，如下图所示，椭圆方程为：
+
+$$
+\begin{bmatrix}u & v\end{bmatrix} M(x, y) \begin{bmatrix}u \\ v\end{bmatrix} = 1
+$$
+
+![](https://i.loli.net/2019/04/04/5ca6167f2d040.jpg)
+
+椭圆函数特征值与图像中的角点、直线（边缘）和平面之间的关系如下图所示。共可分为三种情况：
+- 图像中的直线。一个特征值大，另一个特征值小，$\lambda_1 \gg \lambda_1$ 或 $\lambda_2 \gg \lambda_1$。自相关函数在某一方向上大，在其他方向上小。
+- 图像中的平面。两个特征值都小，且近似相等。自相关函数数值在各个方向上都小。
+- 图像中的角点。两个特征值都大，且近似相等。自相关函数数值在所有方向上都大。
+
+![](https://i.loli.net/2019/04/04/5ca617f724bbd.jpg)
+
+Harris 算法通过计算角点响应值 $R$ 来判断角点，其计算公式为：
+
+$$
+R = det(M)-k(trace(M))^2
+$$
+
+式中，$det(M)$ 为矩阵 $M = \begin{bmatrix}A&C\\\\C&B\end{bmatrix}$ 的行列式；$trace(M)$ 为矩阵 $M$ 的直迹；$k$ 为默认常数，取值范围为 $0.04 \sim 0.06$。事实上，特征是隐含在 $det(M)$ 和 $trace(M)$ 中的，因为：
+
+$$
+det(M) = \lambda_1\lambda_2 = AB - C^2 \\[2ex]
+trace(M) = \lambda_1 + \lambda_2 = A + B
+$$
+
+根绝上述讨论，Harris 角点检测算法的步骤可以总结为：
+
+**1. 计算图像 $I(x, y)$ 在 $x$ 和 $y$ 方向上的梯度 $I_x$、$I_y$：**
+
+$$
+I_x = \frac{\partial I}{\partial x} = I \bigotimes (-1 \ 0 \ 1), \quad
+I_y = \frac{\partial I}{\partial y} = I \bigotimes (-1 \ 0 \ 1)^T
+$$
+
+**2. 计算图像两个方向梯度的乘积。**
+
+$$
+I_x^2=I_x \cdot I_x, \quad I_y^2 = I_y \cdot I_y, \quad I_xI_y = I_x \cdot I_y
+$$
+
+**3. 使用高斯函数对 $I_x^2$、$I_y^2$ 和 $I_xI_y$ 进行高斯滤波，生成矩阵 $M$ 的元素 $A$、$B$ 和 $C$。**这里，高斯卷积模板的 $\sigma$ 取 $0.3 \sim 0.9$。
+
+$$
+A = G(\tilde{s}) \bigotimes I_x^2, \quad
+B = G(\tilde{s}) \bigotimes I_y^2, \quad
+C = G(\tilde{s}) \bigotimes I_xI_y
+$$
+
+**4. 计算每个像素的 Harris 响应值 $R$。**
+
+$$
+R = det(M)-k(trace(M))^2
+$$
+
+**5. 在 $3 \times 3$ 或 $5 \times 5$ 的领域内进行非极大值抑制，局部极值点即为图像中的角点。**
+
+#### 代码实现
+
+```c++
+void Harris(InputArray image, vector<KeyPoint> & keyPoints) {
+    Mat img = image.getMat();
+    if (img.channels() == 3)
+        cvtColor(img, img, COLOR_BGR2GRAY);
+    img.convertTo(img, CV_64F);
+
+    Mat xKernel = (Mat_<double>(1, 3) << -1, 0, 1);
+    Mat yKernel = xKernel.t();
+
+    Mat gX, gY;
+    // filter2D: Convolves an image with the kernel.
+    filter2D(img, gX, CV_64F, xKernel);	// x 方向梯度
+    filter2D(img, gY, CV_64F, yKernel);	// y 方向梯度
+
+    Mat gX2, gY2, gXY;
+    gX2 = gX.mul(gX);	// gX2 = gX * gX
+    gY2 = gY.mul(gY);	// gY2 = gY * gY
+    gXY = gX.mul(gY);	// gXY = gX * gY
+
+
+    // getGaussianKernel: Returns Gaussian filter coefficients.
+    // Aperture size: 7; σ: 0.9
+    Mat gaussKernel = getGaussianKernel(5, 0.9);
+    // 对梯度值进行高斯滤波
+    filter2D(gX2, gX2, CV_64F, gaussKernel);
+    filter2D(gY2, gY2, CV_64F, gaussKernel);
+    filter2D(gXY, gXY, CV_64F, gaussKernel);
+
+    Mat R(img.size(), img.type());  // R: 每个像素的 Harris 响应值
+    double k = 0.04;	            // k: 默认常数
+    double detM, trM;	            // det(M): 行列式，tr(M): 迹
+
+    for (int i = 0; i < img.rows; i++) {
+        for (int j = 0; j < img.cols; j++) {
+            // 分别计算每个像素的 Harris 响应值
+            detM = gX2.at<double>(i, j) * gX2.at<double>(i, j) - 
+                   gXY.at<double>(i, j) * gXY.at<double>(i, j);
+            trM = gX2.at<double>(i, j) + gY2.at<double>(i, j);
+            R.at<double>(i, j) = detM - k * trM * trM;
+        }
+    }
+
+    double maxStrength;	// 图像中的最大值
+    // minMaxLoc: Finds the global minimum and maximum in an array.
+    minMaxLoc(R, NULL, &maxStrength);
+
+    Mat dilated, localMax;
+    // dilate: Dilates an image by using a specific structuring element.
+    // 默认 3 × 3 内核膨胀，膨胀之后除局部最大值与原来相同，其他非局部最大值均被该邻域内的最大值点取代
+    dilate(R, dilated, Mat());
+    // compare: Performs the per-element comparison of two arrays or an array and scalar value.
+    // 与原图相比，找出值相同的（CMP_EQ）点，这些点都是局部最大值点，保存到 localMax 中
+    compare(R, dilated, localMax, CMP_EQ);
+
+    Mat cornerMap;
+    double qualityLevel = 0.01;
+    double threshold = qualityLevel * maxStrength;
+    cornerMap = R > threshold;
+    bitwise_and(cornerMap, localMax, cornerMap);
+
+    // 遍历找出保留的极值点
+    Mat_<uchar>::const_iterator it = cornerMap.begin<uchar>();
+    Mat_<uchar>::const_iterator itd = cornerMap.end<uchar>();
+    for (int i = 0; it != itd; it++, i++) {
+        if (*it)
+            keyPoints.push_back(KeyPoint((float)(i % img.cols), (float)(i / img.cols), 2));
+    }
+}
+```
+> **注：**在 OpenCV 也有现成的 [cornerHarris()](https://docs.opencv.org/3.3.0/dd/d1a/group__imgproc__feature.html#gac1fc3598018010880e370e2f709b4345) 函数计算角点，可以直接调用。
+
+#### 提取结果
+效果不错，与 Moravec 算子比较接近
+![](https://i.loli.net/2019/04/04/5ca60b7d85c44.jpg)
+
+> **参考：**  
+> $1$. 张剑清，潘励，王树根，《摄影测量学（第二版）》  
+> $2$. H. P. Moravec, *[Obstacle Avoidance and Navigation in the Real World by a Seeing Robot Rover](https://www.ri.cmu.edu/publications/obstacle-avoidance-and-navigation-in-the-real-world-by-a-seeing-robot-rover/)*, PhD Thesis, Stanford University, Stanford, CA, USA, 1980.  
+> $3$. [OpenCV: Harris Corner Detection](https://docs.opencv.org/3.3.0/dc/d0d/tutorial_py_features_harris.html)  
+> $4$. [Harris角点 - ☆Ronny丶 - 博客园](https://www.cnblogs.com/ronny/p/4009425.html)
