@@ -1,7 +1,7 @@
 ---
 layout:     post
 title:      "线性代数——特征值分解、奇异值分解与 RQ 分解"
-subtitle:   "A Scale Invariant Feature Transform Algorithm"
+subtitle:   "Three Methods of Matrix Decomposition"
 date:       2019-04-12
 author:     "Thistledown"
 header-img: "img/posts/post-bg-20190412.png"
