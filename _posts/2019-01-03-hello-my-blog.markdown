@@ -477,17 +477,7 @@ location / {
 
 首先设置 GitHub 的 Webhooks，在 GitHub 仓库的项目界面，点击 `Settings`→`Webhooks`→`Add webhook`，添加配置信息，示例如下：
 
-> - Payload URL
->
-> http://www.my-thistledown.com/webhook
->
-> - Content type
->
-> application/json
->
-> - Secret
->
-> \*\*\*\*\*\*
+![](https://i.loli.net/2019/04/18/5cb7de9f7dd6b.jpg)
 
 点击 Add webhook 按钮，就设置成功了。
 
