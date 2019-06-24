@@ -1,0 +1,223 @@
+---
+layout:     post
+title:      "OpenCV——相机检校"
+subtitle:   "Camera Calibration With OpenCV"
+date:       2019-04-18
+author:     "Thistledown"
+header-img: "img/posts/post-bg-20190412.png"
+catalog: true
+mathjax: true
+tags:
+    - OpenCV
+    - C++
+---
+> 本文主要参考自 OpenCV 官方教程 [OpenCV: Camera calibration With OpenCV](https://docs.opencv.org/master/d4/d94/tutorial_camera_calibration.html)，大部分内容是对原文的直接翻译。
+
+### 1. 前言
+
+利用手机相机对棋盘图拍摄得到的图像如下（左边为原图，右边为二值化处理后的图像）：
+
+![](https://i.loli.net/2019/04/18/5cb838359bf08.jpg)
+
+如下所示，将其与原始棋盘图对比（左侧为原始图像，右侧为手机相机拍摄影像）。可以明显地看出出现了一定程度的畸变。
+
+![](https://i.loli.net/2019/04/18/5cb8385ce3115.jpg)
+
+### 2. 相机检校原理
+
+目前常用的相机检校方法是附加参数法，其关键在于通过一组额外参数拟合镜头畸变，主要是径向畸变和切向畸变：
+
+$$
+\begin{align}
+dx &= x(k_1r^2+k_2r^4+k_3r^6) + p_1(r^2+2x^2) + p_2xy \\
+dy &= \underbrace{y(k_1r^2+k_2r^4+k_3r^6)}_\text{radial distortion} + \underbrace{p_2(r^2+2y^2) + p_1xy}_\text{tangential distortion}
+\end{align}
+$$
+
+式中，
+
+$$
+x=x'-x_0, \quad
+y=y'-y_0 \\
+r^2 = x^2 + y^2
+$$
+
+其中 $(x',y')$ 为像片坐标的原始量测值，$k_i\,(i=1,2,3)$ 为径向畸变参数，$p_j\, (j=1,2)$ 为切向畸变参数。所以 5 个畸变参数构成的矩阵为：
+
+$$
+distortion\_coeffients = (\begin{matrix}k_1&k_2&p_1&p_2&k_3\end{matrix})
+$$
+
+对于影像坐标和物空间坐标的转换关系为：
+
+$$
+\begin{bmatrix}x\\y\\f\end{bmatrix}=
+K
+\begin{bmatrix}X\\Y\\Z\end{bmatrix}=
+\begin{bmatrix}f_x&0&c_x\\0&f_y&c_y\\0&0&1\end{bmatrix}
+\begin{bmatrix}X\\Y\\Z\end{bmatrix}
+$$
+
+其中，$(x, y, w)$ 是像点坐标在齐次坐标系下的表示（$w=Z$），$(X,Y,Z)$ 为该点对应的物方坐标。该式有 4 个未知数，$f_x$，$f_y$ 为相机焦距。$c_x$，$c_y$ 为像主点坐标。包含这 4 个参数的矩阵 $K$ 被称为相机矩阵。
+
+相机检校的过程即是求解相机矩阵和畸变矩阵的过程。这些参数可以通过一些基本的几何方程进行解算，其中使用的公式取决于选择的校准对象，本文所参考的 OpenCV 相机检校方法支持三种类型的校准对象：
+
+- 经典的黑白棋盘图案
+- 对称的圆圈图案
+- 不对称的圆圈图案
+
+为了提高精度、忽略噪声的影像，我们往往需要拍摄多张照片以便进行整体解算。而本回使用的黑白棋盘图案理论上所需的相片数量最多，为此，我一共在不同位置拍摄了 10 张相片（见下图）。
+
+![EpoSpR.jpg](https://s2.ax1x.com/2019/04/19/EpoSpR.jpg)
+
+
+
+### 3. 检校过程
+
+通过再实现 OpenCV 的相机检校样例，我们主要完成了以下过程：
+
+- 确定畸变矩阵
+- 确定相机矩阵
+- 批量获取影像数据
+- 从 `.XML/YAML` 文件中读取配置
+- 保存结果到 `.XML/YAML` 中
+- 计算投影误差
+
+其中，输入的配置文件 `input.XML` 部分内容如下：
+
+```xml
+<?xml version="1.0"?>
+<opencv_storage>
+<Settings>
+    <!-- 每张检测的棋盘点为 9×6 个 -->
+    <BoardSize_Width> 9</BoardSize_Width>
+    <BoardSize_Height>6</BoardSize_Height>
+    <!-- 输入图像的类型，这里我们选择“棋盘图” -->
+    <Calibrate_Pattern>"CHESSBOARD"</Calibrate_Pattern>
+    <!-- 输入图像，用于相机检校 -->
+    <Input>"inputImages.xml"</Input>
+    <!-- 输出的日志文件 -->
+  	<Write_outputFileName>"out_camera_data.xml"</Write_outputFileName> 
+</Settings>
+</opencv_storage>
+```
+
+用于检校的输入图像（即上文中的十张相片）通过 `inputImages.xml` 确定：
+
+```xml
+<?xml version="1.0"?>
+<opencv_storage>
+<images>
+imgs/IMG_01.jpg
+imgs/IMG_02.jpg
+imgs/IMG_03.jpg
+imgs/IMG_04.jpg
+imgs/IMG_05.jpg
+imgs/IMG_06.jpg
+imgs/IMG_07.jpg
+imgs/IMG_08.jpg
+imgs/IMG_09.jpg
+imgs/IMG_10.jpg
+</images>
+</opencv_storage>
+```
+
+运行代码，OpenCV 通过  `findChessboardCorners()` 函数找到每张相片中指定数目的棋盘点 $(9\times6)$，比如：
+
+![](https://i.loli.net/2019/04/19/5cb96a01bdea5.jpg)
+
+不过可能是由于光照等因素影响，第八张相片中的点并未成功识别出。程序将尝试在所有输入图像中找到并绘出这些棋盘点：
+
+![DRAW_ALL.jpg](https://i.loli.net/2019/04/19/5cb96b20950d2.jpg)
+
+最终我们通过 `imwrite()` 函数，输出校正变形后的图像：
+
+![EpTKPJ.png](https://s2.ax1x.com/2019/04/19/EpTKPJ.png)
+
+在输出的 `out_camera_data.xml` 文件中，我们可以得到相机检校过程中的所有参数，包括相机矩阵、畸变参数矩阵和检测点的坐标等。
+
+```xml
+<?xml version="1.0"?>
+<opencv_storage>
+<calibration_time>"Fri Apr 19 14:12:13 2019"</calibration_time>
+<nr_of_frames>9</nr_of_frames>
+<image_width>900</image_width>		<!-- 输入图像宽度 -->
+<image_height>1200</image_height>	<!-- 输入图像高度 -->
+<board_width>9</board_width>
+<board_height>6</board_height>
+<square_size>50.</square_size>
+<fix_aspect_ratio>1.</fix_aspect_ratio>
+<flags>6158</flags>
+<fisheye_model>0</fisheye_model>
+<camera_matrix type_id="opencv-matrix">	<!-- 相机矩阵 -->
+    <rows>3</rows>
+    <cols>3</cols>
+    <dt>d</dt>
+    <data>
+        1.1462822465241961e+03 0. 450. 
+        0. 1.1462822465241961e+03 600. 
+        0. 0.1.
+    </data>
+</camera_matrix>
+<distortion_coefficients type_id="opencv-matrix">	<!-- 畸变矩阵 -->
+    <rows>5</rows>
+    <cols>1</cols>
+    <dt>d</dt>
+    <data>
+    	5.2379099530930096e-01 -4.0406900157339871e+00 0. 0.8.8954798029406810e+00
+    </data>
+</distortion_coefficients>
+<avg_reprojection_error>6.1070913167798235e-01</avg_reprojection_error>
+<per_view_reprojection_errors type_id="opencv-matrix">
+    <rows>9</rows>
+    <cols>1</cols>
+    <dt>f</dt>
+    <data>
+        7.01961458e-01 6.66437447e-01 5.47557890e-01 5.58410525e-01
+        4.83857125e-01 5.62040746e-01 6.58297598e-01 6.49597406e-01
+        6.34681106e-01
+	</data>
+</per_view_reprojection_errors>
+<extrinsic_parameters type_id="opencv-matrix">
+    <rows>9</rows>
+    <cols>6</cols>
+    <dt>d</dt>
+    <data><!-- 略 --></data>
+</extrinsic_parameters>
+<image_points type_id="opencv-matrix">
+    <rows>9</rows>
+    <cols>54</cols>
+    <dt>"2f"</dt>
+    <data><!-- 略 --></data>
+</image_points>
+<grid_points><!-- 略 --></grid_points>
+</opencv_storage>
+```
+
+**相机矩阵：**
+
+$$
+\begin{align}
+Camera\_Matrix &=
+\begin{bmatrix}f_x&0&c_x\\0&f_y&c_y\\0&0&1\end{bmatrix}\\
+&=\begin{bmatrix}1146.282& 0 &450 \\0& 1146.282& 600\\ 0&0&1\end{bmatrix}
+\end{align}
+$$
+
+其中，相机焦距的精确值为 $f_x=f_y=1.1462822465241961e+03$，且 $c_x=450$，$c_y=600$，鉴于输入图像的尺寸为 $900\times1200$，可见程序直接将图像中心作为像主点。
+
+**畸变矩阵：**
+
+$$
+\begin{align}
+distortion\_coeffients &= \begin{bmatrix}k_1&k_2&p_1&p_2&k_3\end{bmatrix}\\
+&= \begin{bmatrix}0.52379 & -4.04069 & 0 & 0 & 8.89548\end{bmatrix}
+\end{align}
+$$
+
+- **径向畸变参数**的精确值为：
+    - $k_1 = 5.2379099530930096e-01$
+    - $k_2 = -4.0406900157339871e+00$
+    - $k_3 = 8.8954798029406810e+00$
+- **切向畸变参数**： $p_1 = p _ 2 = 0$
+

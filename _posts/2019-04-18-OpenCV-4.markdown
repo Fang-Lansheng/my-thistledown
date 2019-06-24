@@ -1,0 +1,316 @@
+---
+layout:     post
+title:      "OpenCV——SIFT 算法及源码分析（1）：原理简介"
+subtitle:   "A Scale Invariant Feature Transform Algorithm"
+date:       2019-04-20
+author:     "Thistledown"
+header-img: "img/posts/post-bg-20190412.png"
+catalog: true
+mathjax: true
+tags:
+    - OpenCV
+    - C++
+---
+> 本文及接下来几篇同系列文章是学习 SIFT 算法和 OpenCV SIFT 源码时的学习笔记，整合自参考文献及博客。强烈建议阅读 [论文原文](https://link.springer.com/article/10.1023%2FB%3AVISI.0000029664.99615.94)、[GitHub上的源码](https://github.com/opencv/opencv_contrib/blob/master/modules/xfeatures2d/src/sift.cpp) 以及 [@赵春江](blog.csdn.net/zhaocj) 的 [opencv 2.4.9 源码分析](https://wenku.baidu.com/view/d7edd2464b73f242336c5ffa.html)。
+
+Lowe 在 2004 年提出了尺度不变特征变换 
+(*Scale Invariant Feature Transform, SIFT*) 算法。
+SIFT 主要由关键点探测器 (*detector*) 和描述符 (*descriptor*) 组成，它的实现分为以下四步: 
+- **尺度空间极值探测** (*scale-space extrema detection*)：通过高斯差分函数搜索所有尺度和图像位置，以识别对于尺度和方向不变的潜在兴趣点。
+- **关键点精确定位** (*keypoint localization*)：精确确定每个候选点的尺度与亚像素级位置，根据其稳定性阈值选择关键点。
+- **方向分配** (*orientation assignment*)：基于图像的局部梯度方向，为每个特性点分配一个或多个方向角度。所有后续的操作都是相对于所确定下来的特征点的角度、尺度和位置的基础上进行的，因此特征点具有角度、尺度和位置的不变性。
+- **关键点描述符** (*keypoint descriptor*)：在所选定的尺度空间内，测量特征点邻域区域的局部图像梯度，将这些梯度转换成一种允许局部较大程度的形状变形和亮度变化的描述符形式。
+
+下面将对其进行详细阐释：
+
+## 1. 尺度空间极值探测
+关键点检测的第一阶段是识别可以在同一对象的不同视图下重复分配的位置和尺度。通过在素有可能的尺度进行搜索，可以检测出对图像尺度不变的稳定特征。这一过程中使用到的是被称为**尺度空间** (*scale space*) 的尺度连续函数^[1]。
+
+Koenderink ([The structure of images, 1984](https://doi.org/10.1007/BF00336961)) 和 Lindeberg ([Detecting salient blob-like image structures and their scales with a scale-space primal sketch: A method for focus-of-attention, 1993](https://doi.org/10.1007/BF01469346)) 已经证明，唯一可能的尺度空间核是高斯函数。因此，图像的尺度空间被定义为函数 $L(x, y, \sigma)$，它是由可变尺度高斯函数 $G(x, y, \sigma)$ 与输入图像 $I(x,y)$ 卷积得到的：
+
+$$
+\begin{equation*}
+    L(x, y, \sigma) = G(x, y, \sigma) \bigotimes I(x, y)
+    \label{eq:scale-space}
+\end{equation*}
+$$
+
+其中，$\bigotimes$ 表示在 $(x, y)$ 处的卷积运算。且有：
+
+$$
+\begin{equation*}
+    G(x, y, \sigma) = \frac{1}{2\pi \sigma^2}e^{-(x^2+y^2)/2\sigma^2}
+    \label{eq:gaussian}
+\end{equation*}
+$$
+
+为了有效地检测尺度空间中稳定关键点的位置，Lowe ([Object recognition from local scale-invariant features, 1999](https://dl.acm.org/citation.cfm?id=851523&preflayout=flat)) 提出利用高斯差分函数(*difference-of-Gaussian*) 与图像的卷积来求得尺度空间极值 $D(x, y, \sigma)$。它可以通过间隔常数 $k$ 的相邻尺度的差分来计算：
+
+$$
+\begin{equation}
+    \begin{aligned}
+        D(x,y,\sigma) &= (G(x, y, k\sigma) - G(x, y, \sigma)) \bigotimes I(x, y) \\
+        &= L(x, y, k\sigma) - L(x, y, \sigma)
+    \end{aligned}
+    \label{eq:dog}
+\end{equation}
+\tag{1}
+$$
+
+这样做的目的是为了减少计算量，因为高斯差分可以通过图像间简单的相减得到。此外，Lindeberg 的研究表明，高斯差分函数 $DoG$ 与尺度归一化的高斯拉普拉斯算子 (*Laplacian of Gaussian*)，$\sigma^2\nabla^2G$，是近似相等的。Lowe 在论文中向我们证明了如下结论：
+
+$$
+\begin{equation*}
+    \sigma\nabla^2G = \frac{\partial G}{\partial \sigma} \approx \frac{G(x, y, k\sigma) - G(x, y, \sigma)}{k\sigma - \sigma}
+\end{equation*}
+$$
+
+因此, 则有: 
+
+$$
+\begin{equation*}
+    G(x, y, k\sigma) - G(x, y, \sigma) \approx (k - 1) \sigma^2 \nabla^2 G.
+\end{equation*}
+$$
+
+式中因子 $(k-1)$ 在任何尺度上都是常数，因此不会影像极值位置。且 Lowe 发现近似误差对于极值探测和定位的稳定性几乎没有影响。
+
+<div style="padding: 0 50px;">
+    <img src="https://i.loli.net/2019/06/24/5d10c3a2913d144249.jpg" style="width: 80%;">
+    <p style="font-size: smaller;">
+    <b>图 1</b> SIFT 中的图像金字塔。左侧尺度空间中的每一组图像，都是通过对初始图像重复进行高斯卷积产生得来的。相邻高斯图像相减得到了右侧的高斯差分图像。尺度空间中每一层图像都相对于上一层进行了 2 倍降采样。
+    </p>
+</div>
+
+
+高斯差分图像 $D(x, y, \sigma)$ 金字塔的构造方法如图 1 所示。高斯金字塔共分 O 组 (*Octave*), 每组又分 S 层 (*Layer*)。组内各层图像的分辨率是相同的，即长和宽相同，但尺度逐渐增加，即越接近顶端图像越模糊。每一层的初始图像与高斯逐步卷积，产生由尺度空间中的常数因子 $k$ 分隔的图像，如左列所示。每一层的高斯图像金字塔完成之后，我们选取该层的第二张图像进行隔点降采样 (图像长和宽减小为原来的 $1/2$)，作为下一层的初始影像 (因此其尺度因子 $\sigma$ 为上层图像的两倍)。SIFT 将每层尺度空间划分为整数 $s$ 个子层, 因此 $k=2^{1/s}$。所以为了覆盖全部的 $s$ 尺度, 高斯金字塔中每层至少要有 $s+3$ 张图像。高斯金字塔层中相邻图像之差构成了右侧的高斯差分图像金字塔。
+
+极值点的搜索是在高斯差分金字塔中进行的, 这些极值点就是候选的特征点。为了检测 $D(x, y, \sigma)$ 中的局部最大值和最小值，SIFT 将每个采样点与当前图像中八个相邻像素的值以及上下层尺度中的九个相邻像素值进行对比 (如图 2)。这项搜索工作的计算成本非常低, 因为很多采样点在邻域像素值比较的过程中被排除了。
+
+<div style="padding: 0 50px;">
+    <img src="https://i.loli.net/2019/06/24/5d10ca14c06e278998.jpg" style="width: 50%;">
+    <p style="font-size: smaller;">
+    <b>图 2</b> 将采样点 (用 $\times$ 表示) 像素值与当前及相邻两个尺度层的 3$\times$3 邻域中的 26 个点 (用圆圈表示) 作比较，判断是否为极大值或极小值。
+    </p>
+</div>
+
+## 2. 关键点的精确定位
+
+由于极值点的搜索是在离散空间中进行的，并且这些离散空间还是经过不断采样得到的。通过局部极值探测确定候选点的位置和尺度之后, 我们需要通过三维二次函数拟合得到关键点的精确位置，以达到亚像素级的精度。
+
+根据 [Invariant Features from Interest Point Groups (2002)](https://www.researchgate.net/publication/221259493_Invariant_Features_from_Interest_Point_Groups) ，尺度空间函数 $D(x, y, \sigma)$ 泰勒展开到二次项的形式为：
+
+$$
+\begin{equation}
+    D(\mathbf{x})=D+\frac{\partial D}{\partial \mathbf{x}}^{T} \mathbf{x}+\frac{1}{2} \mathbf{x}^{\mathbf{T}} \frac{\partial^{2} D}{\partial \mathbf{x}^{2}} \mathbf{x}
+    \label{eq:dog-taylor}
+\end{equation}
+\tag{2}
+$$
+
+其中 $D$ 为 $D(x, y, \sigma)$ 在关键点处的值，$\mathbf{x}=(x, y, \sigma)^T$ 是关键点的偏移量。令
+
+$$
+\begin{equation}
+    \frac{\partial D(\mathbf{x})}{\partial\mathbf{x}} = 0
+\end{equation}
+$$
+
+即可得到 $\mathbf{x}$ 的极值 $\mathbf{\hat{x}}$：
+
+$$
+\begin{equation}
+    \hat{\mathbf{x}}=-\frac{\partial^{2} D^{-1}}{\partial \mathbf{x}^{2}} \frac{\partial D}{\partial \mathbf{x}}
+    \label{eq:dog-3}
+\end{equation}
+\tag{3}
+$$
+
+如果 $\hat{\mathbf{x}}$ 在任意方向 $(x, y, \sigma)$ 上大于 0.5，就意味着该关键点与另一采样非常接近，这时就用插值来代替关键点的位置。关键点假设偏移量 $\hat{\mathbf{x}})$ 即为关键点的确位置。为了保证结果的准确性，我们往往使用**迭代**的方法进行这一插值过程。
+
+定位到关键点的精确位置后，为提高匹配的稳定性，我们需要删除低对比度的点。将式 (3) 代入 (2) 得：
+
+$$
+\begin{equation}
+    D(\hat{\mathbf{x}})=D+\frac{1}{2} \frac{\partial D}{\partial \mathbf{x}} \hat{\mathbf{x}}
+\end{equation}
+$$
+
+式中 $D(\hat{\mathbf{x}})$ 可以用来衡量特征点的对比度，在 Lowe 的论文中，对比度 $\|D(\hat{\mathbf{x}})\|$ 小于 0.03 的极值点会被舍弃。
+
+而为了保证关键点的稳定性，仅仅舍弃低对比度的候选点是不够的。高斯差分函数在会产生很强的边缘效应，因此很容易受到噪声的干扰。所以我们也需要剔除掉这些不稳定的边缘点。
+
+高斯差分函数的相应峰值往往在横跨边缘的地方有较大的的主曲率，而在垂直边缘的地方有较小的主曲率。
+主曲率可以通过 $2 \times 2$ 的 Hessian 矩阵 $\mathbf{H}$ 来计算：
+
+$$
+\begin{equation}
+    \mathbf{H}=\left[ \begin{array}{cc}{D_{x x}} & {D_{x y}} \\ {D_{x y}} & {D_{y y}}\end{array}\right]
+    \label{eq:sift-hessian}
+\end{equation}
+\tag{4}
+$$
+
+其中，导数可以通过相邻样本点的差分来计算。
+
+$\mathbf{H}$ 的特征值与 $D$ 的主曲率成正比。设 $\alpha$ 是最大的特征值，$\beta$ 是最小的特征值。特征值的总和与乘积可以分别通过 $\mathbf{H}$ 的迹与行列式来计算：
+
+$$
+\begin{align}
+    \text{Tr}(\mathbf{H}) &= D_{xx} + D_{yy} = \alpha + \beta \\
+    \text{Det}(\mathbf{H}) &= D_{xx}D_{yy} - (D_{xy})^2 = \alpha\beta
+\end{align}
+$$
+
+如果行列式为负，则该候选点将被舍弃。令 $r$ 为最大特征值与最小特征值的比值，即 $r = \alpha / \beta$，则：
+
+$$
+\begin{equation}
+    \frac{\operatorname{Tr}(\mathbf{H})^{2}}{\operatorname{Det}(\mathbf{H})}=\frac{(\alpha+\beta)^{2}}{\alpha \beta}=\frac{(r \beta+\beta)^{2}}{r \beta^{2}}=\frac{(r+1)^{2}}{r}
+\end{equation}
+$$
+
+$\frac{(r + 1)^2}{r}$ 的值在两个特征值相等时最小，并且随着 $r$ 的增大而增大。因此，为了检查主曲率的比值是否低于某个阈值 $r$，只需要判断：
+
+$$
+\begin{equation}
+    \frac{\operatorname{Tr}(\mathbf{H})^{2}}{\operatorname{Det}(\mathbf{H})}<\frac{(r+1)^{2}}{r}
+\end{equation}
+$$
+
+这样能够显著提高计算效率。同时我们取经验值 $r = 10$，即排除主曲率之比大于 10 的候选点。
+
+## 3. 方向分配
+
+经过上述两个步骤，我们可以完全找出一幅图像中的特征点，且它们对于尺度具有不变性。而根据局部图像属性为每个关键点指定某个方向，则关键点描述符可以通过该方向来表示，从而实现了旋转不变性。我们根据关键点的尺度选择与之最接近的高斯平滑图像 $L$，以使得所有计算满足了尺度不变性。对该尺度下的每一个图像采样点 $L(x, y)$，我们根据像素值差分来计算其梯度幅值 $m(x, y)$ 和方向 $\theta(x, y)$：
+
+$$
+\begin{equation}
+    \begin{array}{c}
+        {m(x, y)=\sqrt{[(L(x+1, y)-L(x-1, y)]^{2}+[(L(x, y+1)-L(x, y-1)]^{2}}} \\ 
+        {\theta(x, y)=\tan ^{-1}[(L(x, y+1)-L(x, y-1)] /[(L(x+1, y)-L(x-1, y)]}
+    \end{array}
+\end{equation}
+$$
+
+SIFT 根据关键点邻域内样本点的梯度方向来生成方向直方图。该直方图一共有 36 柱 (bin)，一柱 $10^{\circ}$，覆盖整个 $0^{\circ} \sim 360^{\circ}$ 的范围。添加到直方图中的每个样本点梯度方向都会根据其梯度幅值以及圆形高斯加权窗口 (其 $\sigma$ 为关键点尺度的 1.5 倍) 进行加权。
+
+方向直方图的峰值对应于关键点局部梯度的主方向。同时，如果直方图中的某一柱的峰值高于其前后两柱，且大于大于主峰值的 80%，则我们在该位置处也创建具有该柱所代表的方向 (可视为辅方向) 的关键点。因此，如果一个方向直方图有很多幅值相近的峰值，那么在其相同尺度和位置处会有很多关键点，但它们的方向有所不同。根据 Lowe 的结论，大概只有 15% 的点被分配了多个方向，但这些方向能够显著提高匹配的稳定性。值得注意的是，每个直方图峰值对应方向是通过对其最接近的三个柱进行抛物线拟合、然后再插值得到的。
+
+## 4. 关键点描述符
+
+之前的步骤已经为每个关键点分配了图像位置、尺度和方向。在图像局部区域内，在图像局部区域内，这些参数可以重复地用以描述局部二维坐标系统，因为这些参数具有不变性。最后一步则是计算**局部图像区域的描述符** (*local descriptor*)，该描述符具有高度的独特性，同时对于光照或 3D 视点的变化具有很高的鲁棒性。
+
+<div style="padding: 0 50px;">
+    <img src="https://i.loli.net/2019/06/24/5d10d5ef9f70d81978.jpg">
+    <p style="font-size: smaller;">
+    <b>图 3</b> 首先通过计算关键点邻域中每个采样点的梯度大小和方向来创建关键点描述符，如左侧所示。计算过程由图像中的原型高斯加权窗口进行加权。然后在邻域范围内创建方向直方图。
+    </p>
+</div>
+
+图 3 展现了描述符的计算方法。首先，根据关键点的尺度选择相同模糊程度的高斯金字塔影像，对关键点邻域内像素进行采样以求得其图像梯度和方向。为了保证特征矢量具有旋转不变性，以关键点为中心，在其邻域内将描述符的坐标轴和梯度方向旋转至关键点的主方向。图 3 左侧图像中的每个小箭头代表该采样点的梯度方向和大小。使用高斯加权函数 ($\sigma$ 等于描述符窗口宽度 1/2) 来为每个采样点的梯度幅值分配权重，图中圆圈代表窗口范围。 
+
+然后在关键点 $4\times 4$ 的邻域范围内创建方向直方图。关键点描述符如图 3 中右侧图像所示。每个直方图有八个方向，箭头长度对应与该直方图幅值的大小。该图中显示的是 $2 \times 2$ 的方向直方图阵列，根据 Lowe 的论文结果，使用 $4 \times 4$ 的方向直方图阵列，每个直方图有八个方向，可以提高匹配的稳健性。这样对于每个关键点就可以产生 $4 \times 4 \times 8 = 128$ 维的特征向量。
+
+此时的特征向量已经消去了尺度变化、旋转等几何变形因素的影响。最后还需对特征向量进行一定的修正，以进一步降低照明变化的影响。先将特征向量的归一化为单位长度。这样可以使得描述符不收光照仿射变换的影响。而对于非线性光照条件的变化，SIFT 通过对单位特征向量中的值进行阈值化处理，是每个值不大于 0.2 (该值通过实验验证得出)，然后再重新归一化为单位向量。最终得到的这个 128 维的向量即为 SIFT 特征向量。
+
+## 5. SIFT 匹配方法
+
+SIFT 中的局部特征描述算子对于旋转、尺度缩放和亮度变化保持不变，且对于 3D 视角变化、仿射变换、
+噪声等也具有很高的鲁棒性。得到两副目标影像的 SIFT 特征向量之后，我们采用关键点特征向量的欧氏距离作为两幅影像中关键点的相似性判定度量。在左图像中取出某个关键点，并通过遍历找出其与右影像中欧氏距离最接近的两个关键点。如果最邻近关键点与第二邻近关键点距离距离之比低于某个阈值 (经验值为 0.8)，则接受这一对匹配点。
+
+值得注意的是, 通过调整匹配过程中的阈值，我们可以影响到匹配结果的正确率与匹配点的数量。此外，SIFT 算子对很小的影像或少数几个物体也能产生大量的特征点，而 SIFT 匹配过程中采用了逐关键点遍历的方法, 这在对大尺寸遥感影像处理时有着难以想象的计算开销。
+
+<!-- ## 头文件
+
+```c++
+#pragma once
+#include <cstdio>
+#include <opencv2/opencv.hpp>
+
+using namespace std;
+using namespace cv;
+
+/// 类定义
+class SIFT {
+public:
+    /// 构造函数
+    SIFT(int nOctaves = 4, int nOctaveLayers = 3, double sigma = 1.6, int nfeatures = 0, double contrastThreshold = 0.04, double edgeThreshold = 10);
+
+    /// SIFT 类的重载操作符
+    void operator()(InputArray img, vector<KeyPoint>& keyPoints, OutputArray descriptors);
+    /// 建立高斯金字塔
+    void buildGaussianPyramid(const Mat& base, vector<Mat>& pyr);
+    /// 建立高斯差分金字塔
+    void buildGaussianDifferencePyramid(vector<Mat> gauss_pyr, vector<Mat>& dog_pry);
+    /// 尺度空间极值探测
+    void findScaleSpaceExtrema(vector<Mat>& gauss_pyr, vector<Mat>& dog_pyr, vector<KeyPoint>& keyPoints);
+
+protected:
+    int O;			// 尺度空间数
+    int S;			// 每层尺度空间的子层数
+    double sigma;		// 尺度空间因子
+    int nfeatures;		// 需要输出的特征点数量
+    double contrastThreshold;	// 对比度阈值
+    double edgeThreshold;	// 边缘阈值
+};
+
+/// 宏指令
+// 初始图像的尺度，假设为 0.5 （by D.G.Lowe）
+static const double SIFT_INIT_SIGMA = 0.5;
+
+// 描述符数组中每个直方图的柱数
+static const int SIFT_DESCR_HIST_BINS = 8;
+
+// 在关键点提取中忽略的边缘宽度
+static const int SIFT_IMG_BORDER = 5;
+
+// 关键点插值的最大迭代次数
+static const int SIFT_MAX_INTERP_STEPS = 5;
+
+// 方向分配中高斯函数的 σ
+static const double SIFT_ORI_SIG_FCTR = 1.5;
+
+// 方向分配中目标区域的半径
+static const double SIFT_ORI_RADIUS = 3 * SIFT_ORI_SIG_FCTR;
+
+// 方向分配的梯度直方图柱数（范围为 0 ~ 360°，每 10° 一个柱，共 36 柱）
+static const int SIFT_ORI_HIST_BINS = 36;
+
+// 描述符直方图数组的默认宽度
+static const int SIFT_DESCR_WIDTH = 4;
+
+// 确定单个描述符方向直方图的大小
+static const double SIFT_DESCR_SCL_FCTR = 3.0;
+
+// 描述符向量元素大小的阈值
+static const double SIFT_DESCR_MAG_THR = 0.2;
+
+// 用于将浮点数描述符转换为 uchar 类型
+static const double SIFT_INT_DESCR_FCTR = 512;
+
+/// 函数声明
+// 初始化基层图像矩阵
+static Mat createInitialImage(const Mat& img, double _sigma);
+
+// 极值点的精确定位
+static bool adjustLocalExtrema(const vector<Mat>& dog_pyr, KeyPoint& keyPoint, int octave, int& layer, int& r, int& c, int nOctaveLayers, double contrastThreshold, double edgeThreshold, double _sigma);
+
+// 计算关键点局部影像的梯度方向直方图
+static double calcOrientationHist(const Mat& img, Point pt, int radius, double _sigma, double* hist, int n);
+
+// 关键点特征描述
+static void calcSIFTDescriptor(const Mat& img, Point2d kpt, double ori, double scl, int d, int n, double* dst);
+
+// 计算特征点描述符
+static void calcDescriptors(const vector<Mat>& pyr, const vector<KeyPoint>& keyPoints, Mat& descriptors, int nOctaveLayers);
+``` -->
+
+> **参考：**  
+> $1$. [opencv/opencv_contrib/sift.cpp - github](https://github.com/opencv/opencv_contrib/blob/master/modules/xfeatures2d/src/sift.cpp)  
+> $2$. D. G. Lowe, *[Distinctive Image Features from Scale-Invariant Keypoints](https://doi.org/10.1023/B:VISI.0000029664.99615.94)*, International Journal of Computer Vision, vol. 60, no. 2, pp. 91–110, 2004.   
+> $3$. [opencv 2.4.9 源码分析](https://wenku.baidu.com/view/d7edd2464b73f242336c5ffa.html)  
+> $4$. [【OpenCV】SIFT原理与源码分析 - 小魏的修行路 - CSDN博客](https://blog.csdn.net/xiaowei_cqu/article/details/8069548)  
+> $5$. [SIFT算法详解 - zddhub的专栏 - CSDN博客](https://blog.csdn.net/zddblog/article/details/7521424)  
+> $6$. [SIFT: Theory and Practice - AI Shack](http://aishack.in/tutorials/sift-scale-invariant-feature-transform-introduction/)  
+> $7$. 张剑清，潘励，王树根，《摄影测量学（第二版）》  

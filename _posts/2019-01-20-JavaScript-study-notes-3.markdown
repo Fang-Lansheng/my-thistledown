@@ -642,7 +642,7 @@ arr.sort(function(a, b){
 var arr1 = [{age: 25}, {age: 39}, {age: 99}];
 arr.sort(function(a, b){
     return a.age - b.age;
-})；
+});
 arr.forEach(function(item){	// forEach() 遍历
     console.log('age', item.age);
 });
