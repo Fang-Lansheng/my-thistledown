@@ -313,4 +313,4 @@ static void calcDescriptors(const vector<Mat>& pyr, const vector<KeyPoint>& keyP
 > $4$. [【OpenCV】SIFT原理与源码分析 - 小魏的修行路 - CSDN博客](https://blog.csdn.net/xiaowei_cqu/article/details/8069548)  
 > $5$. [SIFT算法详解 - zddhub的专栏 - CSDN博客](https://blog.csdn.net/zddblog/article/details/7521424)  
 > $6$. [SIFT: Theory and Practice - AI Shack](http://aishack.in/tutorials/sift-scale-invariant-feature-transform-introduction/)  
-> $7$. 张剑清，潘励，王树根，《摄影测量学（第二版）》  
+> $7$. 张剑清，潘励，王树根，《摄影测量学(第二版)》  
