@@ -8,7 +8,7 @@ header-img: "img/posts/post-bg-20190412.png"
 catalog: true
 mathjax: true
 tags:
-    - 线性代数
+    - Linear Algebra
 ---
 
 ## 特征值分解

@@ -8,7 +8,7 @@ header-img: "img/posts/post-bg-20190301.png"
 catalog: true
 mathjax: true
 tags:
-    - 数据结构
+    - Data Structure
     - C++
 ---
 

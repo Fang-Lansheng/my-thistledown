@@ -1,0 +1,113 @@
+---
+layout:     post
+title:      "机器学习-吴恩达：学习笔记及总结（2）"
+subtitle:   "Coursera | Machine Learning | Andrew Ng"
+date:       2020-02-28
+author:     "Thistledown"
+header-img: "img/posts/post-bg-Coursera-ML-Ng.png"
+catalog: true
+mathjax: true
+tags:
+    - ML/DL
+    - Course Learning
+    - Python
+---
+
+> 课程地址：[机器学习 \| Coursera](https://www.coursera.org/learn/machine-learning/)，本篇笔记为 *Week 2* 中的内容
+
+## 5. Multivariate Linear Regression
+
+#### 5.1 Multiple Features
+
+- Training set:
+    <img src="https://i.loli.net/2020/02/28/hLjSDHW1CTYKdNA.png" alt="image.png" style="zoom: 67%;" />
+- Notation:
+    - $m$ = the number of training examples
+    - $n$ = number of features
+    - $x^{(i)}$ = input (features) of $i^{th}$ training example (an $n$-dimensional vector, $i = 1, 2, \cdots, m$).
+    - $x_j^{(i)}$ = value of feature $j$ in $i^{th}$ training example (a number, $j = 1, 2, \cdots, n$).
+- Hypothesis: $h_\theta(x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \cdots + \theta_n x_n$
+    - Previously: $h_\theta(x) = \theta_0 + \theta_1x$
+    - Now: $h_\theta(x) = \theta_0 + \theta_1 x_1 + \theta_2 x_2 + \theta_3 x_3 + \theta_4 x_4$
+    - For convenience of notation, define $x_0 = 1 \ (x_0^{(i)}=1,\ i=1, 2, \cdots, m)$.
+    - $x = [ \begin{matrix}x_0 & x_1 & x_2 & \cdots & x_n \end{matrix}]^T \in \mathbb{R^{n+1}}$
+    - $\theta = [ \begin{matrix}\theta_0 & \theta_1 & \theta_2 & \cdots & \theta_n \end{matrix}]^T \in \mathbb{R^{n+1}}$
+- <u>Multivariate Linear Regression</u>
+
+$$\begin{align}
+      h_\theta(x)&=\theta^Tx= \begin{bmatrix}\theta_0 \ \theta_1 \ \theta_2 \ \cdots \ \theta_n \end{bmatrix} \begin{bmatrix}x_0 \\ x_1 \\ x_2 \\ \cdots \\ x_n \end{bmatrix} 
+        = \theta_0 x_0 + \theta_1 x_1 + \theta_2 x_2 + \cdots + \theta_n x_n
+        \end{align}$$
+
+#### 5.2 Gradient Descent for Multiple Variables
+
+- Hypothesis: $\begin{align}
+          h_\theta(x)&=\theta^Tx 
+            = \theta_0 x_0 + \theta_1 x_1 + \theta_2 x_2 + \cdots + \theta_n x_n
+            \end{align}$
+
+- Parameters: $\theta_0, \theta_1, \dots, \theta_n$  ($\theta = \begin{bmatrix} \theta_0 & \theta_1 & \cdots & \theta_n \end{bmatrix}^T$)
+
+- Cost function: $J(\theta_0, \theta_1, \dots, \theta_n)=\frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)})-y^{(i)})^2 $
+
+- Gradient descent:
+
+    $$\left.\begin{array}{l} \text{repeat until convergence}\ \{ \\ \qquad \theta_j := \theta_j-\alpha\frac{\partial}{\partial\theta_j}J(\theta)=\theta_j-\alpha\frac{1}{m}\sum_{i=1}^{m}(h_\theta(x^{(i)})-y^{(i)})\cdot x_j^{(i)} \\ \qquad (\text{simultaneously update for every } \theta_j \text{ for } j := 0\dots n) \\ \} \end{array}\right.$$
+    
+- The following image compares gradient descent with one variable to gradient descent with multiple variables:
+![image.png](https://i.loli.net/2020/02/29/tJXVdIn4EsCbDkf.png)
+
+#### 5.3 Gradient Descent in Practice I - Feature Scaling
+
+- <u>Feature scaling</u>
+    - Idea: make sure features are on similar scale.
+    - Get every feature into approximately a $-1 \leq x_i \leq 1$ range.
+- <u>Mean normalization</u>: replace $x_i$ with $x_i - u_i$ to make features have approximately zero mean.
+    - $x_i:= \frac{x_i-u_i}{s_i}$: $u_i$ is the *average* of all the values for the feature $(i)$ and $s_i$ is the range of the values $(\text{max - min})$, or $s_i$ is the standard deviation.
+
+#### 5.4 Gradient Descent in Practice II - Learning Rate
+
+- **Debugging gradient descent.** Make a plot with *number of iterations* on the x-axis. Now plot the cost function, $J(\theta)$ over the number of iterations of gradient descent. if $J(\theta)$ ever increases, then you probably need to decrease $\alpha$.
+- **Automatic convergence test.** Declare convergence if $j(\theta)$ decreases by less than $E$ in one iteration, where $E$ is some small value such as $10^{-3}$. However in practice it's difficult to choose this threshold value.
+- **Make sure gradient descent is working correctly.**
+    - For sufficient small $\alpha$, $J(\theta)$ should decrease on every iteration.
+    - If $\alpha$ is too large: may not decrease on every iteration and thus may not converge.
+    - if $\alpha$ is too small: slow convergence.
+
+#### 5.5 Features and Polynomial Regression
+
+- [*Example*] **Housing prices prediction**: $h_\theta(x)=\theta_0 + \theta_1 \times frontage + \theta_2 \times depth$
+- **Polynomial regression**: We can *change the behavior or curve* of our hypothesis function by making it a quadratic, cubic or square root function (or any other form).
+
+## 6. Computing Parameters Analytically
+
+#### 6.1 Normal Equation
+
+- <u>Normal equation</u>: Method to solve for $\theta$ analytically.
+
+    - $\theta \in \mathbb{R^{n+1}}\qquad J(\theta_0,\theta_1,\dots,\theta_n)=\frac{1}{2m}\sum_{i=1}^{m}(h_\theta(x^{(i)})-y^{(i)})^2$
+    - $\frac{\partial}{\partial\theta_j}J(\theta)=\cdots=0 \qquad (\text{for every }j)$
+    - Solve for $\theta_0, \theta_1, \dots,\theta_n$
+
+- $m$ examples $(x^{(1)},y^{(1)}), \dots,(x^{(m)}, y^{(m)})$; $n$ features.
+
+    $$x^{(i)}=\begin{bmatrix} x_0^{(i)} \\ x_1^{(i)} \\ x_2^{(i)} \\ \vdots \\ x_n^{(i)}  \end{bmatrix} \in \mathbb{R^{n+1}}, \qquad  \mathop{x}\limits_{\text{(design matrix)}} = \begin{bmatrix} (x^{(1)})^T \\ (x^{(2)})^T \\ \vdots \\  (x^{(m)})^T \end{bmatrix}_{m\times(n+1)}$$
+
+- $\theta=(X^TX)^{-1}X^Ty$ 
+
+- The following is a comparison of gradient descent and the normal equation: 
+
+| <u>Gradient Descent</u>            | <u>Normal Equation</u>                         |
+| ---------------------------------- | ---------------------------------------------- |
+| Need to choose $\alpha$.           | No need to choose $\alpha$.                    |
+| Needs many iterations.             | Don't need to iterate.                         |
+| $\text{O}(kn^2)$                   | $\text{O}(n^3)$, Need to compute $(X^TX)^{-1}$ |
+| Works well even when $n$ is large. | Slow if $n$ is very large.                     |
+
+#### Normal Equation and Noninvertibility
+
+- Normal equation: $\theta=(X^TX)^{-1}X^Ty$. But what if $X^TX$ is non-invertible (singular/degenerate)?
+- If $X^TX$ is *noninvertible*, the common causes might be having:
+    - Redundant features, where tow features are very closely related (i.e. they are linearly dependent).
+    - Too many features (e.g. $m \leq n$). In this case, delete some features, or use regularization.
+

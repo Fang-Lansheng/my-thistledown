@@ -1,0 +1,361 @@
+---
+layout:     post
+title:      "机器学习-吴恩达：学习笔记及总结（1）"
+subtitle:   "Coursera | Machine Learning | Andrew Ng"
+date:       2020-02-26
+author:     "Thistledown"
+header-img: "img/posts/post-bg-Coursera-ML-Ng.png"
+catalog: true
+mathjax: true
+tags:
+    - ML/DL
+    - Course Learning
+    - Python
+---
+
+> 课程地址：[机器学习 \| Coursera](https://www.coursera.org/learn/machine-learning/)，本篇笔记为 *Week 1* 中的内容
+
+## 0. 写在课前
+
+- 作为机器学习入门课程中的经典，吴恩达教授的课程具有如下特点：
+    - 数学推导过程少，偏重基础，门槛较低
+    - 课程短小精悍，讲解清晰，覆盖面广
+    - 主要用 `Matlab` 完成课后程序作业
+- 课程学习目标：
+    - 理解机器学习的基本思想和方法
+    - 用 `Python` 实现课程要求掌握的算法
+
+## 1. Introduction
+
+#### 1.1 Welcome
+
+- Machine Learning
+
+    - Grew out of work in AI
+    - New capability for computers
+
+- Examples:
+
+    - Database mining
+
+        - Large datesets from growth of automation/web
+
+            E.g., Web click data, medical records, biology, engineering
+
+    - Applications can't program by hand.
+
+        E.g., Autonomous helicopter, handwriting recognition, most of <u>Natural Language Processing</u> (NLP), <u>Computer Vision</u>.
+
+    - Self-customizing programs
+
+        E.g., Amazon, Netflix product recommendations
+
+    - Understanding human learning (brain, real AI).
+
+#### 1.2 What is Machine Learning?
+
+- Machine Learning definition
+    - *Arthur Samuel* (1959). <u>Machine Learning</u>: Field of study that gives computers the ability to learn without being explicitly programmed.
+    - *Tom Mitchell* (1998). <u>Well-posed Learing Problem</u>: A computer program is said to *learn* from experience E with respect to some task T and some performance measure P, if its performance on T, as measured by P, inproves with experience E.
+- Machie Learning algorithms
+    - <u>Supervised learing</u> (监督学习)
+    - <u>Unsupervised learning</u> (无监督学习)
+    - Others: <u>Reinforcement learing</u> (强化学习), <u>recommender systems</u> (推荐系统)
+    - Also talk about: Practical advice for applying learnng algorithms. 
+    - *"You have all these tools but the more important thing is to learn how to use these tools properly."*
+
+#### 1.3 Supervised Learning
+
+- <u>Supervised Learning</u>: "right answers" given
+    - In supervised learning, we are given a data set and already know what our correct output should look like, having the idea that there is a relationship between the input and the output.
+    - Supervised learning problems are categorized into "regression" and "classification" problems.
+- <u>Regression</u>: predict continuous valued output
+    - In a regression problem, we are trying to predict results within a continuous output, meaning that we are trying to map input variables to some continuous function.
+- <u>Classification</u>: discrete valued output (like, 0 or 1)
+    - In a classification problem, we are instead trying to predict results in a discrete output. In other words, we are trying to map input variables into discrete categories.
+
+#### 1.4 Unsupervised Learning
+
+- <u>Unsupervised Learning</u>
+    - Unsupervised learning allows us to approach problems with little or no idea what our results should look like. We can derive structure from data where we don't necessarily know the effect of the variables.
+    - We can derive this structure by clustering the data based on relationships among the variables in the data.
+    - With unsupervised learning there is no feedback based on the prediction results.
+- Application
+    - Organize computing clusters
+    - Social network analysis
+    - Market segmentation
+    - Astrononical data analysis
+- Cocktail party problem
+
+## 2. Model and Cost Function
+
+#### 2.1 Model Representation
+
+- Training set: <img src="https://i.loli.net/2020/02/27/UWoYsfwM1Ge32nD.png" alt="image.png" style="zoom: 25%;" />
+- Notation:
+    - $m$ = Number of training examples
+    - $\boldsymbol{x}'s$ = "input" variables / features
+    - $\boldsymbol{y}'s$ = "output" variables / "target" variables
+    - $(x,\ y)$ = a single training example, 
+    - $(x^{(i)},\ y^{(i)})$ = a specific training example, $i = 1, \dots,m$
+    - $X$ = the space of input values
+    - $Y$ =  the space of output values
+    - $h$ = hypothesis, is a *function* that maps from $\boldsymbol{x}'s$ to $\boldsymbol{y}'s$
+- Our goal is, given a training set, to learn a function $h:X\rightarrow Y$, so that $h(x)$ is a “good” predictor for the corresponding value of $y$. The process is therefore like this:![](https://i.loli.net/2020/03/01/1I5BOWn2UJiwHYj.png)
+
+- <u>Linear regression with one variable</u>
+    - <u>Linear function</u>: $h_{\theta}(x) = \theta_0+\theta_1*x$
+        - $\theta_{i}$: parameters
+
+#### 2.2 Cost Function
+
+- Idea: Choose $\theta_0$, $\theta_1$ so that $h_\theta(x)$ is close to $y$ for our training examples $(x,y)$
+
+- <u>Cost function</u> (also called the <u>Squared error function</u> or <u>Mean squared error</u>, often used for regression problems):
+
+    $$J(\theta_0, \theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(\hat{y}_i-y_i) = \frac{1}{2m}\sum_{i=1}^m[h_\theta(x^{(i)})-y^{(i)}]^2$$
+
+- $h_\theta(x^{(i)}) = \theta_0+\theta_1 x^{(i)} = \hat{y}_i$
+- Goal: to minimize the value of this function
+
+#### 2.3 Cost Function - Intuition I
+
+- Review
+    - Hypothesis: $h_\theta(x)=\theta_0+\theta_1x$
+    - Parameters: $\theta_0$, $\theta_1$
+    - Cost Function: $J(\theta_0, \theta_1) = \frac{1}{2m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}]^2$
+    - Goal: $\mathop{\text{minimize}}\limits_{\theta_0, \theta_1} J(\theta_0, \theta_1)$
+- Simplified
+    - $h_\theta(x)=\theta_1x$ (i.e. $\theta_0$ = 0, there is only one parameter: $\theta _1$)
+    -  $\mathop{\text{minimize}}\limits_{\theta_0}J(\theta_1) = \frac{1}{2m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}]^2$
+
+![image.png](https://i.loli.net/2020/02/27/EqbnBWo4N3Y8TiR.png)
+
+#### 2.4 Cost Function - Intuition II
+
+> This section refers to [Cost Function Intuition II - Reading material](https://www.coursera.org/learn/machine-learning/supplement/9SEeJ/cost-function-intuition-ii)
+
+A contour plot is a graph that contains many contour lines. A contour line of two variable function has a constant value at all points of the same line. An example of such a graph is the one to the right below.
+![](https://i.loli.net/2020/03/01/BKaNgUXSoylER8q.png)
+Taking any color and going along the 'circle', one would expect to get the same value of the cost function. For example, the three green points found on the green line above have the same value for $J(\theta_0, \theta_1)$ and as a result, they are found along the same line. The circled $\times$ displays the value of the cost function for the graph on the left when $\theta_0$ = 800 and $\theta_1$ = -0.15. Taking another $h(x)$ and plotting its contour plot, one gets the following graphs:
+![](https://i.loli.net/2020/03/01/t2H4dwJDcpQ6gse.png)
+When $\theta_0$ = 360 and $\theta_1$ = 0, the value of $J(\theta_0, \theta_1)$ in the contour plot gets closer to the center thus reducing the cost function error. Now giving our hypothesis function a slightly positive slope results in a better fit of the data.
+![](https://i.loli.net/2020/03/01/Z2cI5GoULFQMxzJ.png)
+The graph above minimizes the cost function as much as possible and consequently, the result of $\theta_1$ and $\theta_0$ tend to be around 0.12 and 250 respectively. Plotting those values on our graph to the right seems to put our point in the center of the inner most 'circle'.
+
+## 3. Parameter Learning
+
+#### 3.1 Gradient Descent
+
+- Now:
+
+    - Have some function $J(\theta_0, \theta_1)$
+    - Want $\mathop{\text{min}}\limits_{\theta_0, \theta_1} J(\theta_0, \theta_1)$
+
+- Outline:
+
+    - Start with some $\theta_0$, $\theta_1$ (for example, set $\theta_0$ = 0, $\theta_1$ = 0)
+    - Keep changing $\theta_0$, $\theta_1$ to reduce $J(\theta_0, \theta_1)$ until we hopefully end up at a minimum
+
+- Gredient descent algorithm:
+
+    $$\left.
+    \begin{array}{l}
+    \text{repeat until convergence}\ \{\\
+    \qquad \theta_j := \theta_j - \alpha\frac{\partial}{\partial\theta_j}J(\theta_0, \theta_1)\quad(\text{for}\ j=0\ \text{and}\ j=1) \\ \}
+    \end{array}
+    \right.$$
+
+    - $:=$, assianment operator (赋值运算符)
+    
+    - $\alpha$, learing rate (a number)
+    
+    - Simultaneous update $\theta_0$ and $\theta_1$:
+    
+        $$\left.
+        \begin{array}{l}
+        \color{blue}{\text{temp0}} := \theta_0 - \alpha\frac{\partial}{\partial\theta_0}J(\theta_0,\theta_1)\\
+        \color{blue}{\text{temp1}} := \theta_1 - \alpha\frac{\partial}{\partial\theta_1}J(\theta_0,\theta_1)\\
+        \theta_0:=\color{blue}{\text{temp0}}\\
+        \theta_1:=\color{blue}{\text{temp1}}
+        \end{array}
+        \right.$$
+    
+
+#### 3.2 Gradient Descent Intuition
+
+> This section refers to [Gradient Descent Intuition - Reading material](https://www.coursera.org/learn/machine-learning/supplement/QKEdR/gradient-descent-intuition)
+
+We explored the scenario where we used one parameter $\theta_1$ and plotted its cost function to implement a gradient descent. Our formula for a single parameter was:
+
+$$\left.
+\begin{array}{l}
+\text{repeat until convergence}\ \{\\
+\qquad \theta_1 := \theta_1 - \alpha\frac{d}{ d\theta_1}J(\theta_1) \\ \}
+\end{array}
+\right.$$
+
+Regardless of the slope's sign for $\frac{d}{ d\theta_1}J(\theta_1)$, $\theta_1$ eventually converges to its minimum value. The following graph shows that when the slope is negative, the value of $\theta_1$ increases and when it is positive, the value of $\theta_1$ decreases.
+![](https://i.loli.net/2020/03/01/ZRtbpsgNwHu658E.png)
+On a side note, we should adjust our parameter $\alpha$ to ensure that the gradient descent algorithm converges in a reasonable time. Failure to converge or too much time to obtain the minimum value imply that our step size is wrong.
+![](https://i.loli.net/2020/03/01/DPnxd1NmUy2i5Xu.png)
+
+*How does gradient descent converge with a fixed step size $\alpha$?*
+
+The intuition behind the convergence is that $\frac{d}{ d\theta_1}J(\theta_1)$ approaches 0 as we approach the bottom of our convex function. At the minimum, the derivative will always be 0 and thus we get: $\theta_1 := \theta_1-\alpha*0$.
+![](https://i.loli.net/2020/03/01/nWQJAaMrjqpBiHU.png)
+
+#### 3.3 Gradient Descent For Linear Regression
+
+- Put together <u>gradient descent</u> with <u>cost function</u>: apply gradient descent to minimize our squared error cost function.
+
+- Gradient descent algorithm
+
+    $$\left.
+    \begin{array}{l}
+    \text{repeat until convergence}\ \{\\
+    \qquad \theta_j := \theta_j - \alpha\frac{\partial}{\partial\theta_j}J(\theta_0, \theta_1)\qquad(\text{for}\ j=0\ \text{and}\ j=1) \\ \}
+    \end{array}
+    \right.$$
+
+- Linear Regression Model
+
+    $$\begin{align}h_{\theta}(x)&=\theta_0+\theta_1x &\text{linear hypothesis} \\ J(\theta_0, \theta_1)&=\frac{1}{2m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}]^2 &\text{squared error cost function}  \end{align}$$
+
+- Partial derivative:
+
+    $$\begin{align} \frac{\partial}{\partial\theta_j}J(\theta_0, \theta_1)&= \frac{\partial}{\partial\theta_j}\frac{1}{2m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}]^2 \\ &= \frac{\partial}{\partial\theta_j}\frac{1}{2m}\sum_{i=1}^{m}[\theta_0 + \theta_1  x^{(i)}-y^{(i)}]^2 \end{align} $$ 
+
+    $$\begin{align} j=0&:\quad \frac{\partial}{\partial\theta_0}J(\theta_0, \theta_1) =\frac{1}{m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}] \\ j=1&:\quad\frac{\partial}{\partial\theta_1}J(\theta_0, \theta_1) =\frac{1}{m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}]\cdot x^{(i)}\end{align} $$
+
+- <u>"Batch" Gradient Descent</u>
+
+    - "Batch": Each step of gradient descent uses all the traning examples.
+
+> The following section refers to [Gradient Descent For Linear Regression - Reading material](https://www.coursera.org/learn/machine-learning/supplement/U90DX/gradient-descent-for-linear-regression)
+
+We specifically applied to the case of linear regression, anew form of the gradient descent equation can be derived. We can substitute our actual cost function and our actual hypothesis function and modify the equation to:
+
+
+$$
+\left.
+\begin{array}{l}
+\text{repeat until convergence}\ \{\\
+\qquad \theta_0 := \theta_0 - \alpha\frac{1}{m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}] \\ \qquad \theta_1 := \theta_1 - \alpha\frac{1}{m}\sum_{i=1}^{m}[h_\theta(x^{(i)})-y^{(i)}]\cdot x^{(i)}  \\ \}
+\end{array}
+\right.
+$$
+
+
+Where $m$ is the size of training set, $\theta_0$ a constant that will be changing simultaneously with $\theta_1$ and $x_i$, $y_i$ are values of the given training set (data).
+
+Note that we have separated out the two cases for $\theta_j$ into separate equations for $\theta_0$ and $\theta_1$; and that for $\theta_1$ we are multiplying $x_i$ at the end due to the derivative. The following is a derivative of $\frac{\partial}{\partial\theta_j}J(\theta)$ for a single example:
+
+
+$$
+\begin{align}
+\frac{\partial}{\partial\theta_j}J(\theta) &= \frac{\partial}{\partial\theta_j}\frac{1}{2}(h_\theta(x)-y)^2 \\
+&= 2\cdot\frac{1}{2}(h_\theta(x)-y)\cdot\frac{\partial}{\partial\theta_j}(h_\theta(x)-y) \\
+&= (h_\theta(x)-y)\cdot\frac{\partial}{\partial\theta_j}(\sum_{i=0}^n\theta_ix_i-y) \\
+&= (h_\theta(x) - y)\cdot x_i
+\end{align}
+$$
+
+
+The point of all this is that if we start with a guess for our hypothesis and then repeatedly apply these gradient descent equations, our hypothesis will become more and more accurate.
+
+So, this is simply gradient descent on the original cost function $J$. This method looks at every example in the entire training set on every step, and is called *batch gradient descent*. Note that, while gradient descent can be susceptible to local minima in general, the optimization problem we have posed here for linear regression has only one global, and no other local, optima; thus gradient descent always converges (assuming the learning $\alpha$ is not too large) to the global minimum. Indeed, $J$ is a convex quadratic function. Here is an example of gradient descent as it is run to minimize a quadratic function.
+![img](https://i.loli.net/2020/03/01/kDEgUFm4RZAzCMO.png)
+
+The ellipse shown above are the contours of a quadratic function. Also shown is the trajectory taken by gradient descent, which was initialized at $(48,\ 30)$. The $x's$ in the figure (joined by straight lines) mark the successive values of $\theta$ that gradient descent went through as   it converged to its minimum.
+
+## 4. Linear Algebra Review
+
+#### 4.1 Matrices and Vectors
+
+- <u>Matrix</u>: Rectangular array of numbers.
+    - Dimension of matrix: number of rows  $\times$ number of columns
+    - Matrix elements (entries of matrix): $A_{ij} = \ "i, j\text{ entry}" \text{ in the } i^{th} \text{ row},\ j^{th}\text{ column.}$
+- <u>Vector</u>: An $n\times1$ matrix
+    - Vector elements: $y_i=i^{th} \text{ element}$
+    - Generally, we use 1-indexed vectors in this course.
+- Notation and terms:
+    - $A_{ij}$ refers to the element in the $i^{th}$ row and $j^{th}$ column of matrix $A$.
+    - A vector with '$n$' rows is referred to as an '$n$'-dimensional vector.
+    - $v_i$ refers to the element in the $i^{th}$ row of the vector.
+    - <u>Scalar</u> means that an object is a single value, not a vector or matrix.
+    - $\mathbb{R}$ refers to the set of scalar real numbers.
+    - $\mathbb{R^n}$ refers to the set of $n$-dimensional vectors of real numbers.
+
+#### 4.2 Addition and Scalar Multiplication
+
+- Matrix addition
+- Scalar multiplication
+- Combination of operands
+
+#### 4.3 Matrix-Vector Multiplicaiton
+
+We map the column of the vector onto each row of the matrix, multiplying each element and summing the result.
+
+
+$$
+\begin{bmatrix} a & b \newline c & d \newline e & f \end{bmatrix} *\begin{bmatrix} x \newline y \newline \end{bmatrix} =\begin{bmatrix} a*x + b*y \newline c*x + d*y \newline e*x + f*y\end{bmatrix}
+$$
+
+
+The result is a *vector*. The number of *columns* of the matrix must equal the number of *rows* of the vector. An $m\times n$ *matrix* multiplied by an $n \times 1$ *vector* results in an $m \times 1$ *vector*.
+
+#### 4.4 Matrix-Matrix Multiplication
+
+We multiply two matrices by breaking it into several vector muliplicaitons and concatenating the result.
+
+
+$$
+\begin{bmatrix} a & b \newline c & d \newline e & f \end{bmatrix} *\begin{bmatrix} w & x \newline y & z \newline \end{bmatrix} =\begin{bmatrix} a*w + b*y & a*x + b*z \newline c*w + d*y & c*x + d*z \newline e*w + f*y & e*x + f*z\end{bmatrix}
+$$
+
+
+An $m\times n$ matrix multiplied by an $n\times o$ matrix results in an $m \times o$ matrix. To multiply two matrices, the number of *columns* of the first matrix must equal the number of *rows* of the second matrix.
+
+#### 4.5 Matrix Multiplication Properties
+
+- Let $A$ and $B$ be matrices. Then in general, $A\cdot B \neq B \cdot A$ (not commutative).
+- $A \cdot B \cdot C = (A \cdot B) \cdot C = A \cdot (B \cdot C)$.
+- <u>Identity Matrix</u>: denoted $I$ (or $I_{n\times n}$). For any matrix $A_{m\times n}$, $A_{m\times n} \cdot I_{n\times n} = I_{m \times m} \cdot A_{m \times n} = A_{m \times n}$.
+
+#### 4.6 Inverse and Transpose
+
+- <u>Matrix inverse</u>: if $A$ is an $m\times m$ matrix (squre matrix), and if it has an inverse, then $AA^{-1}=A^{-1}A=I$.
+    - Matrices that don't have an inverse are "*singular*" or "*degenerate*".
+- <u>Matrix Transpose</u>: Let $A$ be an $m \times n$ matrix, and let $B = A^T$. Then $B$ is an $n \times m$ matrix, and $B_{ij}=A_{ji}$.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

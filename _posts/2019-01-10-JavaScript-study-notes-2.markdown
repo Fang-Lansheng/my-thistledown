@@ -7,7 +7,8 @@ author:     "Thistledown"
 header-img: "img/posts/post-bg-js-study-notes.jpg"
 catalog: true
 tags:
-    - JavaScript 学习笔记
+    - JavaScript
+    - Course Learning
 ---
 
 > 本篇学习笔记是在[慕课网](https://www.imooc.com/)上学习[JavaScript深入浅出](https://www.imooc.com/learn/277)时所做笔记，内容主要来自课程课件及老师讲解，同时穿插自己的一些理解和尝试。部分资料整理自 [MDN Web Docs](https://developer.mozilla.org/)。

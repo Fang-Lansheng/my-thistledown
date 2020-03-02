@@ -9,7 +9,7 @@ catalog: true
 tags:
     - PAT
     - C++
-    - 算法
+    - Algorithm
 ---
 
 > PAT Basic Level 刷题（一）   
