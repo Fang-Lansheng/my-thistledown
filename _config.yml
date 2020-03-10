@@ -5,8 +5,13 @@ SEOTitle: My-Thistledown | Blog
 header-img: img/home-bg.jpg
 email: 120768091@qq.com
 description: "A Learner's Blog"
+<<<<<<< HEAD
 keyword: "Thistledown My-Thistledown Blog 个人博客"
 url: "https://my-thistledown.com"              # your host, for absolute URL
+=======
+keyword: "Thistledown My-Thistledown Blog"
+url: "https://www.my-thistledown.com"              # your host, for absolute URL
+>>>>>>> parent of 6338822... 使用顶级域名访问
 baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
 
 
