@@ -339,7 +339,7 @@ def featureNormalize(X):
 
 def normalEqn(X, y):
     '''
-    Conputes the closed-form solution to linear regression
+    Computes the closed-form solution to linear regression
     :param X: input variables
     :param y: output variables
     :return: parameters
