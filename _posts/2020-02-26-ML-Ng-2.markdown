@@ -13,7 +13,7 @@ tags:
     - Python
 ---
 
-> 课程地址：[机器学习 \| Coursera](https://www.coursera.org/learn/machine-learning/)，本篇笔记为 *Week 2* 中的内容
+> 课程地址：[机器学习 \| Coursera](https://www.coursera.org/learn/machine-learning/)，本篇笔记为 *Week 2 - Linear Regression with Multiple Variables* 中的内容
 
 ## 5. Multivariate Linear Regression
 
