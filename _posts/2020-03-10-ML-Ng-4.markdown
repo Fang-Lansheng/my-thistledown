@@ -13,7 +13,9 @@ tags:
     - Python
 ---
 
-> 课程地址：[机器学习 \| Coursera](https://www.coursera.org/learn/machine-learning/)，本篇笔记为 *Week 4 - Neural Networks: Representation* 中的内容
+> Course Link ：[Week 4 - Neural Networks: Representation](https://www.coursera.org/learn/machine-learning/home/week/4)
+> 
+> Code : [Fang-Lansheng/Coursera-MachineLearning-Python](https://github.com/Fang-Lansheng/Coursera-MachineLearning-Python)
 
 ## 11 Motivations
 
@@ -116,29 +118,28 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
         $$
         \begin{align}a_1^{(2)} = g(z_1^{(2)}) \newline a_2^{(2)} = g(z_2^{(2)}) \newline a_3^{(2)} = g(z_3^{(2)}) \newline \end{align}
         $$
-        
+    
 - In other words, for layer $j=2$ and node $k$, the variable $z$ will be:
-     
+  
      $$
         z_k^{(2)}=\Theta_{k,0}^{(1)}x_0 + \Theta_{k,1}^{(1)}x_1+\cdots+\Theta_{k,n}^{(1)}x_n
      $$
-      
+     
     - The vector represation of $x$ and $z^{(j)}$ is:
       
-        
+      
         $$
         \begin{align*}x = \begin{bmatrix}x_0 \newline x_1 \newline\cdots \newline x_n\end{bmatrix} &\qquad z^{(j)} = \begin{bmatrix}z_1^{(j)} \newline z_2^{(j)} \newline\cdots \newline z_n^{(j)}\end{bmatrix}\end{align*}
     $$
     
-  
-      
-  
-    - Setting $x=a^{(1)}$, we can rewrite the equation as: $z^{(j)}=\Theta^{(j-1)}a^{(j-1)}$
-
-    - We are multiplying our matrix $\Theta^{(j-1)}$ with dimensions $s_j \times (n+1)$ (where $s_j$ is the number of our activation nodes) by our vector $a^{(j-1)}$ with height $(n+1)$. This gives us our vector $z^{(j)}$ with height $s_j$. 
-
-    - Now we can get a vector of our activation nodes for layer $j$ as follows: $a^{(j)} = g(z^{(j)})$. Where our function $g$ can be applied element-wise to our vector $z^{(j)}$.
     
+    
+  - Setting $x=a^{(1)}$, we can rewrite the equation as: $z^{(j)}=\Theta^{(j-1)}a^{(j-1)}$
+  
+- We are multiplying our matrix $\Theta^{(j-1)}$ with dimensions $s_j \times (n+1)$ (where $s_j$ is the number of our activation nodes) by our vector $a^{(j-1)}$ with height $(n+1)$. This gives us our vector $z^{(j)}$ with height $s_j$. 
+  
+- Now we can get a vector of our activation nodes for layer $j$ as follows: $a^{(j)} = g(z^{(j)})$. Where our function $g$ can be applied element-wise to our vector $z^{(j)}$.
+  
     - We can then add a bias unit (equal to 1) to layer $j$ after we have computed $a^{(j)}$. This will be element $a_0^{(j)}$ and will be equal to 1.
     
     - To compute our final hypothesis, let's first compute another $z$ vector:
@@ -146,7 +147,7 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
     $$
         z^{(j+1)} = \Theta^{(j)}a^{(j)}
     $$
-        
+    
     
     - We get this final $z$ vector by multiplying the next theta matrix after $\Theta^{(j-1)}$ with the values of all the activation nodes we just got.
     
@@ -155,7 +156,7 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
     $$
         h_\Theta(x) = a^{(j+1)}=g\left(z^{(j+1)}\right)
     $$
-        
+    
     
     - Notice that in this **last step**, between layer $j$ and layer $j+1$, we are doing **exactly the same thing** as we did in logistic regression. Adding all these intermediate layers in neural networks allows us to more elegantly produce interesting and more complex non-linear hypothesis.
     
@@ -194,9 +195,9 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
         $$
         \begin{align*}& h_\Theta(x) = g(-30 + 20x_1 + 20x_2) \newline \newline & x_1 = 0 \ \ and \ \ x_2 = 0 \ \ then \ \ g(-30) \approx 0 \newline & x_1 = 0 \ \ and \ \ x_2 = 1 \ \ then \ \ g(-10) \approx 0 \newline & x_1 = 1 \ \ and \ \ x_2 = 0 \ \ then \ \ g(-10) \approx 0 \newline & x_1 = 1 \ \ and \ \ x_2 = 1 \ \ then \ \ g(10) \approx 1\end{align*}
         $$
-        
-- So we have constructed one of the fundamental operations in computers by using a small neural network rather than using an actual AND gate. 
     
+- So we have constructed one of the fundamental operations in computers by using a small neural network rather than using an actual AND gate. 
+  
 - Neural networks can also be used to simulate all the other logical gates. The following is an example of the logical operator 'OR', meaning either $x_1$ is true or $x_2$ is ture, or both.
     ![image.png](https://i.loli.net/2020/03/12/qkBlXSIavJ5gNp1.png)
     Where $g(z)$ is the following:![image.png](https://i.loli.net/2020/03/12/RmhQjE8L7xdtb4I.png)
@@ -212,23 +213,23 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
 
     - The $\Theta^{(1)}$ matrices for AND, NOR, and OR are:
       
-        
+      
         $$
         \begin{align*}\text{AND}:\newline\Theta^{(1)} &=\begin{bmatrix}-30 & 20 & 20\end{bmatrix} \newline \text{NOR}:\newline\Theta^{(1)} &= \begin{bmatrix}10 & -20 & -20\end{bmatrix} \newline \text{OR}:\newline\Theta^{(1)} &= \begin{bmatrix}-10 & 20 & 20\end{bmatrix} \newline\end{align*}
         $$
 
       
-      
+    
     - We can combine these to get the XNOR logical operator (which gives 1 if $x_1$ and $x_2$ are both 0 or both 1).
       
-        
+      
         $$
         \begin{align*}\begin{bmatrix}x_0 \newline x_1 \newline x_2\end{bmatrix} \rightarrow\begin{bmatrix}a_1^{(2)} \newline a_2^{(2)} \end{bmatrix} \rightarrow\begin{bmatrix}a^{(3)}\end{bmatrix} \rightarrow h_\Theta(x)\end{align*}
         $$
 
       
-      
-      
+    
+    
     - For the transition between the first and second layer, we'll use a $\Theta^{(1)}$ matrix that combines the values for AND and NOR:
       
         $$
@@ -236,7 +237,7 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
         $$
         
 
-      
+    
     - For the transition between the second and third layer, we'll use a $\Theta^{(2)}$ matrix that uses the value for OR:
       
         $$
@@ -272,22 +273,22 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
         $$
         y^{(i)} = \begin{bmatrix} 1 \\ 0 \\ 0 \\ 0 \end{bmatrix}, \begin{bmatrix} 0 \\ 1 \\ 0 \\ 0 \end{bmatrix}, \begin{bmatrix} 0 \\ 0 \\ 1 \\ 0 \end{bmatrix}, \begin{bmatrix} 0 \\ 0 \\ 0 \\ 1 \end{bmatrix}
         $$
-        
-- Each $y^{(i)}$ represents a different image corresponding to either a car, pedestrian, truck, or motorcycle. The inner layers, each provides us with some new information which leads to our final hypothesis function.
     
+- Each $y^{(i)}$ represents a different image corresponding to either a car, pedestrian, truck, or motorcycle. The inner layers, each provides us with some new information which leads to our final hypothesis function.
+  
 - The setup looks like:
       
-    
+  
     $$
         \begin{bmatrix} x_0 \\ x_1 \\ x_2 \\ \cdots \\ x_n \end{bmatrix} \rightarrow
         \begin{bmatrix} a_0^{(2)} \\ a_1^{(2)} \\ a_2^{(2)} \\ \cdots  \end{bmatrix} \rightarrow
         \begin{bmatrix} a_0^{(3)} \\ a_1^{(3)} \\ a_2^{(3)} \\ \cdots\end{bmatrix} \rightarrow
         \cdots \rightarrow
         \begin{bmatrix}  h_\Theta(x)_1 \\ h_\Theta(x)_2 \\ h_\Theta(x)_3 \\ h_\Theta(x)_4 \end{bmatrix}
-        $$
-        
+    $$
+    
     - Our resulting hypothesis for one set of inputs may look like:
-  
+    
         $$
         h_\Theta(x) =\begin{bmatrix}0 \newline 0 \newline 1 \newline 0 \newline\end{bmatrix}
         $$
@@ -314,26 +315,21 @@ import scipy.optimize as opt
 
 ''' Part 0: Functions and Parameters '''
 # Load training data
-def loadData(path, transpose=True):
+def loadData(path):
     data = scio.loadmat(path)
     X, y = data['X'], data['y']
-    # y = y.reshpae(y.shape[0])
     m = len(y)
-    if transpose:
-        # for this dataset, you need a transpose to get the orientation right
-        X = np.array([x.reshape([20, 20]).T for x in X])
-        # and I flat the image again to preserve the vector presentation
-        X = np.array([x.reshape(400) for x in X])
     return X, y, m
 
 # Randomly select several data points to display
-def randomDisplay(data, num=100, cmap='binary'):
+def randomDisplay(data, num=100, cmap='binary', transpose=True):
     sample = data[np.random.choice(len(data), num)]
     size, size1 = int(np.sqrt(num)), int(np.sqrt(sample[0].shape[0]))
     fig0, ax0 = plt.subplots(nrows=size, ncols=size, sharex=True, sharey=True, figsize=(8, 8))
+    order = 'F' if transpose else 'C'
     for i in range(size):
         for j in range(size):
-            ax0[i, j].imshow(sample[size * i + j].reshape([size1, size1]), cmap=cmap)
+            ax0[i, j].imshow(sample[size * i + j].reshape([size1, size1], order=order), cmap=cmap)
             plt.xticks(np.array([]))
             plt.yticks(np.array([]))
     plt.subplots_adjust(wspace=0, hspace=0)
@@ -453,20 +449,14 @@ import scipy.io as scio
 
 ''' Part 0: Functions and Parameters '''
 # Load training data
-def loadData(path, transpose=True):
+def loadData(path):
     data = scio.loadmat(path)
     X, y = data['X'], data['y']
-    # y = y.reshpae(y.shape[0])
     m = len(y)
-    if transpose:
-        # for this dataset, you need a transpose to get the orientation right
-        X = np.array([x.reshape([20, 20]).T for x in X])
-        # and I flat the image again to preserve the vector presentation
-        X = np.array([x.reshape(400) for x in X])
     return X, y, m
 
 # Randomly select several data points to display
-def randomDisplay(data, num=100, cmap='binary', transpose=False):
+def randomDisplay(data, num=100, cmap='binary', transpose=True):
     sample = data[np.random.choice(len(data), num)]
     size, size1 = int(np.sqrt(num)), int(np.sqrt(sample[0].shape[0]))
     fig0, ax0 = plt.subplots(nrows=size, ncols=size, sharex=True, sharey=True, figsize=(8, 8))
@@ -487,8 +477,7 @@ def sigmoid(z):
 def predict(theta1, theta2, X):
     a1 = np.c_[np.ones([X.shape[0], 1]), X]
     z2 = np.dot(a1, theta1.T)
-    z2 = np.c_[np.ones([z2.shape[0], 1]), z2]
-    a2 = sigmoid(z2)
+    a2 = np.c_[np.ones([z2.shape[0], 1]), sigmoid(z2)]
     z3 = np.dot(a2, theta2.T)
     a3 = sigmoid(z3)
     pred = np.argmax(a3, axis=1)
@@ -502,11 +491,11 @@ num_labels = 10         # 10 labels, form 1 to 10 (note that we have mapped '0' 
 ''' Part 1: Loading and Visualizing Data '''
 print('Loading and Visualizing Data ... ')
 # Load Training Data
-X, y, m = loadData('ex3data1.mat', transpose=False)
+X, y, m = loadData('ex3data1.mat')
 
 # Randomly select 100 data points to display
-# randomDisplay(X, 100, transpose=True)
-# plt.show()
+randomDisplay(X, 100, transpose=True)
+plt.show()
 
 ''' Part 2: Loading Parameters '''
 weights = scio.loadmat('ex3weights.mat')

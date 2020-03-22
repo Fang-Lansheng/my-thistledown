@@ -13,7 +13,9 @@ tags:
     - Python
 ---
 
-> 课程地址：[机器学习 \| Coursera](https://www.coursera.org/learn/machine-learning/)，本篇笔记为 *Week 2 - Linear Regression with Multiple Variables* 中的内容
+> Course Link ：[Week 2 - Linear Regression with Multiple Variables](https://www.coursera.org/learn/machine-learning/home/week/2)
+> 
+> Code : [Fang-Lansheng/Coursera-MachineLearning-Python](https://github.com/Fang-Lansheng/Coursera-MachineLearning-Python)
 
 ## 5. Multivariate Linear Regression
 
