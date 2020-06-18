@@ -45,7 +45,7 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
     
     - In this model our $x_0$ input node is sometimes called the "bias unit", it is always equal to 1.
     
-    - In neural networks, we use the same logistic functino as in classification, $\frac{1}{1+e^{-\theta^Tx}}$, yet we sometimes call it a sigmoid (logistic) **activation** function.
+    - In neural networks, we use the same logistic function as in classification, $\frac{1}{1+e^{-\theta^Tx}}$, yet we sometimes call it a sigmoid (logistic) **activation** function.
     
     - In this situation, our "$\theta$" parametrs are sometimes called "weights".
     
@@ -298,6 +298,8 @@ Neural Networks is a much better way to learn complex non-linear hypotheses even
 
 
 ## Ex3: Multi-class Classification and Neural Networks👨‍💻
+
+> See this exercise on [Coursera-MachineLearning-Python/ex3/ex3.ipynb](https://github.com/Fang-Lansheng/Coursera-MachineLearning-Python/blob/master/ex3/ex3.ipynb)
 
 #### Ex3.1 Multi-class Classification
 

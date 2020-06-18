@@ -69,8 +69,8 @@ $$\begin{align}
 
 #### 5.4 Gradient Descent in Practice II - Learning Rate
 
-- **Debugging gradient descent.** Make a plot with *number of iterations* on the x-axis. Now plot the cost function, $J(\theta)$ over the number of iterations of gradient descent. if $J(\theta)$ ever increases, then you probably need to decrease $\alpha$.
-- **Automatic convergence test.** Declare convergence if $j(\theta)$ decreases by less than $E$ in one iteration, where $E$ is some small value such as $10^{-3}$. However in practice it's difficult to choose this threshold value.
+- **Debugging gradient descent.** Make a plot with *number of iterations* on the x-axis. Now plot the cost function, $J(\theta)$, over the number of iterations of gradient descent. if $J(\theta)$ ever increases, then you probably need to decrease $\alpha$.
+- **Automatic convergence test.** Declare convergence if $J(\theta)$ decreases by less than $E$ in one iteration, where $E$ is some small value such as $10^{-3}$. However in practice it's difficult to choose this threshold value.
 - **Make sure gradient descent is working correctly.**
     - For sufficient small $\alpha$, $J(\theta)$ should decrease on every iteration.
     - If $\alpha$ is too large: may not decrease on every iteration and thus may not converge.
@@ -110,10 +110,12 @@ $$\begin{align}
 
 - Normal equation: $\theta=(X^TX)^{-1}X^Ty$. But what if $X^TX$ is non-invertible (singular/degenerate)?
 - If $X^TX$ is *noninvertible*, the common causes might be having:
-    - Redundant features, where tow features are very closely related (i.e. they are linearly dependent).
+    - Redundant features, where two features are very closely related (i.e. they are linearly dependent).
     - Too many features (e.g. $m \leq n$). In this case, delete some features, or use regularization.
 
 ## Ex1: Linear Regression👨‍💻
+
+> See this exercise on [Coursera-MachineLearning-Python/ex1/ex1.ipynb](https://github.com/Fang-Lansheng/Coursera-MachineLearning-Python/blob/master/ex1/ex1.ipynb)
 
 #### Ex1.1 Linear regression with one variable
 

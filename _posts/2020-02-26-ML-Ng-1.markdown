@@ -115,7 +115,7 @@ tags:
 
 - <u>Cost function</u> (also called the <u>Squared error function</u> or <u>Mean squared error</u>, often used for regression problems):
 
-    $$J(\theta_0, \theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(\hat{y}_i-y_i) = \frac{1}{2m}\sum_{i=1}^m[h_\theta(x^{(i)})-y^{(i)}]^2$$
+    $$J(\theta_0, \theta_1) = \frac{1}{2m}\sum_{i=1}^{m}(\hat{y}_i-y_i)^2 = \frac{1}{2m}\sum_{i=1}^m[h_\theta(x^{(i)})-y^{(i)}]^2$$
 
 - $h_\theta(x^{(i)}) = \theta_0+\theta_1 x^{(i)} = \hat{y}_i$
 - Goal: to minimize the value of this function
@@ -236,7 +236,7 @@ The intuition behind the convergence is that $\frac{d}{ d\theta_1}J(\theta_1)$ a
 
 > The following section refers to [Gradient Descent For Linear Regression - Reading material](https://www.coursera.org/learn/machine-learning/supplement/U90DX/gradient-descent-for-linear-regression)
 
-We specifically applied to the case of linear regression, anew form of the gradient descent equation can be derived. We can substitute our actual cost function and our actual hypothesis function and modify the equation to:
+We specifically applied to the case of linear regression, a new form of the gradient descent equation can be derived. We can substitute our actual cost function and our actual hypothesis function and modify the equation to:
 
 
 $$

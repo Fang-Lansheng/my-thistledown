@@ -49,21 +49,21 @@ tags:
     $$
     
     
-    - We have adden a few nested summations to account for our multiple output nodes.
+    - We have added a few nested summations to account for our multiple output nodes.
         - In the first part of the equation, before the square brackets, we have an additional nested summations that loops through the number of output nodes.
         - In the regularization part, after the square brackets, we must account for multiple matrices. The number of columns in our current theta matrix is equal to the number of nodes in our current layer (including the bias unit). The number of rows in our current theta matrix is equal to the number of nodes in the next layer (excluding the bias unit). As before with logistic regression, we square every term.
     
 - Note:
   
     - The double sum simply adds up the logistic regression costs calculated for each cell in the output layer
-        - The triple sum simply adds up the squares of all the individual $\Theta$(s) in the entire network
-        - The $i$ in the triple sum does **not** refer to training example $i$
+    - The triple sum simply adds up the squares of all the individual $\Theta$(s) in the entire network
+    - The $i$ in the triple sum does **not** refer to training example $i$
 
 
 
 #### 14.2 Backpropagation Algorithm
 
-- <u>Backpropatation</u> is a neural-network terminology for minimizing our cost function, just loke what we were doing with gradient descent in logistic and linear regression.
+- <u>Backpropagation</u> is a neural-network terminology for minimizing our cost function, just like what we were doing with gradient descent in logistic and linear regression.
 
 - Our goal is to compute $\mathop{\text{min}}_\limits{\Theta}J(\Theta)$
 
@@ -138,7 +138,7 @@ tags:
     \end{align}
     $$
     
-- If we consider simple non-multiclass classification ($k=1$) and disregrad regularization, the cost is computed with:
+- If we consider simple non-multiclass classification ($k=1$) and disregard regularization, the cost is computed with:
   
     $$
     \text{cost}(i) =y^{(i)}\log\left(h_\Theta(x^{(i)})\right) +\left( 1- y^{(i)} \right)\log\left(1 - h_\Theta(x^{(i)})\right)
@@ -235,6 +235,8 @@ tags:
 
 
 ## Ex4: Neural Networks Learning👨‍💻
+
+> See this exercise on [Coursera-MachineLearning-Python/ex4/ex4.ipynb](https://github.com/Fang-Lansheng/Coursera-MachineLearning-Python/blob/master/ex4/ex4.ipynb)
 
 #### Ex4.1&4.2 Neural Networks&Backpropagation
 
@@ -527,9 +529,9 @@ plt.show()
 - Console
     ![image.png](https://i.loli.net/2020/03/22/5kTym3FtB9hNHKx.png)
 - Randomly select 100 data points to display
-    ![Figure_1.png](https://i.loli.net/2020/03/22/TPfSY1IXHJGWqNL.png)
+    ![image.png](https://i.loli.net/2020/03/27/5IGsJNHq7b1E2Al.png)
 - Visualization of hidden units
-    ![Figure_2.png](https://i.loli.net/2020/03/22/kPufBb16UHv9wm3.png)
+    ![image.png](https://i.loli.net/2020/03/27/kyWvNYflhoZIGbA.png)
 
 
 

@@ -244,6 +244,8 @@ $$
 
 ## Ex2: Logistic Regression👨‍💻
 
+> See this exercise on [Coursera-MachineLearning-Python/ex2/ex2.ipynb](https://github.com/Fang-Lansheng/Coursera-MachineLearning-Python/blob/master/ex2/ex2.ipynb)
+
 #### Ex2.1 Logistic Regression
 
 **Instruction:**
