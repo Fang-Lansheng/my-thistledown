@@ -30,12 +30,12 @@ tags:
         J(\theta) = \frac{1}{2m}\left[\sum_{i=1}^m(h_\theta(x^{(i)}) - y^{(i)})^2 + \lambda\sum_{j=1}^n\theta_j^2 \right]
         $$
     
-- However, when you test your hypothesis on a new set of houses, you find that it makes unacceptably large errors in its predictions. What shoud you try next?
+- However, when you test your hypothesis on a new set of houses, you find that it makes unacceptably large errors in its predictions. What should you try next?
   
     - Get more training examples
         - Try smaller sets of features
         - Try getting additional features
-        - Try adding polynominal features $(x_1^2,\ x_2^2,\ x_1x_2,\ \text{etc.})$
+        - Try adding polynomial features $(x_1^2,\ x_2^2,\ x_1x_2,\ \text{etc.})$
         - Try decreasing/increasing $\lambda$
     
 - **Machine learning diagnostic:**
@@ -195,7 +195,7 @@ In the figure above (The regularization term should be $\frac{\lambda}{2m} \sum_
 #### 17.4 Deciding What to Do Next (Revisited)
 
 - Our decision process can be broken down as follows:
-    - **Getting more training exampls:** Fixes high variance
+    - **Getting more training examples:** Fixes high variance
     - **Trying smaller sets of features:** Fixes high variance
     - **Adding features:** Fixes high bias
     - **Adding polynomial features:** Fixes high bias
@@ -212,6 +212,77 @@ In the figure above (The regularization term should be $\frac{\lambda}{2m} \sum_
     - In reality, we would want to choose a model somewhere in between, that can generalize well but also fits the data reasonably well.
 
 
+
+## 18 Building a Spam Classifier
+
+#### 18.1 Prioritizing What to Work On
+
+- Supervised learning.
+    - $x = \text{features of email}$. Choose 100 words indicative of spam/not spam
+        - Note: In practice, take most frequently occurring $n$ words (10,000 to 50,000) in training set, rather that manually pick 100 words.
+    - $y =1 \text{ (spam), or }  0 \text{ (not spam)} $
+- Building a spam classifier: How to spend your time to make it have low error?
+    - Collect lots of data (for example "honeypot" project but doesn't always work).
+    - Develop sophisticated features based on email routing information (from email header)
+    - Develop sophisticated features for message body, e.g. should "discount" and "discounts" be treated as the same word? How about "deal" and "Dealer"? Features about punctuation?
+    - Develop sophisticated algorithm to detect misspellings (e.g. m0rtage, med1cine, w4tches).
+
+#### 18.2 Error Analysis
+
+- Recommended approach
+    - Start with a simple algorithm that you can implement quickly. Implement it and test it on your cross-validation data.
+    - Plot learning curves to decide if more data, more features, etc. are likely to help.
+    - Error analysis: Manually examine the examples (in cross validation set) that your algorithm made errors on. See if you spot any systematic trend in what type of examples it is making errors on.
+- Error analysis
+- The importance of numerical evaluation
+
+## 19 Handling Skewed Data
+
+#### 19.1 Error Metrics for Skewed Classes
+
+- Cancer classification example
+
+    - Train logistic regression model $h_{\theta}(x)$. $y = 1 \text{ (if cancer)}$, $y=0 \text{ (otherwise)}$ 
+    - Find that you got 1% error on test set (99% correct diagnose) 
+
+- Precision/Recall
+
+    - $y = 1$ in presence of rare class that we want to detect
+
+    - Precision: of all where we predicted $y = 1$, what fraction actually has cancer?
+        $$
+        \text{Precision} = \frac{\text{True positives}}{\text{# predicted as positive}} = \frac{\text{True positives}}{\text{True positives + False positives}}
+        $$
+        
+- Recall: of all patients that actually have cancer, what fraction did we correctly detect as having cancer?
+        $$
+        \text{Recall} = \frac{\text{True positives}}{\text{# actual positives}} = \frac{\text{True positives}}{\text{True positives + False negatives}}
+        $$
+        
+    
+![image-20200619195610476](https://i.loli.net/2020/06/19/9Y471qHgSswiaGx.png)
+
+#### 19.2 Trading off Precision and Recall
+
+![image-20200619200242879](https://i.loli.net/2020/06/19/497dF2QlLaGXJfq.png)
+
+![image-20200619201147354](https://i.loli.net/2020/06/19/OjD8BQX4T75ySMc.png)
+
+## 20 Using Large Data Sets
+
+#### 20.1 Data For Machine Learning
+
+- Designing a high accuracy learning system
+    - E.g. Classify between confusable words {to, two, too}, {then than}.
+    - Algorithms:
+        - Perceptron (logistic regression)
+        - Winnow
+        - Memory-based
+        - Naïve Bayes
+- Large data rationale
+    - Assume feature $x \in \Bbb{R}^{n + 1}$ has sufficient information to predict $y$ accurately.
+    - Use a learning algorithm with many parameters (e.g. logistic regression/linear regression with many features; neural network with many hidden units) → low bias.
+    - Use a very large training set (unlikely to overfit) - low variance.
 
 ## Ex5: Regularized Linear Regression and Bias v.s. Variance👨‍💻
 
