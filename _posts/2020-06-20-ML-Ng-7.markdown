@@ -85,7 +85,7 @@ tags:
 
 - SVM notation is slightly different
 
-#### 22.2 Large Margin Intuition
+#### 21.2 Large Margin Intuition
 
 ![image-20200620162012334](https://i.loli.net/2020/06/20/qQV6yBDhGdZKMAc.png)
 
@@ -138,7 +138,7 @@ tags:
     - Then SVM still does the right thing if you use a normal size $C$
     - So the idea of SVM being a large margin classifier is only really relevant when you have no outliers and you can easily linearly separable data
 
-#### 22.3 Mathematics Behind Large Margin Classification
+#### 21.3 Mathematics Behind Large Margin Classification
 
 - Vector inner products
 
@@ -169,9 +169,9 @@ tags:
 
 
 
-## 23 Kernels
+## 22 Kernels
 
-#### 23.1 Kernels I
+#### 22.1 Kernels I
 
 - What are kernels and how do we use them
 
@@ -237,7 +237,7 @@ tags:
 
 ![image-20200621113650163](https://i.loli.net/2020/06/21/apWO9MfmwuFhKBE.png)
 
-#### 23.1 Kernels II
+#### 22.2 Kernels II
 
 ![image-20200621113954246](https://i.loli.net/2020/06/21/7JKQeSE3paAUuzi.png)
 
@@ -329,9 +329,9 @@ tags:
     - Large $\sigma^2$ → $f$ features vary more smoothly → higher bias, low variance
     - Small $\sigma^2$ → $f$ features vary more abruptly → lower bias, higher variance
 
-## 24 SVMs in Practice
+## 23 SVMs in Practice
 
-#### 24.1 Using An SVM
+#### 23.1 Using An SVM
 
 - Choosing a kernel
     - We've looked at the <u>Gaussian kernel</u>
