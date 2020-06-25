@@ -13,7 +13,7 @@ tags:
     - Python
 ---
 
-> Course Link ：[Week8 - Anomaly Detection & Recommender Systems](https://www.coursera.org/learn/machine-learning/home/week/9)
+> Course Link ：[Week9 - Anomaly Detection & Recommender Systems](https://www.coursera.org/learn/machine-learning/home/week/9)
 > 
 > Code : [Fang-Lansheng/Coursera-MachineLearning-Python](https://github.com/Fang-Lansheng/Coursera-MachineLearning-Python)
 
@@ -87,7 +87,7 @@ tags:
     - $x_1 \sim N(\mu_1, \sigma_1^2), \dots, x_n \sim N(\mu_n, \sigma_n^2)$
 
     - So
-        
+      
         $$
         p(x) = p(x_1;\mu_1, \sigma_1^2)\cdots p(x_n; \mu_n, \sigma^2_n) = \prod_{j=1}^n p(x_j; \mu_j, \sigma_j^2)
         $$
@@ -103,7 +103,7 @@ tags:
         - $$ \sigma^{2}_{j} = \frac{1}{m} \sum_{i=1}^m \left( x^{(i)}_j-\mu_j \right)^2$$
 
     - Given new example $x$, compute $p(x)$:
-        
+      
         $$
         p(x) = \prod_{j=1}^n p(x_j;\mu_j, \sigma_j^2) = \prod_{j=1}^n \frac{1}{\sqrt{2\pi}\sigma_j}\exp \left( -\frac{(x_j-\mu_j)^2}{2\sigma_j^2} \right)
         $$
@@ -132,22 +132,21 @@ tags:
     - Fit model $p(x)$ on training set $\lbrace x^{(1)}, \dots, x^{(m)} \rbrace$
 
     - On a cross validation/test example $x$, predict 
-        
+      
         $$
         y = \begin{cases}
         1 & \text{if $p(x) < \varepsilon$ (anomaly)} \\
         0 & \text{if $p(x) \ge \varepsilon$ (normal)} 
         \end{cases}
         $$
-        
-
-    - Possible evaluation metrics:
-
-        - True positive, false positive, false negative, true negative
+    
+- Possible evaluation metrics:
+  
+    - True positive, false positive, false negative, true negative
         - Precision/Recall
         - $F_1$-score
-
-    - Can also use cross validation set to choose parameter $\varepsilon$
+    
+- Can also use cross validation set to choose parameter $\varepsilon$
 
 #### 29.2 Anomaly Detection vs. Supervised Learning
 
@@ -193,7 +192,7 @@ tags:
     - Parameters: $\mu \in \Bbb{R}^n$, $\Sigma \in \Bbb{R}^{n \times n}$ (covariance matrix)
 
     - Formula:
-        
+      
         $$
         p(x ; \mu, \Sigma)=\frac{1}{(2 \pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}} \exp \left(-\frac{1}{2}(x-\mu)^{T} \Sigma^{-1}(x-\mu)\right)
         $$
@@ -214,7 +213,7 @@ tags:
 - Multivariate Gaussian (Normal) distribution
 
     - Formula:
-        
+      
         $$
         p(x ; \mu, \Sigma)=\frac{1}{(2 \pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}} \exp \left(-\frac{1}{2}(x-\mu)^{T} \Sigma^{-1}(x-\mu)\right)
         $$
@@ -247,18 +246,17 @@ tags:
             $$
 
     - Given a new example $x$, compute
-        
+      
         $$
         p(x )=\frac{1}{(2 \pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}} \exp \left(-\frac{1}{2}(x-\mu)^{T} \Sigma^{-1}(x-\mu)\right)
         $$
-        
-
-    - Flag an anomaly of $p(x) < \varepsilon$
-
+    
+- Flag an anomaly of $p(x) < \varepsilon$
+  
 - Relationship to original model 
 
     - Original model:
-        
+      
 
         $$
         p(x) = p(x_1; \mu_1, \sigma_1^2) \times p(x_2; \mu_2, \sigma_2^2) \times \cdots 
@@ -268,7 +266,7 @@ tags:
         ![image-20200624111749404](https://i.loli.net/2020/06/24/urA1kx47Sym6aIZ.png)
 
     - Corresponds to multivariate Gaussian:
-        
+      
         $$
         p(x ; \mu, \Sigma)=\frac{1}{(2 \pi)^{\frac{n}{2}}|\Sigma|^{\frac{1}{2}}} \exp \left(-\frac{1}{2}(x-\mu)^{T} \Sigma^{-1}(x-\mu)\right)
         $$
@@ -359,22 +357,20 @@ tags:
 - Optimization objective
 
     - To learn $\theta^{(j)}$ (parameter for user $j$):
-        
+      
         $$
         \min_{\theta^{(j)}} \frac{1}{2} \sum_{i:r(i, j)=1}\left[\left( \theta^{(j)} \right)^T x^{(i)} - y^{(i, j)}  \right]^2 + \frac{\lambda}{2 } \sum_{k=1}^n \left( \theta_k^{(j)} \right)^2
         $$
-        
-
-    - To learn $\theta^{(1)}, \theta^{(2)}, \dots, \theta^{(n_u)}$
-        
-
-        $$
-        \min_{\theta^{(1)},  \dots, \theta^{(n_u)}} \frac{1}{2} \sum_{j=1}^{n_u} \sum_{i:r(i, j)=1}\left[\left( \theta^{(j)} \right)^T x^{(i)} - y^{(i, j)}  \right]^2 + \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^n \left( \theta_k^{(j)} \right)^2
-        $$
-        
-
-- Optimization algorithm
     
+- To learn $\theta^{(1)}, \theta^{(2)}, \dots, \theta^{(n_u)}$
+      
+  
+    $$
+        \min_{\theta^{(1)},  \dots, \theta^{(n_u)}} \frac{1}{2} \sum_{j=1}^{n_u} \sum_{i:r(i, j)=1}\left[\left( \theta^{(j)} \right)^T x^{(i)} - y^{(i, j)}  \right]^2 + \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^n \left( \theta_k^{(j)} \right)^2
+    $$
+    
+- Optimization algorithm
+  
 
     $$
     \min_{\theta^{(1)},  \dots, \theta^{(n_u)}} \frac{1}{2} \sum_{j=1}^{n_u} \sum_{i:r(i, j)=1}\left[\left( \theta^{(j)} \right)^T x^{(i)} - y^{(i, j)}  \right]^2 + \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^n \left( \theta_k^{(j)} \right)^2
@@ -442,7 +438,7 @@ tags:
     - Given $\theta^{(1)}, \dots, \theta^{(n_u)}$ (i.e. given the parameter vectors for each users' preferences), to learn $x^{(i)}$
 
     - We must minimize an optimization function which tries to identify the best parameter vector associated with a film
-        
+      
         $$
         \min_{x^{(i)}} \frac{1}{2} \sum_{j:r(i, j)=1)} \left(
         (\theta^{(j)})^Tx^{(i)} - y^{(i,j)}
@@ -482,30 +478,30 @@ tags:
 - Collaborative filtering optimization objective
 
     - If we're given the film's features we can use that to work out the users' preference: 
-        
+      
         $$
         \text{Given $x^{(1)}, \dots, x^{(n_m)} $, estimate $ \theta^{(1)}, \dots, \theta^{(n_u)} $ :} \\
         \min_{\theta^{(1)},  \dots, \theta^{(n_u)}} \frac{1}{2} \sum_{j=1}^{n_u} \sum_{i:r(i, j)=1}\left[\left( \theta^{(j)} \right)^T x^{(i)} - y^{(i, j)}  \right]^2 + \frac{\lambda}{2} \sum_{j=1}^{n_u} \sum_{k=1}^n \left( \theta_k^{(j)} \right)^2
         $$
-        
-
-    - If we're given the users' preferences we can use them to work out the film's features
-        
-        $$
-        \text{Given $ \theta^{(1)}, \dots, \theta^{(n_u)}  $, estimate $x^{(1)}, \dots, x^{(n_m)} $ :} \\
-        \min_{x^{(1)}, \dots, x^{(n_m)}} \frac{1}{2} \sum_{i=1}^{n_m} \sum_{j:r(i, j)=1}\left[\left( \theta^{(j)} \right)^T x^{(i)} - y^{(i, j)}  \right]^2 + \frac{\lambda}{2} \sum_{i=1}^{n_m} \sum_{k=1}^n \left(x_k^{(i)} \right)^2
-        $$
-        
+    
+- If we're given the users' preferences we can use them to work out the film's features
+  
+    $$
+    \text{Given $ \theta^{(1)}, \dots, \theta^{(n_u)}  $, estimate $x^{(1)}, \dots, x^{(n_m)} $ :} \\
+    \min_{x^{(1)}, \dots, x^{(n_m)}} \frac{1}{2} \sum_{i=1}^{n_m} \sum_{j:r(i, j)=1}\left[\left( \theta^{(j)} \right)^T x^{(i)} - y^{(i, j)}  \right]^2 + \frac{\lambda}{2} \sum_{i=1}^{n_m} \sum_{k=1}^n \left(x_k^{(i)} \right)^2
+    $$
+    
+    
 
     - One thing you could do is
-
+    
         - Randomly initialize parameter
-        - Go back and forward
-
+    - Go back and forward
+    
 - But there's a more efficient algorithm which can solve $\theta$ and $x$ simultaneously
 
     - Define a new optimization objective which is a function of $x$ and $\theta$ 
-        
+      
 
     $$
     \text{Minimizing $ x^{(1)}, \dots, x^{(n_m)}$ and $\theta^{(1)}, \dots, \theta^{(n_u)} $ simultaneously :} \\
@@ -519,7 +515,7 @@ tags:
     
 
     - Goal:
-        
+      
 
         $$
         \min_{\mathop{x^{(1)}, \dots, x^{(n_m)}\\\theta^{(1)}, \dots, \theta^{(n_u)}} }J(x^{(1)}, \dots, x^{(n_m)},\theta^{(1)}, \dots, \theta^{(n_u)})
@@ -578,7 +574,7 @@ tags:
         \left(
         \sum_{i:r(i,j)=1} \left( (\theta^{(j)})^Tx^{(i)} - y^{(i,j)} \right) x_k^{(i)} + \lambda \theta^{(j)}_k \right)
         $$
-        
+
 
     - 3) Having minimized the values, given a user (user $j$) with parameters $\theta$ and movie (movie $i$) with learned features $x$, we predict a star rating of $\theta^Tx$ 
 
