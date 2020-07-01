@@ -1,0 +1,884 @@
+---
+layout:     post
+title:      "机器学习基石-数学篇：When Can Machines Learn?"
+subtitle:   "Coursera | Machine Learning Foundations - Mathematical Foundations | Hsuan-Tien Lin"
+date:       2020-06-30
+author:     "Thistledown"
+header-img: "img/posts/post-bg-Coursera-ML-Ng.png"
+catalog: true
+mathjax: true
+tags:
+    - ML/DL
+    - Course Learning
+    - Python
+---
+
+> Course Link ：
+>
+> - [Week 1 - The Learning Problem](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/1) 
+> - [Week 2 - Learning to Answer Yes/No](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/2) 
+
+## 1 The Learning Problem
+
+<img src="https://i.loli.net/2020/06/30/icm3oUY1EZr5exC.png" alt="image-20200630142813602" style="zoom:67%;" />
+
+#### 1.1 Course Introduction
+
+- Machine Learning: a mixture of theoretical and practical tools
+
+    - theory oriented
+        - derive everything **deeply** for solid understanding
+        - less interesting to general audience
+    - technique**s** oriented
+        - flash over the sexiest techniques broadly for shiny converge
+        - too many techniques, hard to choose, hard to use properly
+    - **Our approach: **foundation oriented
+
+- Foundation Oriented ML Course
+
+    - mixture of philosophical illustrations, key theory, core techniques, usage in practice and hopefully jokes
+
+        ---- what every machine learning user should know
+
+    - story-like:
+
+        - *When* Can Machines Learn? (illustrative + technical)
+        - *Why* Can Machines Learn? (theoretical + illustrative)
+        - *How* Can Machines Learn? (technical + practical)
+        - How Can Machines Learn *Better*? (practical + theoretical)
+
+    - allows students to learn "future/untaught" techniques or study deeper theory easily
+
+#### 1.2 What is Machine Learning
+
+- From Learning to Machine Learning
+
+    - learning: acquiring <u>skill</u> with experience accumulated from <u>observations</u> 
+
+        ![N5FQYD.png](https://s1.ax1x.com/2020/06/30/N5FQYD.png)
+
+    - machine learning: acquiring <u>skill</u> with experience accumulated/**computed** from <u>data</u>
+
+        ![N5FG6A.png](https://s1.ax1x.com/2020/06/30/N5FG6A.png)
+
+    - what is **skill** ?
+
+        - improve some <u>performance measure</u> (e.g. prediction accuracy)
+
+- A more concrete definition:
+
+    - **machine learning**: improving some <u>performance measure</u> with experience <u>computed</u> from <u>data</u>
+
+        ![image-20200630130607936](https://i.loli.net/2020/06/30/KHtdfSMrYsb9Q3A.png)
+
+    - For example:
+
+        ![image-20200630130642653](https://i.loli.net/2020/06/30/GDa67sWJkLfZwK4.png)
+
+    - Yet another application: tree recognition
+
+        - "define" trees and hand-program: **difficult**
+        - learn from data (observations) and recognize: **a 3-year-old can do so**
+        - "ML-based tree recognition system" can be **easier to build** than hand-programmed system
+
+- The machine learning route
+
+    - ML: an **alternative route** to build complicated systems
+    - Some use scenarios:
+        - When human cannot program the system manually:
+            - navigating on Mars
+        - When human cannot "define the solution" easily:
+            - speech/visual recognition
+        - When needing rapid decisions that humans cannot do
+            - high-frequency trading
+        - When needing to be user-oriented in a massive scale
+            - consumer-targeted marketing
+    - ![image-20200630131250743](https://i.loli.net/2020/06/30/TmsWLaD9VE2KCQS.png)
+
+- Key essence of ML
+
+    ![image-20200630131408096](https://i.loli.net/2020/06/30/vN8o4lYFPtgWryu.png)
+
+    - exists <u>some "underlying pattern" to be learned</u>
+        - so "performance measure" can be improved
+    - but *no* programmable (easy) *definition*
+        - so "ML" is needed
+    - somehow there is **data** about the pattern
+        - so ML has some "inputs" to learn
+
+<details><summary>QUIZ</summary>
+<img src="https://i.loli.net/2020/06/30/k1ybUPlZ2MqwrVD.png"/></details>
+
+#### 1.3 Applications of Machine Learning
+
+- Daily needs: food, clothing, housing, transportation
+
+    ![N5FG6A.png](https://s1.ax1x.com/2020/06/30/N5FG6A.png)
+
+    - Food (Sadilek et al., 2013)
+        - <u>data</u>: twitter data (words + location)
+        - <u>skill</u>: tell food poisoning likeliness of restaurant properly
+    - Clothing (Abu-Mostafa, 2012)
+        - <u>data</u>: sales figures + client surveys
+        - <u>skill</u>: give good fashion recommendations to clients
+    - Housing: (Tsanas and Xifara, 2012)
+        - <u>data</u>: characteristics of buildings and their energy load
+        - <u>skill</u>: predicted energy load of other buildings closely
+    - Transportation: (Stallkamp et al., 2012)
+        - <u>data</u>: some traffic sign images and meanings
+        - <u>skill</u>: recognize traffic signs accurately
+
+- And more:
+
+    - Education
+
+        - <u>data</u>: students' records on quizzes on a Math tutoring system
+        - <u>skill</u>: predict whether a student can give a correct answer to another quiz question
+        - A possible ML solution: answer correctly $\approx$ [recent strength of students $>$ difficulty of question]
+            - give ML 9 million records from 3,000 students
+            - ML determines (**reverse-engineers**) strength and difficulty automatically
+
+    - Entertainment: recommender system
+
+        - <u>data</u>: how many users have rated some movies
+
+        - <u>skill</u>: predict how a user would rate an unrated movie
+
+        - A hot problem:
+
+            - competition held by Netflix in 2006
+                - 100,480,507 ratings that 480,189 users gave to 17,770 movies
+                - 10% improvement = 1 million dollar prize
+            - similar competition (movies → songs) held by Yahoo! in KDDCup 2011
+                - 252,800,275 ratings that 1,000,990 users gave to 624,961 songs
+
+        - A possible ML solution:
+
+            <img src="https://i.loli.net/2020/06/30/ohKigT4Dj1tL2Px.png" alt="image-20200630134147107" style="zoom:50%;" />
+
+            - pattern: rating ← viewer/movie factors
+            - learning: known rating
+                - learned factors
+                - unknown rating prediction
+
+<details><summary>QUIZ</summary>
+<img src="https://i.loli.net/2020/06/30/yl3jLtb867zGnBs.png"/></details>
+
+#### 1.4 Components of Machine Learning
+
+>  Metaphor using credit approval
+
+- Application information:
+
+    ![image-20200630134645252](https://i.loli.net/2020/06/30/ir8fnDzlg5YTdXm.png)
+
+- Unknown pattern to be learned: "approve credit card good for bank?"
+
+- Formalize the learning problem:
+
+    - basic notations:
+
+        ![image-20200630135818429](https://i.loli.net/2020/06/30/eowpIsXDMqaz98E.png)
+
+        - input: $\bf{x} \in \cal{X}$ (customer application)
+        - output: $y \in \cal{Y}$ (good/bad after approving credit card)
+        - unknown pattern to be learned $\Leftrightarrow$ target function: $f: \cal{X} \rightarrow \cal{Y}$ (ideal credit approval formula)
+        - <u>data</u> $\Leftrightarrow$ <u>training examples</u>: $\mathcal{D} = \left\lbrace (\mathbf{x}_1, y_1), \mathbf{x}_2, y_2), \dots, \mathbf{x}_N, y_N)  \right\rbrace$ (historical records in bank)
+        - <u>hypothesis</u> $\Leftrightarrow$ <u>skill</u> with hopefully good performance: $g: \mathcal{X} \rightarrow \mathcal{Y}$ ("learned" formula to be used)
+
+    - learning flow to credit approval
+
+        ![image-20200630135924863](https://i.loli.net/2020/06/30/mklR7TWJCFPIZNx.png)
+
+        - target $f$ unknown (i.e. no programmable definition)
+        - hypothesis $g$ hopefully $\approx f$, but possibly *different* from $f$ (perfection "impossible" when $f$ unknown)
+        - What does $g$ look like?
+
+- The learning model
+
+    ![image-20200630140305059](https://i.loli.net/2020/06/30/ighH7Q2wG8I3ytl.png)
+
+    - assume $g \in \mathcal{H} =\lbrace h_k \rbrace$, i.e. approving if
+        - $h_1$: annual salary > \$800,000
+        - $h_2$: debt > \$100,000 (really?)
+        - $h_3$: year in job $\le$ 2 (really?)
+    - hypothesis set $\cal H$:
+        - can contain good or bad hypothesis
+
+- Practical definition of machine learning
+
+    ![image-20200630140719723](https://i.loli.net/2020/06/30/O26eVRQjJ1qGsZA.png)
+
+    - use data to compute hypothesis $g$ that approximates target $f$
+
+<details><summary>QUIZ</summary>
+<img src="https://i.loli.net/2020/06/30/IHV54wZMhfQKenz.png"/></details>
+
+#### 1.5 Machine Learning and Other Fields
+
+- Machine Learning and Data Mining
+    - Definition
+        - **Machine learning** use data to compute hypothesis $g$ that approximates target $f$
+        - **Data mining** use (**huge**) data to **find property** that is *interesting*
+    - if "interesting property" **same as** "hypothesis that approximate target"
+        - **ML = DM**
+    - if "interesting property" **related to** "hypothesis that approximate target"
+        - **DM can help ML, and vice versa** (often, but not always)
+    - traditional DM also focuses on **efficient computation in large database**
+    - difficult to distinguish ML and DM in reality
+- Machine Learning and Artificial Intelligence
+    - Definition
+        - **Machine learning** use data to compute hypothesis $g$ that approximates target $f$
+        - **Artificial Intelligence** compute **something that shows intelligent behavior**
+    - $g \approx f$ is something that shows intelligent behavior
+        - **ML can realize AI**, among other routes
+        - e.g. chess playing
+            - traditional AI: game tree
+            - ML for AI: "learning from board data"
+    - ML is one possible route to realize AI
+- Machine Learning and Statistics
+    - Definition
+        - **Machine learning** use data to compute hypothesis $g$ that approximates target $f$
+        - **Statistics** use data to **make inference about an unknown process** 
+    - $g$ is an inference outcome; $f$ is something unknown
+        - Statistics **can be used to achieve ML**
+    - traditional statistics also focus on **provable results with math assumptions**, and care less about computation
+    - Statistics: many useful tools for ML
+
+<details><summary>QUIZ</summary>
+<img src="https://i.loli.net/2020/06/30/dvKZ3alkezUtWbf.png"/></details>
+---
+
+## 2 Learning to Answer Yes/No
+
+<img src="https://s1.ax1x.com/2020/07/01/NTeKPI.png" alt="NTeKPI.png" style="zoom:67%;" />
+
+#### 2.1 Perceptron Hypothesis Set
+
+- A simple hypothesis set: the "Perceptron"
+
+    - for $\mathbf{x} = (x_1, x_2, \dots, x_d)$ "**feature of customer**", compute a weighted "score" and:
+
+        ![image-20200630173814252](https://i.loli.net/2020/06/30/d8MwFRko4baUCVQ.png)
+
+        - approve credit if $\sum_{i=1}^d w_ix_i > \text{threshold}$
+        - deny credit if $\sum_{i=1}^d w_ix_i < \text{threshold}$ 
+
+    - $\mathcal{Y}:\lbrace +1(\text{good}), -1(\text{bad}) \rbrace$, (0 ignored) - linear formula $h \in \cal{H}$ are:
+      
+        $$
+        h(x) = \text{sign}\left( \sum_{i=1}^dw_ix_i - \text{threshold}\right)
+        $$
+        
+
+        - called **perceptron** hypothesis historically
+
+- Vector form of perceptron hypothesis
+
+    $$
+    \begin{aligned}
+    h(x) &= \text{sign}\left( \sum_{i=1}^dw_ix_i - \text{threshold}\right) \newline
+    &= \text{sign}\left( \sum_{i=1}^dw_ix_i + 
+     \underbrace{(-\text{threshold})}_{w_0} \cdot 
+     \underbrace{(+1)}_{x_0}
+    \right) \newline
+    &= \text{sign}\left( \sum_{i=0}^dw_ix_i\right) = \text{sign}(\mathbf{w}^T\mathbf{x})
+    \end{aligned}
+    $$
+
+    - each "tall" $\mathbb{w}$ represents a hypothesis $h$ & is multiplied with "tall" $\mathbf{x}$ -- will use tall version to simplify notation
+    - what do perceptron $h$ "look like"?
+
+- Perceptron in $\Bbb{R}^2$ 
+
+    ![image-20200630175254256](https://i.loli.net/2020/06/30/k3tVGvBS2Id5wXa.png)
+
+    - $h(\mathbf{x}) = \text{sign}(\mathbf{w}^T\mathbf{x}) = \text{sign}(w_0+w_1x_1+w_2x_2)$ 
+
+    - customer features $\mathbf{x}$: points on the plane (or points in $\Bbb{R}^d$)
+
+    - labels $y$: $\color{blue}{\circ (+1)}, \color{red}{\times (-1)}$ 
+
+    - hypothesis $h$: <u>lines</u> (or hypothesis in $\Bbb{R}^d$)
+
+        - <p><font style="color: blue;">positive</font> on one side of a line, <font style="color: red;">negative</font> on the other side</p>
+
+<details><summary>QUIZ</summary>
+<img src="https://i.loli.net/2020/06/30/qMs15RrEYyZTnev.png"/></details>
+
+#### 2.2 Perception Learning Algorithm (PLA)
+
+- Select $g$ from $\cal{H}$
+
+    - $\cal H$ = all possible perceptrons, $g = ?$
+
+    - want: $g \approx f$ (hard when $f$ unknown)
+
+    - almost necessary: $g \approx f$ on $\cal D$, ideally $g(\mathbf{x}_n) = f(\mathbf{x}_n)=y_n$ 
+
+    - difficult: $\cal H$ is of *infinite* size
+
+    - idea: start from some $g_0$, and **"correct" its mistakes** on $\cal D$ 
+
+        ![image-20200630204931689](https://i.loli.net/2020/06/30/dxYSj5UlZOcM2oz.png)
+
+    - will present $g_0$ by its weight vector $\mathbf{w}_0$ 
+
+- Perceptron Learning Algorithm
+
+    - start from some $\mathbf{w}_0$ (say, $\mathbf{0}$), and "correct" its mistakes on $\cal D$ 
+
+    - For $t = 0, 1, \dots$
+
+        - find a mistake of $\mathbf{w}_t$ called $(x_{n(t)}, y_{n(t)})$, $\text{sign}\left( \mathbf{w}_t^T\mathbf{x}_{n(t)} \right) \ne y_{n(t)}$ 
+
+        - (try to) correct the mistake by $\mathbf{w}_{t+1} \leftarrow \mathbf{w}_t + y_{n(t)}x_{n(t)}$ 
+
+            <img src="https://s1.ax1x.com/2020/06/30/NI2zOP.png" alt="NI2zOP.png" style="zoom:50%;" />
+
+        - ... until no more mistakes
+
+        - return last $\mathbf{w}$ called $\mathbf{w}_{PLA}$ as $g$ 
+
+    - Cyclic PLA
+
+        <img src="https://i.loli.net/2020/06/30/r2tji4HeJRZlUBd.png" alt="image-20200630210020512" style="zoom:67%;" />
+
+        - **next** can follow naïve cycle $(1, \dots, N)$ or **precomputed random cycle** 
+
+- Some remaining issues of PLA
+
+    - "correct" mistakes on $\cal D$ **until no mistakes** 
+    - Algorithmic: halt (with no mistakes)?
+        - naïve cyclic: ??
+        - random cyclic: ??
+        - other variant: ??
+    - Learning: $g \approx f$ ?
+        - on $\cal D$, if halt, yes (no mistake)
+        - outside $\cal D$: ??
+        - if not halting: ??
+    - if (...), after *enough* corrections, **any PLA variant halts**
+
+<details><summary>QUIZ</summary>
+<img src="https://i.loli.net/2020/06/30/RtsxQLoi1NV7B5b.png"/></details>
+
+#### 2.3 Guarantee of PLA
+
+- Linear separability
+
+    - **if** PLA halts (i.e. no more mistakes) 
+    - **(necessary condition)** $\cal {D}$ allows some $\bf w$ to make no mistake
+    - call such $\cal D$ **linear separable** 
+        
+
+    ![image-20200701105203129](https://i.loli.net/2020/07/01/u6nPm2SqYZB3JXv.png)
+
+    - assume linear separable $\cal D$, dose PLA always **halt**?
+
+- PLA fact: $\mathbf{w}_t$ gets more aligned with $\mathbf{w}_f$ 
+
+    - linear separable $\Leftrightarrow$ exists perfect $\mathbf{w}_f$ such that $y_n = \text{sign}(\mathbf{w}_f^T\mathbf{x}_n)$ 
+
+    - $\mathbf{w}_f$ perfect hence every $\mathbf{x}_n$ correctly away from line:
+        $$
+        {y}_{n(t)}\mathbf{w}_f^T\mathbf{x}_{n(t)} \ge \min_n y_n \mathbf{w}_f^T\mathbf{x}_n > 0
+        $$
+
+    - by updating with any $(\mathbf{x}_{n(t)}, y_{n(t)})$,
+        $$
+        \begin{aligned}
+        \mathbf{w}_f^T\mathbf{w}_{t+1} &= \mathbf{w}_f^T(\mathbf{w}_t+y_{n(t)}\mathbf{x}_{n(t)}) \newline
+        &\ge \mathbf{w}_f^T\mathbf{w}_t + \min_n  y_{n}\mathbf{x}_{n} \newline
+        &> \mathbf{w}_f^T\mathbf{w}_t + 0.
+        \end{aligned}
+        $$
+
+- PLA fact: $\mathbf{w}_t$ does not grow too fast
+
+    - $\mathbf{w}_t$ change only when mistake $\Leftrightarrow$ $\text{sign}(\mathbf{w}_t^T\mathbf{x}_{n(t)}) \ne y_{n(t)}$ $\Leftrightarrow$ $y_{n(t)}\mathbf{w}_t^T\mathbf{x}_{n(t)} \le 0$ 
+
+    - mistake **limits** $\|\mathbf{w}_t\|^2$ growth, even when updating with *longest* $\mathbf{x}_n$ 
+        
+        $$
+        \begin{aligned}
+        \|\mathbf{w}_{t+1}\|^2  &= \|\mathbf{w}_t+y_{n(t)}\mathbf{x}_{n(t)} \|^2 \newline
+        &= \|\mathbf{w}_t\|^2 +{2y_{n(t)}\mathbf{w}_t^T\mathbf{x}_{n(t)}} + {\|y_{n(t)}\mathbf{x}_{n(t)}\|^2 }\newline
+        &\le \|\mathbf{w}_t\|^2 +0 + \|y_{n(t)}\mathbf{x}_{n(t)}\|^2 \newline
+        &\le \|\mathbf{w}_t\|^2 +\max_n \| y_{n} \mathbf{x}_n\|^2
+        \end{aligned}
+        $$
+
+    - start from $\mathbf{w}_0=0$, after $T$ mistake corrections, 
+        $$
+        \frac{\mathbf{w}_f^T}{\|\mathbf{w}_f\|} \frac{\mathbf{w}_T}{\|\mathbf{w}_T\|} \ge \sqrt{T} \cdot \text{constant} 
+        $$
+
+<details><summary>QUIZ</summary>
+<img src="https://s1.ax1x.com/2020/07/01/NTiLvQ.png"/>
+</details>
+
+#### 2.4 Non-Separable Data
+
+- More about PLA
+
+    - Guarantee: as long as <u>linear separable</u> and <u>correct by mistake</u>
+        - inner product of $\mathbf{w}_f$ and $\mathbf{w}_t$ grows fast; length of $\mathbf{w}_t$ grows slowly
+        - PLA "lines" are more and more aligned with $\mathbf{w}_f$ $\Rightarrow$ halts
+    - Pros: simple to implement, fast, works in any dimension $d$
+    - Cons:
+        - **"assumes" linear separable** $\cal D$ to halt
+            - property unknown in advance (no need for PLA if we know $\mathbf{w}_f$)
+        - not fully sure **how long halting takes** ($\rho$ depends on $\mathbf{w}_f$)
+            - though practically fast
+    - What if $\cal D$ not linear separable?
+
+- Learning with **Noisy Data** 
+
+    ![NTEtaR.png](https://s1.ax1x.com/2020/07/01/NTEtaR.png)
+
+    - how to at least get $g \approx f$ on **noisy** $\cal D$?
+
+- Line with noise tolerance
+
+    - assume *little* noise: $y_n = f(\mathbf{x}_n)$ **usually**
+
+    - if so, $g \approx f$ on $\cal D$ $\Leftrightarrow$ $y_n=g(\mathbf{x}_n)$ **usually** 
+
+    - How about
+        $$
+        \mathbf{w}_g \leftarrow \mathop{\text{argmin}}_{\mathbf{w}} \sum_{n=1}^N
+        \left[ y_{n} \neq \operatorname{sign}\left(\mathbf{w}^{T} \mathbf{x}_n\right) \right]
+        $$
+
+        - NP-hard to solve, unfortunately
+
+    - can we **modify PLA** to get an *approximately good* $g$?
+
+- Pocket Algorithm
+
+    - Modify PLA algorithm (black lines) by **keeping best weights in pocket** 
+
+    - **Initialize pocket weights** $\mathbf{\hat{w}}$ 
+
+        - find a **(random)** mistake of $\mathbf{w}_t$ called $\left(\mathbf{x}_{n(t)}, y_{n(t)}\right)$
+
+        - (try to) correct the mistake by
+            $$
+            \mathbf{w}_{t+1} \leftarrow \mathbf{w}_t + y_{n(t)}\mathbf{x}_{n(t)}
+            $$
+
+        - **if $\mathbf{w}_{t+1}$ makes fewer mistakes that $\mathbf{\hat{w}}$, replace $\mathbf{\hat{w}}$ by $\mathbf{w}_{t+1}$**
+
+        - ... until **enough iterations**
+
+        - return $\mathbf{\hat{w}}$ (called $\mathbf{w}_{\text{POCKET}}$) as $g$ 
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/NTep5R.png"/></details>
+
+## 3 Types of Learning
+
+<img src="https://s1.ax1x.com/2020/07/01/NTvpJH.png" alt="NTvpJH.png" style="zoom:67%;" />
+
+#### 3.1 Learning with Different Output Space
+
+- More binary classification problems
+
+    - like:
+        - credit <span style="color: blue;">approve</span>/<span style="color: red;">disapprove</span> 
+        - email <span style="color: blue;">spam</span>/<span style="color: red;">non-spam</span> 
+        - patient <span style="color: blue;">sick</span>/<span style="color: red;">not sick</span> 
+        - ad <span style="color: blue;">profitable</span>/<span style="color: red;">not profitable</span> 
+        - answer <span style="color: blue;">correct</span>/<span style="color: red;">incorrect</span> 
+    - core and important problem with many tools as building block of other tools
+
+- **Multiclass classification**
+
+    - coin recognition problem
+
+        - classify US coins (1c, 5c, 10c, 25c) by (size, mass)
+
+        <img src="https://i.loli.net/2020/07/01/JGkzHPTjqcEYVrg.png" alt="image-20200701135154064" style="zoom:50%;" />
+
+        - $\mathcal{Y} = \lbrace 1, 5, 10, 25\rbrace$
+
+    - binary classification: special case with $K = 2$
+
+    - Other multiclass classification problems:
+
+        - written digits $\Rightarrow$ 0, 1, 2, ..., 9
+        - pictures $\Rightarrow$ apple, orange, strawberry, ...
+        - emails $\Rightarrow$ spam, primary, social, promotion, update ...
+
+    - many applications in practice, especially for **recognition** 
+
+- **Regression**:
+
+    - patient recovery prediction problem
+        - binary classification: patient features $\Rightarrow$ sick or not
+        - multiclass classification: patient features $\Rightarrow$ which type of cancer
+        - regression: patient features $\Rightarrow$ **how many days before recovery**
+        - $\mathcal{Y}=\Bbb{R}$ or $\mathcal{Y}=[\text{lower},\text{upper}]$ $\subset \Bbb{R}$ (bounded regression)
+            - **deeply studied in statistics** 
+    - Other regression problems:
+        - company data $\Rightarrow$ stock price
+        - climate data $\Rightarrow$ temperature
+    - also core and important with math *statistical* tools as **building block of other tools** 
+
+- **Structured Learning:** sequence tagging problem
+
+    - e.g. NLP
+
+        <img src="https://s1.ax1x.com/2020/07/01/NTNz6g.png" alt="NTNz6g.png" style="zoom: 50%;" />
+
+        - multiclass classification $\Rightarrow$ word class
+        - structured learning:
+            - sentence $\Rightarrow$ structure (class of each word)
+        - $\mathcal{Y} = \lbrace PVN, PVP, NVN, PV, \cdots \rbrace$, not including $VVVVVV$
+        - huge multiclass classification problem (structure $\equiv$ hyperclass) **without *explicit* class definition**
+
+    - Other structured learning problems:
+
+        - protein data $\Rightarrow$ protein folding
+        - speech data $\Rightarrow$ speech parse tree
+
+    - a fancy but complicated learning problem
+
+- Mini Summary: learning with different output space $\cal Y$
+
+    - **binary classification**: $\mathcal{Y} = \lbrace -1, +1 \rbrace$
+    - multiclass classification: $\mathcal{Y} = \lbrace 1, 2, \cdots, K \rbrace$
+    - **regression**: $\mathcal{Y} = \Bbb{R}$
+    - structured learning: $\mathcal{Y} = \text{structures}$
+    - ... and a lot more!
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/NTayI1.png"/></details>
+
+#### 3.2 Learning with Different Data Label
+
+![NTdFzT.png](https://s1.ax1x.com/2020/07/01/NTdFzT.png)
+
+- **Supervised Learning**
+
+    - coin recognition revisited
+        - supervised multiclass classification
+
+- **Unsupervised Learning**
+
+    - coin recognition without $y_n$ 
+        - unsupervised multiclass classification $\Leftrightarrow$ **clustering**
+    - Other clustering problems:
+        - articles $\Rightarrow$ topics
+        - consumer profiles $\Rightarrow$ consumer groups
+    - **clustering**: a challenging but useful problem
+
+- Other unsupervised learning problems
+
+    - clustering: $\lbrace \mathbf{x}_n \rbrace \Rightarrow \text{cluster}(\mathbf{x})$
+        - $\approx$ unsupervised multiclass classification
+    - **density estimation**: $\lbrace \mathbf{x}_n \rbrace \Rightarrow \text{density}(\mathbf{x})$ 
+        - $\approx$ unsupervised bounded regression
+        - e.g., traffic reports with location $\Rightarrow$ dangerous areas
+    - **outlier detection**: $\lbrace \mathbf{x}_n \rbrace \Rightarrow \text{unusual}(\mathbf{x})$
+        - $\approx$ extreme *unsupervised binary classification*
+        - e.g., Internet logs $\Rightarrow$ intrusion alert
+    - ... and a lot more!
+
+- **Semi-supervised Learning**: 
+
+    ![image-20200701142527334](https://i.loli.net/2020/07/01/8z2eIVFGWQfMZ9n.png)
+
+    - coin regression with some $y_n$
+    - Other semi-supervised learning problems
+        - face images with a few labeled $\Rightarrow$ face identifier 
+        - medicine data with a few labeled $\Rightarrow$ medicine effect predictor
+    - leverage unlabeled data to avoid *expensive* labeling
+
+- **Reinforcement Learning**: a *very different* but natural way of learning
+
+    - Teach your dog: say "sit down"
+        - if
+            - The dog pees on the ground
+                - BAD DOG. THAT'S A VERY WRONG ACTION.
+            - The dog sits down.
+                - Good Dog. Let me give you some cookies
+        - cannot easily show the dog that $y_n$ = "sit", when $\mathbf{x}_n$ = "sit down"
+        - but can "punish" to say $\tilde{y}_n$ = "pee is wrong"
+        - but can "reward" to say $\tilde{y}_n$ = "sit is good"
+    - Other RL problems using $(\mathbf{x}, \tilde{y}, \text{goodness})$
+        - (customer, ad choice, ad click earning) $\Rightarrow$ ad system
+        - (cards, strategy, winning amount) $\Rightarrow$ black jack agent
+    - RL:  learn with **partial/implicit information** (often sequentially)
+
+- Mini Summary: learning with different data label $y_n$
+
+    - supervised: all $y_n$
+    - unsupervised: no $y_n$
+    - semi-supervised: some $y_n$
+    - reinforcement: implicit $y_n$ by goodness ($\tilde{y}_n$)
+    - ... and more!
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/NTsc0U.png"/></details>
+
+#### 3.3 Learning with Different Protocol
+
+- **Batch Learning**:
+    - coin recognition revisited
+    - **batch** supervised multiclass classification: learn from **all known** data
+    - More batch learning problems
+        - batch of (email,spam?) $\Rightarrow$ spam filter
+        - batch of (patient,cancer) $\Rightarrow$ cancer classifier
+        - batch of patient data $\Rightarrow$ group of patients
+- **Online Learning**: 
+    - spam filter that *improve*
+        - batch spam filter:
+            - learn with known (email, spam?) pairs, and predict with fixed $g$ 
+        - **online** spam filter, which **sequentially**:
+            - observe an email $\mathbf{x}_t$
+            - predict spam status with current $g_t(\mathbf{x}_t)$
+            - receive *desired label* $y_t$ from user, and then update $g_t$ with $(\mathbf{x}_t, y_t)$
+    - Connection to what we've learned
+        - PLA can be easily adapted to online protocol (how?)
+        - RL learning is often done online (why?)
+    - Online learning: hypothesis *improves* through receiving data instances **sequentially** 
+- **Active Learning**: learning by *asking*
+    - protocol $\Leftrightarrow$ learning philosophy
+        - batch: "duck feeding"
+        - online: "passive sequential"
+        - **active**: **"question asking"** (sequentially)
+            - query the $y_n$ of the **chosen** $\mathbf{x}_n$ 
+    - active: improve hypothesis with  fewer labels (hopefully) by asking questions **strategically** 
+- Mini Summary: learning with different protocol $\Rightarrow$ $(\mathbf{x}_n, y_n)$
+    - **batch**: all known data
+    - online: sequential (passive) data
+    - *active*: strategically-observed data
+    - ... and more!
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/NTgZ3d.png"/></details>
+
+#### 3.4 Learning with Different Input Space
+
+- **Concrete** features: each dimension of $\cal{X} \subseteq \Bbb{R}^d$
+
+    - More on concrete features
+        - (size, mass) for coin classification
+        - customer info for credit approval
+        - patient info for cancer diagnosis
+
+    - often including *human intelligence* on the learning task
+    - concrete features: the *easy* ones for ML
+
+- **Raw** features:
+
+    - digit recognition problem
+
+        ![image-20200701160301074](https://i.loli.net/2020/07/01/HvLhUSROn1BMXFk.png)
+
+        - features $\Rightarrow$ meaning of digit
+        - a typical supervised multiclass classification problem
+
+    - Other problems with raw features
+
+        - image pixels, speech signal, etc.
+
+    - raw features: often need human or machines to **convert to concrete ones**
+
+- **Abstract** features
+
+    - rating prediction problem
+        - given previous (<u>userid</u>, <u>itemid</u>, <u>rating</u>) tuples, predict the <u>rating</u> that some <u>userid</u> would give to <u>itemid</u>?
+        - a regression problem with $\cal{Y} \subseteq \Bbb R$ as rating and $\mathcal{X} \subseteq N \times N$ as (<u>userid</u>, <u>itemid</u>)
+        - **no** physical meaning; thus even more difficult for ML
+    - Other problems with abstract features
+        - student ID in online tutoring system
+        - advertisement ID in online ad system
+    - abstract: again need **feature** **conversion**/extraction/construction
+
+- Mini Summary: Learning with different space $\cal X$
+
+    - **concrete**: sophisticated (and related) physical meaning
+    - **raw**: simple physical meaning
+    - abstract: no (or little) physical meaning
+    - ... and more!
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/NTj5oF.png"/></details>
+
+## 4 Feasibility of Learning
+
+<img src="https://s1.ax1x.com/2020/07/01/N75NCV.png" alt="N75NCV.png" style="zoom:67%;" />
+
+#### 4.1 Learning is Impossible
+
+- Two controversial answers
+
+    ![image-20200701161955017](https://i.loli.net/2020/07/01/2tUyLc3xeJdBq1A.png)
+
+    - all valid reasons, your **adversarial teacher** can always call you *didn’t learn*. :cry:
+
+- A *simple* binary classification problem
+
+    ![image-20200701162305664](https://i.loli.net/2020/07/01/AHDmzkUdoeI7JTa.png)
+
+    - pick $g \in \cal{H}$ with all $g(\mathbf{x}_n)=y_n$ (like PLA), **does $g \approx f$**?
+
+    ![image-20200701162602212](https://i.loli.net/2020/07/01/h9vdMlxYueWmSFo.png)
+
+    - learning from $\cal D$ (to infer something outside $\cal D$) is doomed if any *unknown* $f$ can happen. :cry:
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/N7SckT.png"/></details>
+
+#### 4.2 Probability to the Rescue
+
+- Inferring something unknown
+
+    - difficult to infer **unknown target $f$ outside $\cal D$** in learning; can we infer **something unknown** in other scenarios?
+    - consider a bin of many many <span style="color: orange;">orange</span> and <span style="color: green;">green</span> marbles
+    - do we **know** the <span style="color: orange;">orange</span> portion (probability)> No!
+    - can you **infer** the <span style="color: orange;">orange</span> probability?
+
+- Statistics 101: Inferring <span style="color: orange;">orange</span> probability
+
+    ![image-20200701163757530](https://i.loli.net/2020/07/01/FrWmDd5jnl3yckE.png)
+
+    - Possible versus Probable: does **in-sample** $v$ say anything about out-of-sample $\mu$?
+        - possibly not: sample can be mostly <span style="color: green;">green</span> while bin is mostly <span style="color: orange;">orange</span>
+        - probably yes: in-sample $\nu$ likely **close to** unknown $\mu$
+    - formally, what does $\nu$ say about $\mu$?
+
+- Hoeffding’s Inequality![image-20200701164152187](https://i.loli.net/2020/07/01/2Qvj7f9sJ1wrPcn.png)![N7PI2D.png](https://s1.ax1x.com/2020/07/01/N7PI2D.png)
+
+    - $\epsilon$: tolerance
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/N7ki40.png"/></details>
+
+#### 4.3 Connection to Learning
+
+- Connection to Learning
+
+    ![image-20200701172635552](https://i.loli.net/2020/07/01/dZpg9JDfe3SuEhM.png)
+
+- Added components
+
+    ![image-20200701173348325](https://i.loli.net/2020/07/01/ryYL8VfTMZU4JGR.png)
+
+    - for any fixed $h$, can probably infer
+        - **unknown** $E_{out}(h) = \mathop{\varepsilon}_\limits{\mathbf{x}\sim P} [h(\mathbf{x}) \neq f(\mathbf{x})]$ (out-of-sample error)
+        - by **known** $E_{in}(h) = \frac{1}{N} \sum_{n=1}^N [h(\mathbf{x}_n) \neq y_n]$ (in-sample error)
+
+- The formal guarantee
+
+    - for any fixed $h$, in *big* data ($N$ large), in-sample error $E_{in}(h)$ is probably close to out-of-sample error $E_{out}(h)$ (within $\epsilon$)
+        $$
+        \Bbb{R} \left[|E_{in}(h) - E_{out}(h)| > \epsilon \right] \leq 2 \exp(-2\epsilon^2N)
+        $$
+
+    - same as the "bin" analogy
+
+        - valid for all $N$ and $\epsilon$ 
+        - does not depend on $E_{out}(h)$, **no need to "know"** $E_{out}(h)$
+            - $f$ and $P$ can stay unknown
+
+    - if $E_{in}(h) \approx E_{out}(h)$ and $E_{in}(h)$ **small** $\Rightarrow$ $E_{out}(h)$ small $\Rightarrow$ $h \approx f$ with respect to $P$ 
+
+- Verification of one $h$ 
+
+    - for any fixed $h$, when data large enough, $E_{in}(h) \approx E_{out}(h)$ 
+    - **can we claim "good learning" ($g \approx f)$?** 
+    - Yes!
+        - if $E_{in}(h)$ is small for the fixed $h$ and $\cal A$ pick the $h$ as $g$
+        - $\Rightarrow$ $g = f$ PAC
+    - No!
+        - if $\cal A$ forced to pick THE $h$ as $g$
+        - $\Rightarrow$ $E_{in}(h)$ almost always not small
+        - $\Rightarrow$ $g \ne f$ PAC!
+    - real learning:
+        - $\cal A$ shall **make choices** $\in \cal H$ (like PLA)
+        - rather than **being forced to pick one $h$** 
+
+- The **verification** flow
+
+    ![image-20200701175844600](https://i.loli.net/2020/07/01/IC7NStAGhqd2Mnv.png)
+
+    - can now use *historical records* (data) to **verify "one candidate formula" $h$** 
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/N7YGzF.png"/></details>
+
+#### 4.4 Connection to Real Learning
+
+- Multiple $h$ 
+
+    ![image-20200701185115470](https://i.loli.net/2020/07/01/L654uqjzYvXksIK.png)
+
+    - real learning (say like PLA):
+        - BINGO when getting all green marbles?
+
+- Coin game
+
+    - Q: if everyone in size-150 NTU ML class flips a coin 5 times, and **one of the students gets 5 heads for her coin $g$**. Is $g$ really magical?
+    - A: No. Even if all coins are fair, the probability that **one of the** coins results in 5 heads is $1 - \left(\frac{31}{32}\right)^{150} > 99\%$.
+    - BAD sample: $E_{in}$ and $E_{out}$ far away
+        - can get worse when involving *choice*
+
+- BAD Sample and BAD Data
+
+    - BAD Sample:
+
+        - e.g., $E_{out} = \frac{1}{2}$, but getting all heads ($E_{in} = 0$)!
+
+    - BAD Data for One $h$
+
+        - $E_{out}(h)$ and $E_{in}(h)$ far away
+        - e.g., $E_{out}(h)$ big (far from $f$), but $E_{in}$ small (correct on most examples)
+
+    - Hoeffding: $\Bbb{P}_{\cal D}[{\color{Orange}{\text{BAD }}} \mathcal{D} \text{ for } h] \le \ ...$
+
+        - $$
+            \Bbb{P}_{\cal D}[{\color{Orange}{\text{BAD }}} \mathcal{D}] = \mathop{\sum}_\limits{\text{all possible }\mathcal{D}} \Bbb{P}(\mathcal{D})\cdot [{\color{Orange}{\text{BAD }}}\mathcal{D}]
+            $$
+
+- BAD Data for Many $h$
+
+    - $\Leftrightarrow$ **no "freedom of choice"** by $\cal A$
+    - $\Leftrightarrow$ **there exists some $h$ such that** $E_{out}(h)$ and $E_{in}(h)$ far away
+    - for $M$ hypothesis, bound of $\Bbb{P}_{\cal D}[{\color{Orange}{\text{BAD }}} \mathcal{D} ]$?
+
+- Bound of BAD Data
+    $$
+    \begin{aligned}
+    &\ \Bbb{P}_{\cal D} [{\color{Orange}{\text{BAD }}} \mathcal{D}] \newline
+    = &\ \Bbb{P}_{\cal D} [{\color{Orange}{\text{BAD }}} \mathcal{D} \text{ for $h_1$ or } \dots {\text{ or }\color{Orange}{\text{BAD }}} \mathcal{D} \text{ for $h_M$} ] \newline
+    \le &\ \Bbb{P}_{\cal D} [{\color{Orange}{\text{BAD }}} \mathcal{D} \text{ for $h_1$ or }] + \cdots + \Bbb{P}_{\cal D} [{\color{Orange}{\text{BAD }}} \mathcal{D} \text{ for $h_M$} ] \newline 
+    \le &\ 2\exp{\left(-2\epsilon^2N \right)} + \cdots + 2\exp{\left(-2\epsilon^2N \right)} \newline
+    = &\ 2M\exp{\left(-2\epsilon^2N \right)}
+    \end{aligned}
+    $$
+
+    - finite-bin version of Hoeffding, valid for all $M$, $N$ and $\epsilon$
+    - does not depend on any $E_{out} (h_m )$, **no need to "know"** $E_{out }(h_m)$
+        - $f$ and $P$ can stay unknown
+    - $E_{in}(g) = E_{out}(g)$ is **PAC, regardless of** $\cal A$ 
+    - *most reasonable* $\cal A$ (like PLA/pocket):
+        - pick the $h_m$ with **lowest** $E_{in}(h_m )$ as $g$ 
+
+- The *Statistical* Learning Flow
+
+    ![N7h956.png](https://s1.ax1x.com/2020/07/01/N7h956.png)
+
+    - if $|\mathcal{H}| = M$ finite, $N$ large enough
+        - for whatever $g$ picked by $\cal A$, $E_{out}(h) \approx E_{in}(g)$
+    - if $\cal A$ finds one $g$ with $E_{in}(g) \approx 0$,
+        - PAC guarantee for $E_{out}(g) \approx 0$ $\Rightarrow$ **learning possible** :happy:
+    - if $M = \infty$ (**like perceptrons**)?
+        - see you in the next lecture**s** 
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/N74MwR.png"/></details>
+
+
+
+
+
+
+
+
+
+
+
