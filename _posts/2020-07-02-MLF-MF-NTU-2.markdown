@@ -1,0 +1,940 @@
+---
+layout:     post
+title:      "机器学习基石-数学篇：Why Can Machines Learn?"
+subtitle:   "Coursera | Machine Learning Foundations - Mathematical Foundations | Hsuan-Tien Lin"
+date:       2020-07-02
+author:     "Thistledown"
+header-img: "img/posts/post-bg-mlf-lin.jpg"
+catalog: true
+mathjax: true
+tags:
+    - ML/DL
+    - Course Learning
+    - Python
+---
+
+> Course Link ：
+>
+> - [Week 5 - Training versus Testing](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/5) 
+> - [Week 6 - Theory of Generalization](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/6)
+> - [Week 7 - The VC Dimension](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/7) 
+> - [Week 8 - Noise and Error](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/8) 
+
+## 5 Training versus Testing
+
+> What we pay in choosing hypotheses during training: the growth function for representing effective number of choices ...
+
+<img src="https://s1.ax1x.com/2020/07/02/NqkKYR.png" alt="NqkKYR.png" style="zoom:67%;" />
+
+#### 5.1 Recap and Preview
+
+- Recap: the *statistical* learning flow
+
+    - if $\mathcal{H} = M$ finite, $N$ large enough
+        - for whatever $g$ picked by $\cal A$, $E_{out}(g) \approx E_{in}(g)$ 
+    - if $\cal A$ finds one $g$ with $E_{in}(g) \approx 0$
+        - PAC guarantee for $E_{out}(g) \approx 0$ $\Rightarrow$ learning possible
+
+- Two central questions
+
+    ![image-20200702145131269](https://i.loli.net/2020/07/02/oS3QdmTfN6WhCxv.png)
+
+    - learning split to two central questions:
+        - can we make sure that $E_{out}(g)$ is close enough to $E_{in}(g)$?
+        - can we make $E_{in}(g)$ small enough?
+    - what role dose $M$ ($\vert \cal H \vert$) play for the two questions?
+
+- Trade-off on $M$ 
+
+    ![image-20200702145507168](https://i.loli.net/2020/07/02/XrAy6CfvUnBFSKO.png)
+
+    - using the right $M$ (or $\cal H$) is important
+    - $M = \infty$ doomed?
+
+- Preview
+
+    - Known
+      
+        $$
+        \mathbb{P}\left[\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert >\epsilon\right] \leq 2 \cdot M \cdot \exp \left(-2 \epsilon^{2} N\right)
+        $$
+        
+        
+
+    - Todo
+
+        - establish **a finite quantity** that replaces $M$
+
+          
+            $$
+            \mathbb{P}\left[\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert >\epsilon\right] \mathop{\leq}^{?} 2 \cdot m_{\mathcal{H}} \cdot \exp \left(-2 \epsilon^{2} N\right)
+            $$
+            
+            
+
+        - justify the feasibility of learning for infinite $M$
+
+        - study $m_{\cal H}$ to understand its trade-off for *right* $\cal H$, just like $M$
+
+    - mysterious PLA to be fully resolved <u>after 3 more lectures</u> 🎉
+
+<details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/02/NboQkd.png"/></details>
+
+#### 5.2 Effective Number of Lines
+
+- Where did $M$ come from?
+  
+    $$
+    \mathbb{P}\left[\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert >\epsilon\right] \leq 2 \cdot M \cdot \exp \left(-2 \epsilon^{2} N\right)
+    $$
+    
+
+    - **BAD events** $\mathcal{B}\_m : \vert E_{in}(h_m) - E_{out}(h_m)\vert > \epsilon$ 
+
+    - to give $\cal A$ freedom of choice: bound $\Bbb{P}[\mathcal{B}_1 \text{ or } \cdots \text{ or } \mathcal{B}_M ]$
+
+    - worst case: all $\mathcal{B}_m$ **non-overlapping**
+      
+        $$
+        \Bbb{P}[\mathcal{B}_1 \text{ or } \cdots \text{ or } \mathcal{B}_M ]
+        \underbrace{\le}_{\text{union bound}} \Bbb{P}[\mathcal{B}_1] + \cdots \Bbb{P}[\mathcal{B}_M]
+        $$
+        
+        
+
+    - where did **uniform bound fail** to consider for $M = \infty$?
+
+- Where did uniform bound fail?
+
+    $$
+    {\text{union bound }} \Bbb{P}[\mathcal{B}_1] + \cdots \Bbb{P}[\mathcal{B}_M]
+    $$
+    
+
+    - **BAD events** $\mathcal{B}_ m:\vert E_{in}(h_m) - E_{out}(h_m)\vert > \epsilon$ 
+
+        - overlapping for similar hypotheses $h_1 \approx h_2$ 
+
+            <img src="https://i.loli.net/2020/07/02/2LMW9jguoBCwVEH.png" alt="image-20200702151849980" style="zoom:50%;" />
+
+    - Why?
+
+        - $E_{out}(h_1) \approx E_{out}(h_2)$
+        - for most $\cal D$, $E_{in}(h_1) = E_{in}(h_2)$
+
+    - union bound **over-estimating**
+
+    - to account for overlap, can we group similar hypotheses by **kind**?
+
+- How many lines are there?
+  
+    $$
+    \mathcal{H} = \lbrace \text{all lines in } \Bbb{R}^2 \rbrace
+    $$
+    
+    
+
+- Effective number of lines
+
+    | $N$  | effective $(N)$ |
+    | ---- | --------------- |
+    | $1$  | $2$             |
+    | $2$  | $4$             |
+    | $3$  | $8$             |
+    | $4$  | $14\  (<2^N)$   |
+
+    
+
+    - maximum kinds of lines with respect to $N$ inputs $\mathbf{x}_1, \cdots, \mathbf{x}_N \Leftrightarrow$ **effective numbers of lines**
+
+        - must be $\le 2^N$
+        - finite *grouping* of infinitely-many lines $\in \cal H$
+        - wish:
+          
+
+        $$
+        \mathbb{P}\left[\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert >\epsilon\right] \leq 2 \cdot \text{effective}(N) \cdot \exp \left(-2 \epsilon^{2} N\right)
+        $$
+
+        
+        
+- if
+    
+    - $\text{effective}(N)$ can replace $M$ and
+        - $\text{effective}(N) \ll 2^N$  
+    
+- **learning possible with infinite lines.**
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NbOAET.png"/>
+</details>
+
+#### 5.3 Effective Number of Hypothesis
+
+- Dichotomies: mini-hypothesis
+  
+    $$
+    \mathcal{H} = \lbrace \text{hypothesis } h: \mathcal{X} \rightarrow \lbrace {\color{Red}{\times}},{\color{Blue}{\circ}}\rbrace \rbrace
+    $$
+    
+
+    - call 
+        $$
+        h(\mathbf{x}_1, \dots, \mathbf{x}_N) = \left( h(\mathbf{x}_1), \dots, h(\mathbf{x}_N) \right) \in \lbrace {\color{Red}{\times}},{\color{Blue}{\circ}}\rbrace^N
+        $$
+
+    - a **dichotomy**: hypothesis *limited* to the eyes of $\mathbf{x}_1, \dots, \mathbf{x}_N$
+
+    - $\mathcal{H}(\mathbf{x}_1, \dots, \mathbf{x}_N)$: **all dichotomies implemented by $\cal H$ on $\mathbf{x}_1, \dots, \mathbf{x}_N$** 
+
+        |      | hypothesis $\cal H$      | dichotomies $\mathcal{H}(\mathbf{x}_1, \dots, \mathbf{x}_N)$ |
+        | ---- | ------------------------ | ------------------------------------------------------------ |
+        | e.g. | all lines in $\Bbb{R}^2$ | $\lbrace {\color{Blue}{\circ}}{\color{Blue}{\circ}}{\color{Blue}{\circ}}{\color{Blue}{\circ}},{\color{Blue}{\circ}}{\color{Blue}{\circ}}{\color{Blue}{\circ}}{\color{Red}{\times}},{\color{Blue}{\circ}}{\color{Blue}{\circ}}{\color{Red}{\times}}{\color{Red}{\times}},\dots\rbrace$ |
+        | size | possibly infinite        | upper bounded by $2^N$                                       |
+
+    - $\vert \mathcal{H}(\mathbf{x}_1, \dots, \mathbf{x}_N) \vert$: candidate for **replacing** $M$ 
+
+- Growth function
+
+    - $\vert \mathcal{H}(\mathbf{x}_1, \dots, \mathbf{x}_N) \vert$: depends on inputs $(\mathbf{x}_1, \dots, \mathbf{x}_N)$
+
+    - growth function: remove dependence by **taking $\max$ of all possible** $(\mathbf{x}_1, \dots, \mathbf{x}_N)$ 
+      
+        $$
+        m_{\cal H}(N) = \max_{\mathbf{x}_1, \dots, \mathbf{x}_N \in \mathcal{X}} \vert \mathcal{H}(\mathbf{x}_1, \dots, \mathbf{x}_N) \vert
+        $$
+        
+        
+
+    - finite, upper-bounded by $2^N$
+
+- Growth function for positive rays
+
+    ![image-20200702155748213](https://i.loli.net/2020/07/02/syock3iRCM6nH54.png)
+
+    - $\mathcal{X} = \Bbb{R}$ (one dimensional)
+    - $\cal H$ contains $h$, where **each $h(x) = \text{sign}(x-a)$ for threshold $a$** 
+    - *positive half* of 1-D perceptrons
+    - one dichotomy for $a \in$ each spot $(x_n, x_{n+1})$: $m_{\cal H}(N) = N + 1$
+    - $(N+1) \ll 2^N$ when $N$ large!
+
+- Growth function for positive intervals
+
+    ![image-20200702160043359](https://i.loli.net/2020/07/02/GCZYbNXk1hVtiKa.png)
+
+    - $\mathcal{X} = \Bbb{R}$ (one dimensional)
+
+    - $\cal H$ contains $h$, where **each $h(x) = +1  \text{ iff } x \in [\mathcal{l}, r), -1$ otherwise** 
+
+    - one dichotomy for each *interval kind*:
+      
+        $$
+        m_{\cal H}(N) = \underbrace{\frac{1}{2}N(N+1)}_{\text{interval ends in $N+1$ spots}} + \underbrace{1}_{\text{all }\times}
+        $$
+        
+        
+
+    - $\frac{1}{2}N^2+\frac{1}{2}N+1 \ll 2^N$ when $N$ large!
+
+- Growth function for convex sets
+
+    - $\mathcal{X} = \Bbb{R}^2$ (two dimensional)
+
+    - $\cal H$ contains $h$, where **each $h(x) = +1  \text{ iff $x$ in a convex region}, -1$ otherwise** 
+
+    - one possible set of $N$ inputs: $\mathbf{x}_1, \dots, \mathbf{x}_N$ on a big circle
+
+        <img src="https://i.loli.net/2020/07/02/huz3PbqFCIc5l8H.png" alt="image-20200702161025400" style="zoom:50%;" />
+
+    - **every dichotomy can be implemented** by $\cal H$ using a convex region slightly extended from contour of positive inputs: $m_{\cal H} = 2^N$
+
+    - call this $N$ inputs **shattered** by $\cal H$
+
+    - $m_{\cal H}(N) = 2^N \Leftrightarrow$ **exists** $N$ inputs that can be shattered
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NqCGI1.png"/>
+</details>
+
+#### 5.4 Break Point
+
+- The four growth functions
+
+    ![NqPrXF.png](https://s1.ax1x.com/2020/07/02/NqPrXF.png)
+
+    - what if $m_{\cal H}(N)$ replaces $M$?
+      
+        $$
+        \mathbb{P}\left[\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert >\epsilon\right] \mathop{\leq}^{?} 2 \cdot m_{\mathcal{H}}(N) \cdot \exp \left(-2 \epsilon^{2} N\right)
+        $$
+        
+
+        - polynomial: good :+1:
+        - exponential: bad :-1: 
+
+    - for 2D or general perceptron, $m_{\cal H}(N)$ polynomial (good)?
+
+- Break point of $\cal H$
+
+    - what do we know about 2D perceptrons now?
+        - three inputs: *exists* shatter
+        - four inputs: *for all* no shatter
+    - if no $k$ inputs can be shattered by $\cal H$, call $k$ a **break point** for $\cal H$
+        - $m_{\cal H} < 2^k$
+        - $k+1, k+2, \dots $ also break points!
+        - will study minimum break point $k$
+
+- The four beak points
+
+    ![image-20200702162231928](https://i.loli.net/2020/07/02/QGjbxpo7s1tLczf.png)
+
+    - conjecture:
+        - no break point: $m_{\cal H} = 2^N$ (sure!)
+        - break point $k$: $m_{\cal H} = O(N^{k-1})$
+            - exited? wait for next lecture ;-)
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NqFHJI.png"/>
+</details>
+
+## 6 Theory of Generalization
+
+> Test error can approximate training error if there is enough data and growth function does not grow too fast ...
+
+<img src="https://s1.ax1x.com/2020/07/02/Nqj5WD.png" alt="Nqj5WD.png" style="zoom:67%;" />
+
+#### 6.1 Restiction of Break Point
+
+- The four break points
+
+    <img src="https://i.loli.net/2020/07/02/SCZpy78vFGg3MH1.png" alt="image-20200702170735578" style="zoom:67%;" />
+
+    - growth function $m_{\cal H}(N)$: max number of dichotomies
+    - break point $k \Rightarrow$ break point $k + 1, \dots$
+    - what else?
+
+- Restriction of break point
+
+    - what *must be true* when **minimum break point** $k = 2$
+        - $N = 1$: every $m_{\cal H}(N) = 2$ by definition
+        - $N = 2$: every $m_{\cal H}(N) < 4$ by definition
+            - (so maximum possible = 3)
+        - $N = 3$: maximum possible $= 4 \ll 2^3$ 
+    - break point $k$ **restricts maximum possible $m_{\cal H}(N)$ a lot** for $N > k$
+
+    ![image-20200702172002753](https://i.loli.net/2020/07/02/PbDGstTUkVueK3m.png)
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/Nq3z0s.png"/>
+</details>
+
+#### 6.2 Bounding Function: Basic Cases
+
+- **Bounding function** $B(N, k)$: maximum possible $m_{\cal H}(N)$ when break point $= k$
+    - combinatorial quantity:
+        - maximum number of length-$N$ vectors with $({\color{Red}{\times}},{\color{Blue}{\circ}})$ while **"no shatter" any length-$k$** subvectors
+    - irrelevant of the details of $\cal H$
+        - e.g. $B(N, 3)$ bounds both
+            - positive intervals ($k = 3$)
+            - 1D perceptrons ($k = 3$)
+    - new goal: $B(N, k) \le \text{poly}(N)$ ?
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NqYDgK.png"/>
+</details>
+
+#### 6.3 Bounding Function: Inductive Cases
+
+- Table of bounding funciton
+
+    ![Nq75KP.png](https://s1.ax1x.com/2020/07/02/Nq75KP.png)
+
+    - Known
+        - $B(N, 1) = 1$ (see previous quiz)
+        - $B(N, k) = 2^N \text{ for } N < k$
+        - $B(N, k) = 2^N-1 \text{ for } N = k$
+    - $B(N, k) \le B(N-1, k) +B(N-1, k-1)$
+        - (actually "$=$")
+    - Now have **upper bound** of bounding function
+
+- Bounding function: the theorem
+  
+    $$
+    B(N, k) \leq \underbrace{\sum_{i=0}^{k-1}\dbinom{N}{i}}_{\text{highest term }N^{k-1}}
+    $$
+    
+
+    - simple induction using **boundary and inductive formula**
+    - for fixed $k$, $B(N, k)$ upper bounded by $\text{poly}(N)$
+        - $\Rightarrow m_{\cal H}(N)$ is $\text{poly}(N)$ if break points exists
+    - "$\le$" can be "$=$" actually
+
+- The three break points
+
+    ![Nq7Du6.png](https://s1.ax1x.com/2020/07/02/Nq7Du6.png)
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NqULUH.png"/>
+</details>
+
+#### 6.4 A Pictorial Proof
+
+- BAD Bound for General $\cal H$
+
+    - want:
+      
+        $$
+        \mathbb{P}\left[\exists h \in \mathcal{H} \text { s.t. }\left\vert E_{\text {in }}(h)-E_{\text {out }}(h)\right\vert >\epsilon\right] \leq 2 \cdot \quad {\color{Orange}{m_{\mathcal{H}}(N)}} \cdot \exp \left(-2 \quad \epsilon^{2} N\right)
+        $$
+        
+        
+
+    - actually, **when $N$ is large enough:** 
+      
+        $$
+        \mathbb{P}\left[\exists h \in \mathcal{H} \text { s.t. }\left\vert E_{\text {in }}(h)-E_{\text {out }}(h)\right\vert >\epsilon\right] \leq 2 \cdot {\color{Red}{2}} {\color{Orange}{m_{\mathcal{H}}({\color{Blue}{2}}N)}} \cdot \exp \left(-2 \cdot {\color{Purple}{\frac{1}{16}}} \epsilon^{2} N\right)
+        $$
+        
+        
+
+    - next: **sketch** of proof
+
+- Step 1: **Replace $E_{out}$ by $E_{in}^{\prime}$** 
+  
+    $$
+    \begin{aligned}
+    & \frac{1}{2} \mathbb{P}\left[\exists h \in \mathcal{H} \text { s.t. }\left\vert E_{\text {in}}(h)-E_{\text {out}}(h)\right\vert >\epsilon\right] \newline
+    \leq & \  \mathbb{P}\left[\exists h \in \mathcal{H} \text { s.t. }\left\vert E_{\text {in}}(h)- {\color{Red}{E_{\text {in}}^{\prime}(h)}} \right\vert > {\color{Red}{\frac{\epsilon}{2}}} \right]
+    \end{aligned}
+    $$
+    
+
+    - $E_{\text {in}}(h)$ finitely many, $E_{\text {out}}(h)$ infinitely many
+
+        - replace the evil $E_{\text {out}}(h)$ first
+
+    - how? sample **verification set** $\cal D^{\prime}$ of size $N$ to calculate $E_{\text {in}}^{\prime}$ 
+
+        <img src="https://i.loli.net/2020/07/02/IBNPcdeb7GXST4E.png" alt="image-20200702194403759" style="zoom:50%;" />
+
+    - BAD $h$ of $E_{\text {in}} - E_{\text {out}}$
+
+        - $\stackrel{\text { probably }}{\Longrightarrow}$ BAD $h$ of $E_{\text {in}}  - E_{\text {in}}^{\prime}$ 
+
+- Step 2: Decompose $\cal H$ by Kind
+  
+    $$
+    \begin{aligned}
+    \mathrm{BAD} & \leq {\color{Red}{2}} \mathbb{P}\left[\exists h \in \mathcal{H} \text { s.t. }\left\vert E_{\text {in }}(h)- {\color{Red}{E_{\text {in }}^{\prime}(h)}} \right\vert >{\color{Red}{\frac{\epsilon}{2}}}\right] \\
+    & \leq {\color{Red}{2}} m_{\mathcal{H}}({\color{Blue}{2}} N) \mathbb{P}\left[{\color{Blue}{\text { fixed }}} h \text { s.t. }\left\vert E_{\text {in }}(h)-{\color{Red}{E_{\text {in }}^{\prime}(h)}} \right\vert >{\color{Red}{\frac{\epsilon}{2}}}\right]
+    \end{aligned}
+    $$
+    
+
+    - $E_{\text {in}}$ with $\cal D$, $E_{\text {in}}^{\prime}$ with $\cal D^{\prime}$
+        - now $m_{\cal H}$ comes to play
+    - how? infinite $\cal H$ becomes $\vert \mathcal{H}(\mathbf{x}_1, \dots, \mathbf{x}_N)\vert $ kinds
+    - union bound on $m_{\cal H}(2N)$ kinds
+
+- Step 3: Use Hoeffding without Replacement 
+  
+    $$
+    \begin{aligned}
+    \mathrm{BAD} & \leq {\color{Red}{2}} m_{\mathcal{H}}({\color{Blue}{2}} N) \mathbb{P}\left[{\color{Blue}{\text { fixed }}} h \text { s.t. }\left\vert E_{\text {in }}(h)-{\color{Red}{E_{\text {in }}^{\prime}(h)}} \right\vert >{\color{Red}{\frac{\epsilon}{2}}}\right] \\
+    & \leq {\color{Red}{2}} m_{\mathcal{H}}({\color{Blue}{2}} N) \cdot 2 \exp \left(-2\left({\color{Purple}{\frac{\epsilon}{4}}}\right)^{2} N\right)
+    \end{aligned}
+    $$
+    
+
+    - consider bin of $2N$ examples, choose $N$ for $E_{\text{in}}$,leave others for $E_{\text{in}}^{\prime}$
+        - $\vert E_{\text{in}} - E_{\text{in}}^{\prime} \vert > \frac{\epsilon}{2} \Leftrightarrow \left \vert E_{\text{in}} - \frac{E_{\text{in}}+E_{\text{in}}^{\prime}}{2} \right\vert > \frac{\epsilon}{4}$
+    - so? just *similar bin*, *smaller $\epsilon$*, and Hoeffding without replacement
+
+- That's All! $\Rightarrow$ **Vapnik-Chervonenkis( VC) bound**:
+  
+    $$
+    \begin{aligned}
+    &\ \mathbb{P}\left[\exists h \in \mathcal{H} \text { s.t. }\left\vert E_{\text {in }}(h)-E_{\text {out }}(h)\right\vert >\epsilon\right] \newline \leq & \ {\color{Red}{4}} {\color{Orange}{m_{\mathcal{H}}({\color{Blue}{2}}N)}} \cdot \exp \left(-  {\color{Purple}{\frac{1}{8}}} \epsilon^{2} N\right)
+    \end{aligned}
+    $$
+    
+
+    - replace $E_{\text{out}}$ by $E_{\text{in}}^{\prime}$
+    - decompose $\cal H$ by kind
+    - use Hoeffding without replacement
+    - 2D perceptrons:
+        - break point? 4
+        - $m_{\cal H}(N)$? $O(N^3)$
+        - learning with 2D perceptrons feasible! 🎉 
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/Nqj6y9.png"/>
+</details>
+
+## 7 The VC Dimension
+
+> Learning happens if there is finite model complexity (called VC dimension), enough data, and low training error ...
+
+<img src="https://s1.ax1x.com/2020/07/03/NOkl60.png" alt="NOkl60.png" style="zoom:67%;" />
+
+#### 7.1 Definition of VC Dimension
+
+- Recap: More on Growth Function
+
+    ![Nqv9yj.png](https://s1.ax1x.com/2020/07/02/Nqv9yj.png)
+
+- Recap: More on Vapnik-Chervonenkis(VC) Bound
+
+    ![Nqvl01.png](https://s1.ax1x.com/2020/07/02/Nqvl01.png)
+
+    - if:
+        - ① $m_{\cal H}(N)$ breaks at $k$  (good $\cal H$)
+        - ② $N$ large enough (good $\cal D$)
+    - $\Rightarrow$ **probably** generalized $E_{out} \approx E_{in}$,
+    - and if:
+        - ③ $\cal A$ picks a $g$ with small $E_{in}$ (good $\cal A$)
+    - $\Rightarrow$ **probably** learned! 🎉 
+
+- VC Dimension
+
+    - the formal name of **maximum non-**break point
+
+    - Definition: VC dimension of $\cal H$, denoted $d_{\text{VC}}(\cal H)$ is
+      
+        $$
+        \text{largest } N \text{ for which } m_{\cal H}(N) = 2^N
+        $$
+        
+
+        - the **most** inputs $\cal H$ that can shatter
+        - $d_{\text{VC}} = \min(k) - 1$
+
+    - $N \leq d_{\text{VC}} \Rightarrow$
+
+        - $\cal H$ can shatter some $N$ inputs
+
+    - $N > d_{\text{VC}} \Rightarrow$
+
+        - $N$ is a break point for $\cal H$ 
+
+    - $\text{if } N \ge 2, d_{\text{VC}} \ge 2, m_{\cal H} \leq N^{d_{\text{VC}}}$ 
+
+- The Four VC Dimensions
+
+    <img src="https://i.loli.net/2020/07/02/bHNlpMBRrcwZnKy.png" alt="image-20200702202423140" style="zoom:67%;" />
+
+- VC Dimension and Learning
+
+    - **good** $\Rightarrow$ **finite $d_{\text{VC}}$** $\Rightarrow$ $g$ **"will" generalize** $(E_{out}(g) \approx E_{in}(g))$
+    - regardless of learning algorithm $\cal A$
+    - regardless of input distribution $P$
+    - regardless of target function $f$
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NLpzse.png"/>
+</details>
+
+#### 7.2 VC Dimension of Perceptrons
+
+- 2D PLA Revisited
+
+    <img src="https://s1.ax1x.com/2020/07/02/NLCplT.png" alt="NLCplT.png" style="zoom:67%;" />
+
+    - general PLA for $\mathbf{x}$ with **more that 2 features**?
+
+- VC Dimension of Perceptrons
+
+    - 1D perceptron (pos/neg rays): $d_{\text{VC}} = 2$ 
+    - 2D perceptron: $d_{\text{VC}} = 3$
+    - $d$-D perceptrons: $d_{\text{VC}} \mathop{=}^{?}d+1$ 
+
+<details>
+    <summary>EXTRA QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NLPIsS.png"/>
+</details>
+
+- $d_{\text{VC}} \ge d + 1$
+
+    - There are **some** $d+1$ **inputs** we can shatter
+
+    - some "trivial" inputs:
+      
+        $$
+        \mathbf{X}=\left[\begin{array}{c}
+        -\mathbf{x}_{1}^{T}- \\
+        -\mathbf{x}_{2}^{T}- \\
+        -\mathbf{x}_{3}^{T}- \\
+        \vdots \\
+        -\mathbf{x}_{d+1}^{T}-
+        \end{array}\right]=\left[\begin{array}{ccccc}
+        1 & 0 & 0 & \cdots & 0 \\
+        1 & 1 & 0 & \cdots & 0 \\
+        1 & 0 & 1 & & 0 \\
+        \vdots & \vdots & & \ddots & 0 \\
+        1 & 0 & \cdots & 0 & 1
+        \end{array}\right]
+        $$
+        
+- note: $\mathbf{X}$ invertible
+    
+- to shatter ...
+    
+    - for any $\bf y \in \Bbb{R}^{d+1}$, find $\mathbf{w}$ such that
+        - $\text{sign}(\mathbf{Xw})=\mathbf{y} \Leftarrow \bf{Xw=y} \stackrel{X\text{ invertible!}}{\Longleftrightarrow} w= X^{-1}y $ 
+
+<details>
+    <summary>EXTRA QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NLF4Hg.png"/>
+</details>
+
+- $d_{\text{VC}} \ge d+1$ 
+
+    - A 2D special case
+
+        <img src="https://s1.ax1x.com/2020/07/02/NLkVbD.png" alt="NLkVbD.png" style="zoom:67%;" />
+
+    - $d$-D general case
+
+        <img src="https://s1.ax1x.com/2020/07/02/NLkhxx.png" alt="NLkhxx.png" style="zoom:67%;" />
+
+    - general $\bf X$ no-shatter $\Rightarrow d_{\text{VC}}\le d+1$ 
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/02/NLAKwF.png"/>
+</details>
+
+#### 7.3 Physical Intuition of VC Dimension
+
+- Degrees of Freedom
+
+    - hypothesis parameters $\mathbf{w}=(w_0, w_1, \dots, w_d)$: creates degrees of freedom
+    - hypothesis quantity $M = \vert \mathcal{H} \vert$: "analog" degrees of freedom
+    - hypothesis *power* $d_{\text{VC}}=d+1$: **effective "binary" degrees of freedom**
+    - $d_{\text{VC}}(\cal H)$: powerfulness of $\cal H$
+
+- Two Old Friends
+
+    - Positive rays ($d_{\text{VC}}=1$)
+
+        <img src="https://i.loli.net/2020/07/03/1SwY2PCBrfNlZoW.png" alt="image-20200703091430075" style="zoom:67%;" />
+
+        - free parameters: $a$
+
+    - Positive intervals ($d_{\text{VC}}=2$):
+
+        <img src="https://i.loli.net/2020/07/03/yqaujTE8oKgmMxH.png" alt="image-20200703091507066" style="zoom:67%;" />
+
+        - free parameters: $\mathcal{l}, r$ 
+
+    - pratical rule of thumb: $d_{\text{VC}} \approx \text{#free parameters}$  (but not always)
+
+- $M$ and $d_{\text{VC}}$ 
+
+    <img src="https://i.loli.net/2020/07/03/9W5m36oPQjZkALv.png" alt="image-20200703091718409" style="zoom:67%;" />
+
+    - using the right $d_{\text{VC}}$ (or $\cal H$) is important
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/03/NO9k90.png"/>
+</details>
+
+#### 7.4 Interpreting VC Dimension
+
+- VC Bound Rephrase: Penalty for Model Complexity
+
+    - For any ${\color{Red}{g}={\color{Red}{\cal A}}}({\color{Blue}{\cal D}}) \in \mathcal {\color{Orange}{H}}$ and statistical large $\cal D$, for $d_{\text{VC}} \ge 2$:         
+
+        $$
+        {\mathbb{P}_ {\color{Blue} \mathcal{D} } } [\underbrace{\left\vert E_{\text {in }}({\color{Red} g} )-E_{\text {out }}({\color{Red} g} )\right\vert >\epsilon }_ { \mathbf{BAD} } ] \leq \underbrace{ {4} {\color{Orange} (2 N)^{d_\text {VC }}}  \exp \left(-\frac{1}{8} \epsilon^{2} {\color{Blue} N} \right)}_ {\color{Purple} \delta} 
+        $$
+
+    - Rephrase: with prbability $\ge 1 - \delta$, **GOOD:** $\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert \leq \epsilon$ 
+        
+
+        $$
+        \begin{aligned}
+        \operatorname{set} \quad {\color{Purple} \delta}  &=4{\color{Orange} (2 N)^{d_{\mathrm{VC}}}}  \exp \left(-\frac{1}{8} \epsilon^{2} {\color{Blue} N} \right) \\
+        \frac{\color{Purple} \delta }{4{\color{Orange} (2 N)^{d_{\mathrm{VC}}}} } &=\exp \left(-\frac{1}{8} \epsilon^{2} {\color{Blue} N} \right) \\
+        \ln \left(\frac{4{\color{Orange} (2 N)^{d_{\mathrm{VC}}} }}{\color{Purple} \delta }\right) &=\frac{1}{8} \epsilon^{2} {\color{Blue} N}  \\
+        \sqrt{\frac{8}{\color{Blue} N } \ln \left(\frac{4{\color{Orange} (2 N)^{d_{\mathrm{VC}}}} }{\color{Purple} \delta }\right)} &=\epsilon
+        \end{aligned}
+        $$
+
+    - generalization error $\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert  \le \sqrt{\frac{8}{\color{Blue} N } \ln \left(\frac{4{\color{Orange} (2 N)^{d_{\mathrm{VC}}}} }{\color{Purple} \delta }\right)} $ 
+
+    - $E_{\text {in }}(g)- \sqrt{\frac{8}{\color{Blue} N}  \ln \left(\frac{4{\color{Orange} (2 N)^{d_{\mathrm{VC}}}} }{\color{Purple} \delta} \right)} \le E_{\text {out }}(g) \le E_{\text{in}}(g) + \sqrt{\frac{8}{\color{Blue} N}  \ln \left(\frac{4{\color{Orange} (2 N)^{d_{\mathrm{VC}}}} }{\color{Purple} \delta} \right)}$
+
+    - $\underbrace{\sqrt{\cdots}}_{\Omega(N, \mathcal{H}, \delta)}$： penalty for **model complexity** 
+
+- THE VC Message
+
+    - with a high probability, $E_{\text {out }}(g) \le E_{\text{in}}(g) + \underbrace{\sqrt{\frac{8}{\color{Blue} N}  \ln \left(\frac{4{\color{Orange} (2 N)^{d_{\mathrm{VC}}}} }{\color{Purple} \delta }\right)}}_{\Omega(N, \mathcal{H}, \delta)}$ 
+    - <img src="https://i.loli.net/2020/07/03/4UXB7tbiH2l5uoq.png" alt="image-20200703093855894" style="zoom:67%;" />
+    - powerful $\cal H$ not always good!
+
+- VC Bound Rephrase: Sample Complexity
+
+    <img src="https://i.loli.net/2020/07/03/rRbQLiS1nEcZlqM.png" alt="image-20200703094157104" style="zoom:67%;" />
+
+    -  practical rule of thumb:
+        - $N \approx 10 d_{\text{VC}}$ **often enough!** 
+
+- Looseness of VC Bound
+
+    - theory: $N \approx 10,000\ d_{\text{VC}}$; practice: $N \approx 10\ d_{\text{VC}}$
+
+    - Why?
+
+        <img src="https://i.loli.net/2020/07/03/6QszolHcp9Ww4qZ.png" alt="image-20200703094549579" style="zoom:67%;" />
+
+    - **philosophical message** of VC bound: important for improving ML
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/03/NOkufs.png"/>
+</details>
+
+## 8 Noise and Error
+
+> Learning can still happen within a noisy environment and different error measures ...
+
+<img src="https://i.loli.net/2020/07/03/Vgl29iTkDmvrRwI.png" alt="image-20200703114018117" style="zoom:67%;" />
+
+#### 8.1 Noise and Probabilistic Target
+
+- Recap: The Learning Flow
+
+    <img src="https://s1.ax1x.com/2020/07/03/NOkvj0.png" style="zoom:67%;" />
+
+    - what if there is **noise**?
+
+- Noise
+
+    - Probabilistic Marbles
+
+        <img src="https://s1.ax1x.com/2020/07/03/NOEFZ8.png" alt="NOEFZ8.png" style="zoom:67%;" />
+
+- Target Distribution $P(y\vert\mathbf{x})$: characterizes behavior of "mini-target" on one $\bf x$ 
+
+    <img src="https://i.loli.net/2020/07/03/Sv5bqNBkDnJC8rj.png" alt="image-20200703102917421" style="zoom:67%;" />
+
+    - goal of learning:
+        - predict **ideal mini-target** (w.r.t. $P(y\vert \mathbf{x})$) on **often-seen inputs** (w.r.t $P(\mathbf{x})$) 
+
+- The New Learning Flow
+
+    ![image-20200703103311023](https://i.loli.net/2020/07/03/fcu8DHgaSNqC6vY.png)
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/03/NOuAoV.png"/>
+</details>
+
+#### 8.2 Error Measure
+
+- Error Measure: final hypothesis $g \approx f$
+
+    - how well? previously, considered out-of-sample measure
+    
+      $$ 
+        E_{\text {out }}(g)=\underset{\mathbf{x} \sim P}{\mathcal{E}}[\mathbf{g}(\mathbf{x}) \neq f(\mathbf{x})]
+      $$
+
+    - more generally, **error measure** $E(g, f)$
+    - naturally considered
+        - out-of-sample: averaged over unknown $\bf x$
+        - pointwise: evaluated on one $\bf x$
+        - classification: $[\text{prediction} \ne \text{target}]$
+    - classification error often also called **"0/1 error"** 
+
+- Pointwise Error Measure
+
+    - can often express $E(g,f)$ = averaged $\mathop{\text{err}}(g(\mathbf{x}),f(\mathbf{x}))$, like
+        
+        $$
+        E_{\text {out }}(g)=\underset{\mathbf{x} \sim P}{\mathcal{E}}\, \underbrace{[g(\mathbf{x}) \neq f(\mathbf{x})]}_{\operatorname{err}(g(\mathbf{x}), f(\mathbf{x}))}
+        $$
+
+        - $\text{err}$: called **pointwise error measure**
+
+    - in-sample: 
+     
+        $$
+        E_{\mathrm{in}}(g)=\frac{1}{N} \sum_{n=1}^{N} \operatorname{err}\left(g \left( \mathbf{x}_{n} \right), f \left(\mathbf{x}_{n}\right) \right)
+        $$
+
+    - out-of-sample: 
+
+        $$
+        E_{\text {out }}(g)=\underset{\mathbf{x} \sim P}{\mathcal{E}}\, \operatorname{err}\left(g \left( \mathbf{x}_{n} \right), f \left(\mathbf{x}_{n}\right) \right)
+        $$
+
+    - will mainly consider pointwise $\operatorname{err}$ for simplicity
+
+- Two Important Pointwise Error Measure: $\operatorname{err}(g(\mathbf{x}), f(\mathbf{x})) = \operatorname{err}(\tilde{y}, y)$ 
+
+    - 0/1 error: $\operatorname{err}(\tilde{y}, y)=[\tilde{y} \neq y]$
+        - correct or incorrect?
+        - often for **classification**
+    - squared error: $\operatorname{err}(\tilde{y}, y)=(\tilde{y}-y)^{2}$
+        - how far is $\tilde{y}$ from $y$?
+        - often for **regression** 
+    - how does $\operatorname{err}$ "guide" learning?
+
+- Ideal Mini-Target
+
+    - interplay between **noise** and **error**
+
+        - $P(y\vert \mathbf{x})$ and $\text{err}$ define **ideal mini-target** $f(\mathbf{x})$ 
+
+    - e.g.
+
+        <img src="https://i.loli.net/2020/07/03/BDMySwbLejE86C4.png" alt="image-20200703105045991" style="zoom:50%;" />
+
+- Learning Flow with Error Measure
+
+    <img src="https://s1.ax1x.com/2020/07/03/NOlbU1.png" alt="NOlbU1.png" style="zoom:67%;" />
+
+    - extended VC theory/"philosophy" works for most $\cal H$ and $\text{err}$ 
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/03/NO1bLQ.png"/>
+</details>
+
+#### 8.3 Algorithmic Error Measure
+
+- Choice of Error Measure
+
+    <img src="https://i.loli.net/2020/07/03/KCws9glvZQOrpG8.png" alt="image-20200703105658110" style="zoom: 50%;" />
+
+    - two types of error: <font color="orange">false accept</font> and <font color="purple">false reject</font> 
+
+        ![image-20200703105815077](https://i.loli.net/2020/07/03/4bcHEIRo8MQNmAx.png)
+
+    - 0/1 error penalizes both types **equally** 
+
+    - Fingerprint verification for supermarket
+
+        <img src="https://i.loli.net/2020/07/03/Q7XgRLZ4qYspIFP.png" alt="image-20200703110027922" style="zoom:67%;" />
+
+        - supermarket: fingerprint for discount
+        - <font color="purple">false reject</font>: very unhappy customer, lose future business
+        - <font color="orange">false accept</font>: give away a minor discount, intruder left fingerprint
+
+    - Fingerprint verification for CIA
+
+        <img src="https://i.loli.net/2020/07/03/SLhstEQuWip1aKx.png" alt="image-20200703110201545" style="zoom:33%;" />
+
+        - CIA: fingerprint for entrance
+        - <font color="orange">false accept</font>: very serious consequences!
+        - <font color="purple">false reject</font>: unhappy employee, but so what?
+
+- Take-home Message for Now: $\text{err}$ is **application/user-dependent** 
+
+    - Algorithmic Error Measures $\widehat{\text{err}}$
+        - true: just $\text{err}$
+        - plausible:
+            - 0/1: minimum "flipping noise"—NP-hard to optimize, remember?
+            - squared: minimum Gaussian noise
+        - friendly: easy to optimize for $\cal A$
+            - closed-form solution
+            - convex objective function
+    - $\widehat{\text{err}}$: more in next lectures
+
+- Learning Flow with Algorithmic Error Measure
+
+    <img src="https://i.loli.net/2020/07/03/PrYuo8HhJasiCnd.png" alt="image-20200703110812770" style="zoom:67%;" />
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/03/NOJx74.png"/>
+</details>
+
+#### 8.4 Weighted Classification
+
+- Weighted Classification
+
+    - CIA cost (error, loss) matrix
+
+        <img src="https://i.loli.net/2020/07/03/SLhstEQuWip1aKx.png" alt="image-20200703110201545" style="zoom:33%;" />
+
+    - out-of-sample
+        
+        $$
+        E_{\text {out}}(h)= \underset{(\mathbf{x},y) \sim P}{\mathcal{E}}
+        \left\lbrace 
+        \begin{array}{cc}
+        {\color{Purple} 1}  & \text { if } y=+1 \\
+        {\color{Orange} 1000}  & \text { if } y=-1
+        \end{array}\right\rbrace 
+        \cdot {\color{Blue} [y \neq h(\mathbf{x}) ] } 
+        $$
+
+    - in-sample
+        
+        $$
+
+        E_{\text {in}}(h)
+        = \frac{1}{N} \sum_{n=1}^{N}
+        \left\lbrace \begin{array}{cc}
+        {\color{Purple} 1}  & \text { if } y_ n =+1 \\
+        {\color{Orange} 1000}  & \text { if } y_ n =-1
+        \end{array} \right\rbrace 
+        \cdot { \color{Blue} \left[ y _ n \neq h \left(\mathbf{x} _ n \right) \right] }
+
+        $$
+        
+    - weighted classification: different "weight" for different $(\mathbf{x},y)$ 
+
+- Minimizing $E_{\text{in}}$ for Weighted Classification 
+    
+    $$
+
+    {\color{Red} E_{\mathrm{in}}^{\mathrm{w}}(h)} 
+    =\frac{1}{N} \sum_{n=1}^{N}\left\lbrace \begin{array}{cc}
+    {\color{Purple} 1}  & \text { if } y_ n = +1 \\
+    {\color{Orange} 1000}  & \text { if } y_ n = -1
+    \end{array}\right\rbrace \cdot{\color{Blue} \left[y_ n \neq h\left(\mathbf{x}_ n\right)\right]}
+
+    $$
+    
+
+    - Naïve Thoughts
+        - PLA: doesn’t matter if linear separable
+        - pocket: modify **pocket-replacement rule**
+            - if $\mathbf{w}_ {t+1}$ reaches smaller $ E_ {\mathrm{in}}^{\mathrm{w}}$ than $\hat{\mathbf{w}}$, replace $\hat{\bf w}$ by $\mathbf{w}_ {t+1}$ 
+    - But
+        - pocket: some guarantee on $ E_{\mathrm{in}}^{0/1}$ 
+        - modified pocket: similar guarantee on $  E_{\mathrm{in}}^{\mathrm{w}}$?
+
+- Systematic Route: Connect $E_{\mathrm{in}}^{\mathrm{w}}$ and $E_{\mathrm{in}}^{\mathrm{0/1}}$ 
+
+    <img src="https://i.loli.net/2020/07/03/CybwQoUtlYz4Srj.png" alt="image-20200703113020927" style="zoom:40%;" />
+
+    -  after copying "-1" examples 1,000 times, $E_{\mathrm{in}}^{\mathrm{w}} \text{ for LHA} \equiv E_{\mathrm{in}}^{\mathrm{0/1}} \text{ for RHS}$! 
+
+- Weighted Pocket Algorithm
+
+    - using "virtual copying", weighted pocket algorithm include:
+        - weighted PLA:
+            - randomly check "-1" example mistakes with 1000 times more probability
+        - weighted pocket replacement:
+            - if $\mathbf{w}_ {t+1}$ reaches smaller $ E_ {\mathrm{in}}^{\mathrm{w}}$ than $\hat{\mathbf{w}}$, replace $\hat{\bf w}$ by $\mathbf{w}_ {t+1}$ 
+    - systematic route (called "reduction"):
+        - **can be applied to many other algorithms!** 
+
+<details>
+    <summary>QUIZ</summary>
+    <img src="https://s1.ax1x.com/2020/07/03/NOw1vn.png"/>
+</details>

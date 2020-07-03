@@ -4,7 +4,7 @@ title:      "机器学习基石-数学篇：When Can Machines Learn?"
 subtitle:   "Coursera | Machine Learning Foundations - Mathematical Foundations | Hsuan-Tien Lin"
 date:       2020-06-30
 author:     "Thistledown"
-header-img: "img/posts/post-bg-Coursera-ML-Ng.png"
+header-img: "img/posts/post-bg-mlf-lin.jpg"
 catalog: true
 mathjax: true
 tags:
@@ -17,8 +17,12 @@ tags:
 >
 > - [Week 1 - The Learning Problem](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/1) 
 > - [Week 2 - Learning to Answer Yes/No](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/2) 
+> - [Week 3 - Types of Learning](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/3) 
+> - [Week 4 - Feasibility of Learning](https://www.coursera.org/learn/ntumlone-mathematicalfoundations/home/week/4)  
 
 ## 1 The Learning Problem
+
+> What machine learning is and its connection to applications and other fields ...
 
 <img src="https://i.loli.net/2020/06/30/icm3oUY1EZr5exC.png" alt="image-20200630142813602" style="zoom:67%;" />
 
@@ -247,9 +251,9 @@ tags:
 
 <details><summary>QUIZ</summary>
 <img src="https://i.loli.net/2020/06/30/dvKZ3alkezUtWbf.png"/></details>
----
-
 ## 2 Learning to Answer Yes/No
+
+> Your first learning algorithm (and the world's first!) that "draws the line" between yes and no by adaptively searching for a good line based on data ...
 
 <img src="https://s1.ax1x.com/2020/07/01/NTeKPI.png" alt="NTeKPI.png" style="zoom:67%;" />
 
@@ -330,7 +334,7 @@ tags:
 
     - For $t = 0, 1, \dots$
 
-        - find a mistake of $\mathbf{w}_t$ called $(x_{n(t)}, y_{n(t)})$, $\text{sign}\left( \mathbf{w}_t^T\mathbf{x}_{n(t)} \right) \ne y_{n(t)}$ 
+        - find a mistake of $\mathbf{w}_t$, called $(x_{n(t)}, y_{n(t)})$, and $\text{sign}\left( \mathbf{w}_t^T\mathbf{x}_{n(t)} \right) \ne y_{n(t)}$ 
 
         - (try to) correct the mistake by $\mathbf{w}_{t+1} \leftarrow \mathbf{w}_t + y_{n(t)}x_{n(t)}$ 
 
@@ -369,7 +373,7 @@ tags:
     - **if** PLA halts (i.e. no more mistakes) 
     - **(necessary condition)** $\cal {D}$ allows some $\bf w$ to make no mistake
     - call such $\cal D$ **linear separable** 
-        
+      
 
     ![image-20200701105203129](https://i.loli.net/2020/07/01/u6nPm2SqYZB3JXv.png)
 
@@ -380,11 +384,15 @@ tags:
     - linear separable $\Leftrightarrow$ exists perfect $\mathbf{w}_f$ such that $y_n = \text{sign}(\mathbf{w}_f^T\mathbf{x}_n)$ 
 
     - $\mathbf{w}_f$ perfect hence every $\mathbf{x}_n$ correctly away from line:
+        
         $$
         {y}_{n(t)}\mathbf{w}_f^T\mathbf{x}_{n(t)} \ge \min_n y_n \mathbf{w}_f^T\mathbf{x}_n > 0
-        $$
-
-    - by updating with any $(\mathbf{x}_{n(t)}, y_{n(t)})$,
+    $$
+        
+        
+        
+    - by updating with any $\left(\mathbf{x}_{n(t)}, y_{n(t)}\right)$,
+        
         $$
         \begin{aligned}
         \mathbf{w}_f^T\mathbf{w}_{t+1} &= \mathbf{w}_f^T(\mathbf{w}_t+y_{n(t)}\mathbf{x}_{n(t)}) \newline
@@ -393,12 +401,15 @@ tags:
         \end{aligned}
         $$
 
+    
+    
+
 - PLA fact: $\mathbf{w}_t$ does not grow too fast
 
     - $\mathbf{w}_t$ change only when mistake $\Leftrightarrow$ $\text{sign}(\mathbf{w}_t^T\mathbf{x}_{n(t)}) \ne y_{n(t)}$ $\Leftrightarrow$ $y_{n(t)}\mathbf{w}_t^T\mathbf{x}_{n(t)} \le 0$ 
 
     - mistake **limits** $\|\mathbf{w}_t\|^2$ growth, even when updating with *longest* $\mathbf{x}_n$ 
-        
+      
         $$
         \begin{aligned}
         \|\mathbf{w}_{t+1}\|^2  &= \|\mathbf{w}_t+y_{n(t)}\mathbf{x}_{n(t)} \|^2 \newline
@@ -408,9 +419,12 @@ tags:
         \end{aligned}
         $$
 
+      
+      
     - start from $\mathbf{w}_0=0$, after $T$ mistake corrections, 
+        
         $$
-        \frac{\mathbf{w}_f^T}{\|\mathbf{w}_f\|} \frac{\mathbf{w}_T}{\|\mathbf{w}_T\|} \ge \sqrt{T} \cdot \text{constant} 
+        \frac{\mathbf{w}_f^T}{\|\mathbf{w}_f\|} \frac{\mathbf{w}_T}{\|\mathbf{w}_T\|} \ge \sqrt{T} \cdot \text{constant}
         $$
 
 <details><summary>QUIZ</summary>
@@ -460,7 +474,7 @@ tags:
 
     - **Initialize pocket weights** $\mathbf{\hat{w}}$ 
 
-        - find a **(random)** mistake of $\mathbf{w}_t$ called $\left(\mathbf{x}_{n(t)}, y_{n(t)}\right)$
+        - find a **(random)** mistake of $\mathbf{w}_t$, called $\left(\mathbf{x}_{n(t)}, y_{n(t)}\right)$
 
         - (try to) correct the mistake by
             $$
@@ -476,6 +490,8 @@ tags:
 <details><summary>QUIZ</summary><img src="https://s1.ax1x.com/2020/07/01/NTep5R.png"/></details>
 
 ## 3 Types of Learning
+
+> Learning comes with many possibilities in different applications, with our focus being binary classification or regression from a batch of supervised data with concrete features ...
 
 <img src="https://s1.ax1x.com/2020/07/01/NTvpJH.png" alt="NTvpJH.png" style="zoom:67%;" />
 
@@ -704,6 +720,8 @@ tags:
 
 ## 4 Feasibility of Learning
 
+> Learning can be "probably approximately correct" when given enough statistical data and finite number of hypotheses ...
+
 <img src="https://s1.ax1x.com/2020/07/01/N75NCV.png" alt="N75NCV.png" style="zoom:67%;" />
 
 #### 4.1 Learning is Impossible
@@ -863,7 +881,7 @@ tags:
 
     ![N7h956.png](https://s1.ax1x.com/2020/07/01/N7h956.png)
 
-    - if $|\mathcal{H}| = M$ finite, $N$ large enough
+    - if $\vert \mathcal{H} \vert= M$ finite, $N$ large enough
         - for whatever $g$ picked by $\cal A$, $E_{out}(h) \approx E_{in}(g)$
     - if $\cal A$ finds one $g$ with $E_{in}(g) \approx 0$,
         - PAC guarantee for $E_{out}(g) \approx 0$ $\Rightarrow$ **learning possible** :happy:
