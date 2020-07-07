@@ -157,9 +157,9 @@ tags:
         $$
 
         
-        
-- if
     
+- if
+  
     - $\text{effective}(N)$ can replace $M$ and
         - $\text{effective}(N) \ll 2^N$  
     
@@ -582,11 +582,11 @@ tags:
         1 & 0 & \cdots & 0 & 1
         \end{array}\right]
         $$
-        
+    
 - note: $\mathbf{X}$ invertible
-    
+  
 - to shatter ...
-    
+  
     - for any $\bf y \in \Bbb{R}^{d+1}$, find $\mathbf{w}$ such that
         - $\text{sign}(\mathbf{Xw})=\mathbf{y} \Leftarrow \bf{Xw=y} \stackrel{X\text{ invertible!}}{\Longleftrightarrow} w= X^{-1}y $ 
 
@@ -647,7 +647,6 @@ tags:
     <summary>QUIZ</summary>
     <img src="https://s1.ax1x.com/2020/07/03/NO9k90.png"/>
 </details>
-
 #### 7.4 Interpreting VC Dimension
 
 - VC Bound Rephrase: Penalty for Model Complexity
@@ -659,7 +658,7 @@ tags:
         $$
 
     - Rephrase: with prbability $\ge 1 - \delta$, **GOOD:** $\left\vert E_{\text {in }}(g)-E_{\text {out }}(g)\right\vert \leq \epsilon$ 
-        
+      
 
         $$
         \begin{aligned}
@@ -746,7 +745,7 @@ tags:
 
     - how well? previously, considered out-of-sample measure
     
-      $$ 
+      $$
         E_{\text {out }}(g)=\underset{\mathbf{x} \sim P}{\mathcal{E}}[\mathbf{g}(\mathbf{x}) \neq f(\mathbf{x})]
       $$
 
@@ -760,7 +759,7 @@ tags:
 - Pointwise Error Measure
 
     - can often express $E(g,f)$ = averaged $\mathop{\text{err}}(g(\mathbf{x}),f(\mathbf{x}))$, like
-        
+      
         $$
         E_{\text {out }}(g)=\underset{\mathbf{x} \sim P}{\mathcal{E}}\, \underbrace{[g(\mathbf{x}) \neq f(\mathbf{x})]}_{\operatorname{err}(g(\mathbf{x}), f(\mathbf{x}))}
         $$
@@ -768,7 +767,7 @@ tags:
         - $\text{err}$: called **pointwise error measure**
 
     - in-sample: 
-     
+    
         $$
         E_{\mathrm{in}}(g)=\frac{1}{N} \sum_{n=1}^{N} \operatorname{err}\left(g \left( \mathbf{x}_{n} \right), f \left(\mathbf{x}_{n}\right) \right)
         $$
@@ -870,7 +869,7 @@ tags:
         <img src="https://i.loli.net/2020/07/03/SLhstEQuWip1aKx.png" alt="image-20200703110201545" style="zoom:33%;" />
 
     - out-of-sample
-        
+      
         $$
         E_{\text {out}}(h)= \underset{(\mathbf{x},y) \sim P}{\mathcal{E}}
         \left\lbrace 
@@ -882,42 +881,38 @@ tags:
         $$
 
     - in-sample
-        
+      
         $$
-
-        E_{\text {in}}(h)
+E_{\text {in}}(h)
         = \frac{1}{N} \sum_{n=1}^{N}
         \left\lbrace \begin{array}{cc}
         {\color{Purple} 1}  & \text { if } y_ n =+1 \\
         {\color{Orange} 1000}  & \text { if } y_ n =-1
         \end{array} \right\rbrace 
         \cdot { \color{Blue} \left[ y _ n \neq h \left(\mathbf{x} _ n \right) \right] }
-
         $$
-        
+
     - weighted classification: different "weight" for different $(\mathbf{x},y)$ 
-
-- Minimizing $E_{\text{in}}$ for Weighted Classification 
     
+- Minimizing $E_{\text{in}}$ for Weighted Classification 
+  
     $$
-
-    {\color{Red} E_{\mathrm{in}}^{\mathrm{w}}(h)} 
+{\color{Red} E_{\mathrm{in}}^{\mathrm{w}}(h)} 
     =\frac{1}{N} \sum_{n=1}^{N}\left\lbrace \begin{array}{cc}
     {\color{Purple} 1}  & \text { if } y_ n = +1 \\
     {\color{Orange} 1000}  & \text { if } y_ n = -1
     \end{array}\right\rbrace \cdot{\color{Blue} \left[y_ n \neq h\left(\mathbf{x}_ n\right)\right]}
-
     $$
-    
 
+    
     - Naïve Thoughts
-        - PLA: doesn’t matter if linear separable
+    - PLA: doesn’t matter if linear separable
         - pocket: modify **pocket-replacement rule**
             - if $\mathbf{w}_ {t+1}$ reaches smaller $ E_ {\mathrm{in}}^{\mathrm{w}}$ than $\hat{\mathbf{w}}$, replace $\hat{\bf w}$ by $\mathbf{w}_ {t+1}$ 
     - But
         - pocket: some guarantee on $ E_{\mathrm{in}}^{0/1}$ 
         - modified pocket: similar guarantee on $  E_{\mathrm{in}}^{\mathrm{w}}$?
-
+    
 - Systematic Route: Connect $E_{\mathrm{in}}^{\mathrm{w}}$ and $E_{\mathrm{in}}^{\mathrm{0/1}}$ 
 
     <img src="https://i.loli.net/2020/07/03/CybwQoUtlYz4Srj.png" alt="image-20200703113020927" style="zoom:40%;" />

@@ -309,8 +309,7 @@ tags:
 
 <details><summary>QUIZ</summary>
 <img src="https://i.loli.net/2020/06/30/qMs15RrEYyZTnev.png"/></details>
-
-#### 2.2 Perception Learning Algorithm (PLA)
+#### 2.2 Perceptron Learning Algorithm (PLA)
 
 - Select $g$ from $\cal{H}$
 
@@ -384,7 +383,7 @@ tags:
     - linear separable $\Leftrightarrow$ exists perfect $\mathbf{w}_f$ such that $y_n = \text{sign}(\mathbf{w}_f^T\mathbf{x}_n)$ 
 
     - $\mathbf{w}_f$ perfect hence every $\mathbf{x}_n$ correctly away from line:
-        
+      
         $$
         {y}_{n(t)}\mathbf{w}_f^T\mathbf{x}_{n(t)} \ge \min_n y_n \mathbf{w}_f^T\mathbf{x}_n > 0
     $$
@@ -393,7 +392,7 @@ tags:
         
     - by updating with any $\left(\mathbf{x}_{n(t)}, y_{n(t)}\right)$,
         
-        $$
+    $$
         \begin{aligned}
         \mathbf{w}_f^T\mathbf{w}_{t+1} &= \mathbf{w}_f^T(\mathbf{w}_t+y_{n(t)}\mathbf{x}_{n(t)}) \newline
         &\ge \mathbf{w}_f^T\mathbf{w}_t + \min_n  y_{n}\mathbf{x}_{n} \newline
@@ -403,7 +402,6 @@ tags:
 
     
     
-
 - PLA fact: $\mathbf{w}_t$ does not grow too fast
 
     - $\mathbf{w}_t$ change only when mistake $\Leftrightarrow$ $\text{sign}(\mathbf{w}_t^T\mathbf{x}_{n(t)}) \ne y_{n(t)}$ $\Leftrightarrow$ $y_{n(t)}\mathbf{w}_t^T\mathbf{x}_{n(t)} \le 0$ 
@@ -420,9 +418,9 @@ tags:
         $$
 
       
-      
+    
     - start from $\mathbf{w}_0=0$, after $T$ mistake corrections, 
-        
+      
         $$
         \frac{\mathbf{w}_f^T}{\|\mathbf{w}_f\|} \frac{\mathbf{w}_T}{\|\mathbf{w}_T\|} \ge \sqrt{T} \cdot \text{constant}
         $$
